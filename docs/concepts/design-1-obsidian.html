@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obsidian &amp; Brass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;1,6..96,400;1,6..96,600&amp;family=Manrope:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+:root{
+  --ink:#0A0908; --ink-2:#100E0C; --ink-3:#171411;
+  --brass:#C69B52; --brass-lt:#E8CE9A; --brass-dk:#8A6A32;
+  --bone:#EDE7DC; --muted:#9C938A; --dim:#6B635B;
+  --line:rgba(198,155,82,.22); --line-soft:rgba(237,231,220,.09);
+  --f-disp:"Bodoni Moda","Didot","Times New Roman",serif;
+  --f-body:"Manrope","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"Courier New",monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--bone);font-family:var(--f-body);font-weight:300;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+
+body::before{content:"";position:fixed;inset:16px;border:1px solid var(--line);pointer-events:none;z-index:60}
+@media(max-width:640px){body::before{inset:8px}}
+
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:clamp(22px,5vw,46px)}
+.eyebrow{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:34px;height:1px;background:var(--brass);opacity:.6}
+h1,h2,h3{font-family:var(--f-disp);font-weight:600;line-height:1.08;text-wrap:balance;margin:0}
+h2{font-size:clamp(2rem,4.2vw,3.25rem)}
+em{font-style:italic;color:var(--brass-lt);font-weight:400}
+p{margin:0}
+section{position:relative}
+.sec{padding-block:clamp(72px,10vw,130px)}
+.rule{display:flex;align-items:center;gap:18px;color:var(--line)}
+.rule::before,.rule::after{content:"";height:1px;background:currentColor;flex:1}
+.rule span{width:6px;height:6px;background:var(--brass);transform:rotate(45deg);opacity:.7}
+
+.nav{position:fixed;top:16px;left:16px;right:16px;z-index:50;transition:background .35s,border-color .35s;border-bottom:1px solid transparent}
+.nav.stuck{background:rgba(10,9,8,.86);backdrop-filter:blur(14px);border-bottom-color:var(--line)}
+@media(max-width:640px){.nav{top:8px;left:8px;right:8px}}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:24px;height:74px;padding-inline:clamp(22px,5vw,46px);max-width:1180px;margin-inline:auto}
+.logo{font-family:var(--f-disp);font-size:1.45rem;letter-spacing:.04em;display:flex;align-items:baseline;gap:9px}
+.logo b{font-weight:700}
+.logo i{font-style:normal;font-family:var(--f-mono);font-size:.58rem;letter-spacing:.2em;color:var(--brass);text-transform:uppercase}
+.menu{display:flex;gap:34px;font-size:.86rem;color:var(--muted)}
+.menu a{position:relative;padding-block:4px;transition:color .25s}
+.menu a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--brass);transition:width .3s}
+.menu a:hover{color:var(--bone)}
+.menu a:hover::after{width:100%}
+.nav-right{display:flex;align-items:center;gap:22px}
+.lang{display:flex;gap:2px;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.1em;color:var(--dim)}
+.lang button{background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding:4px 6px;transition:color .2s}
+.lang button[aria-current="true"]{color:var(--brass)}
+.lang button:hover{color:var(--bone)}
+@media(max-width:1000px){.menu,.lang{display:none}}
+
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;padding:15px 26px;border:1px solid var(--brass);color:var(--ink);background:var(--brass);transition:background .3s,color .3s,box-shadow .3s;cursor:pointer}
+.btn:hover{background:var(--brass-lt);border-color:var(--brass-lt);box-shadow:0 0 34px rgba(198,155,82,.28)}
+.btn-ghost{background:transparent;color:var(--brass-lt);border-color:var(--line)}
+.btn-ghost:hover{background:rgba(198,155,82,.08);color:var(--bone);border-color:var(--brass);box-shadow:none}
+.btn-sm{padding:12px 20px;font-size:.66rem}
+
+.hero{padding-top:clamp(140px,17vw,210px);padding-bottom:clamp(60px,8vw,90px);overflow:hidden}
+.hero::after{content:"";position:absolute;top:-16%;left:50%;translate:-50% 0;width:min(1000px,120vw);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(198,155,82,.16) 0%,rgba(198,155,82,.05) 38%,transparent 66%);pointer-events:none;z-index:-1}
+.hero-grid{position:absolute;inset:0;z-index:-2;opacity:.5;background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);background-size:78px 78px;-webkit-mask-image:radial-gradient(ellipse 80% 55% at 50% 30%,#000,transparent);mask-image:radial-gradient(ellipse 80% 55% at 50% 30%,#000,transparent)}
+.hero h1{font-size:clamp(2.7rem,7.4vw,5.4rem);margin-block:26px 26px;letter-spacing:-.015em}
+.lede{max-width:60ch;color:var(--muted);font-size:clamp(1rem,1.35vw,1.12rem)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:38px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:clamp(56px,7vw,84px)}
+.stat{background:var(--ink);padding:28px 24px;display:flex;flex-direction:column;gap:6px}
+.stat b{font-family:var(--f-disp);font-size:clamp(1.9rem,3.4vw,2.6rem);font-weight:600;color:var(--brass-lt);font-variant-numeric:tabular-nums;line-height:1}
+.stat span{font-family:var(--f-mono);font-size:.63rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+.strip{border-block:1px solid var(--line-soft);padding-block:20px;overflow:hidden;background:var(--ink-2)}
+.track{display:flex;gap:56px;width:max-content;animation:slide 34s linear infinite;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+.track span{display:flex;align-items:center;gap:56px}
+.track span::after{content:"\25C6";color:var(--brass);opacity:.55;font-size:.55rem}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:clamp(40px,5vw,64px)}
+.head p{max-width:40ch;color:var(--muted);font-size:.95rem}
+@media(max-width:820px){.head{flex-direction:column;align-items:flex-start;gap:18px}}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line-soft)}
+@media(max-width:940px){.grid-3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.grid-3{grid-template-columns:1fr}}
+.svc{background:var(--ink);padding:clamp(28px,3.2vw,40px);position:relative;transition:background .4s}
+.svc::before{content:"";position:absolute;top:-1px;left:0;height:1px;width:0;background:linear-gradient(90deg,var(--brass),transparent);transition:width .55s ease}
+.svc:hover{background:var(--ink-3)}
+.svc:hover::before{width:100%}
+.svc svg{width:26px;height:26px;stroke:var(--brass);fill:none;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.svc h3{font-size:1.42rem;margin-block:22px 12px}
+.svc p{color:var(--muted);font-size:.92rem}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}
+.tags i{font-style:normal;font-family:var(--f-mono);font-size:.62rem;letter-spacing:.08em;color:var(--brass-dk);border:1px solid var(--line);padding:5px 9px;transition:color .3s}
+.svc:hover .tags i{color:var(--brass)}
+
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(40px,6vw,84px);align-items:center}
+@media(max-width:900px){.split{grid-template-columns:1fr}}
+.quote{font-family:var(--f-disp);font-size:clamp(1.6rem,2.9vw,2.35rem);line-height:1.32;font-weight:400}
+.pts{display:flex;flex-direction:column;gap:26px}
+.pt{display:grid;grid-template-columns:auto 1fr;gap:18px;padding-bottom:26px;border-bottom:1px solid var(--line-soft)}
+.pt:last-child{border-bottom:0;padding-bottom:0}
+.pt em{font-family:var(--f-mono);font-style:normal;font-size:.7rem;color:var(--brass);letter-spacing:.1em;padding-top:5px}
+.pt h4{margin:0 0 5px;font-family:var(--f-body);font-weight:600;font-size:1rem}
+.pt p{color:var(--muted);font-size:.9rem}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line-soft)}
+@media(max-width:900px){.steps{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.steps{grid-template-columns:1fr}}
+.step{background:var(--ink-2);padding:clamp(26px,3vw,36px);display:flex;flex-direction:column;gap:12px;transition:background .35s}
+.step:hover{background:var(--ink-3)}
+.step b{font-family:var(--f-disp);font-size:2.6rem;line-height:1;color:transparent;-webkit-text-stroke:1px var(--brass-dk);font-variant-numeric:tabular-nums;transition:-webkit-text-stroke-color .35s}
+.step:hover b{-webkit-text-stroke-color:var(--brass)}
+.step h4{margin:0;font-family:var(--f-disp);font-size:1.25rem;font-weight:600}
+.step p{color:var(--muted);font-size:.88rem}
+
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+@media(max-width:940px){.plans{grid-template-columns:1fr;max-width:480px;margin-inline:auto}}
+.plan{border:1px solid var(--line-soft);background:var(--ink-2);padding:clamp(28px,3vw,38px);display:flex;flex-direction:column;gap:22px}
+.plan.top{border-color:var(--brass);background:linear-gradient(180deg,rgba(198,155,82,.09),var(--ink-2) 42%);position:relative}
+.plan.top::after{content:"\018Fn \00E7ox se\00E7il\0259n";position:absolute;top:-1px;right:-1px;background:var(--brass);color:var(--ink);font-family:var(--f-mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:7px 13px}
+.plan h3{font-size:1.3rem}
+.price{font-family:var(--f-disp);font-size:2.9rem;line-height:1;color:var(--bone);font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:8px}
+.price small{font-family:var(--f-mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.plan ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px;font-size:.89rem;color:var(--muted)}
+.plan li{display:grid;grid-template-columns:auto 1fr;gap:11px}
+.plan li::before{content:"\2014";color:var(--brass-dk)}
+.plan .btn{justify-content:center;margin-top:auto}
+
+.revs{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+@media(max-width:820px){.revs{grid-template-columns:1fr}}
+.rev{border:1px solid var(--line-soft);padding:clamp(28px,3vw,38px);position:relative;background:var(--ink-2);margin:0}
+.rev::before{content:"\201D";position:absolute;top:6px;right:22px;font-family:var(--f-disp);font-size:5rem;color:var(--brass);opacity:.18;line-height:1}
+.rev p{font-family:var(--f-disp);font-size:1.14rem;line-height:1.5;font-style:italic;color:var(--bone)}
+.rev footer{margin-top:22px;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.11em;text-transform:uppercase;color:var(--brass-dk)}
+.note{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:18px}
+
+.contact{background:var(--ink-2);border-top:1px solid var(--line)}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px)}
+@media(max-width:900px){.cgrid{grid-template-columns:1fr}}
+.cinfo{display:flex;flex-direction:column}
+.cline{display:grid;grid-template-columns:110px 1fr;gap:16px;padding-block:16px;border-bottom:1px solid var(--line-soft);align-items:baseline}
+.cline em{font-style:normal;font-family:var(--f-mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}
+.cline a,.cline span{font-size:1.02rem;color:var(--bone);transition:color .25s}
+.cline a:hover{color:var(--brass)}
+form{display:flex;flex-direction:column;gap:14px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.row{grid-template-columns:1fr}}
+label{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:7px}
+input,select,textarea{width:100%;background:var(--ink);border:1px solid var(--line-soft);color:var(--bone);font-family:var(--f-body);font-size:.94rem;padding:13px 15px;transition:border-color .25s;border-radius:0}
+input:focus,select:focus,textarea:focus{border-color:var(--brass);outline:none}
+textarea{resize:vertical;min-height:108px}
+.status{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;color:var(--brass);min-height:1.2em}
+
+footer.site{border-top:1px solid var(--line-soft);padding-block:36px;font-size:.8rem;color:var(--dim)}
+.fgrid{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+.fgrid nav{display:flex;gap:22px}
+.fgrid a:hover{color:var(--brass)}
+
+.js .rv{opacity:0;transform:translateY(22px)}
+.js .rv.in{opacity:1;transform:none;transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1)}
+@media(prefers-reduced-motion:reduce){
+  .js .rv{opacity:1 !important;transform:none !important}
+  .track{animation:none}
+  *{transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="logo" href="#top"><b>MG</b><i>Studio</i></a>
+    <nav class="menu">
+      <a href="#services">Xidmətlər</a>
+      <a href="#process">İş prinsipi</a>
+      <a href="#plans">Qiymətlər</a>
+      <a href="#contact">Əlaqə</a>
+    </nav>
+    <div class="nav-right">
+      <div class="lang"><button type="button" aria-current="true">AZ</button><button type="button">RU</button><button type="button">EN</button></div>
+      <a class="btn btn-sm" href="#contact">Pulsuz audit</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="wrap">
+    <p class="eyebrow">Bakı · 2017-ci ildən</p>
+    <h1>Biznesinizin rəqəmsal siması —<br><em>zərgər dəqiqliyi</em> ilə qurulur.</h1>
+    <p class="lede">Veb sayt, SEO, korporativ e-poçt, hosting, SMM və Reels — bir əldən. Sizə ayrı-ayrı podratçılar deyil, bütün rəqəmsal varlığınıza cavabdeh olan bir komanda lazımdır.</p>
+    <div class="hero-cta">
+      <a class="btn" href="#contact">Layihəni müzakirə edək</a>
+      <a class="btn btn-ghost" href="#services">Xidmətlərə bax</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>8+</b><span>il təcrübə</span></div>
+      <div class="stat"><b>150+</b><span>tamamlanmış layihə</span></div>
+      <div class="stat"><b>99.9%</b><span>server işləmə vaxtı</span></div>
+      <div class="stat"><b>92</b><span>orta PageSpeed balı</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="strip" aria-hidden="true">
+  <div class="track">
+    <span>WordPress</span><span>WooCommerce</span><span>Cloudflare</span><span>Google Workspace</span><span>Meta Ads</span><span>LiteSpeed</span><span>Search Console</span><span>Premiere Pro</span>
+    <span>WordPress</span><span>WooCommerce</span><span>Cloudflare</span><span>Google Workspace</span><span>Meta Ads</span><span>LiteSpeed</span><span>Search Console</span><span>Premiere Pro</span>
+  </div>
+</div>
+
+<section class="sec" id="services">
+  <div class="wrap">
+    <div class="head rv">
+      <div>
+        <p class="eyebrow">Xidmətlər</p>
+        <h2 style="margin-top:20px">Altı istiqamət,<br>bir məsuliyyət sahibi.</h2>
+      </div>
+      <p>Domenin qeydiyyatından həftəlik Reels montajına qədər — hər mərhələ eyni standartla aparılır.</p>
+    </div>
+    <div class="grid-3">
+      <article class="svc rv">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="1.5"></rect><path d="M2.5 8.5h19M6 6.2h.01M8.5 6.2h.01M11 6.2h.01"></path></svg>
+        <h3>Veb sayt hazırlanması</h3>
+        <p>Korporativ saytlar, e-ticarət platformaları və satış səhifələri. Fərdi dizayn, çoxdilli struktur və idarəetməsi asan admin panel.</p>
+        <div class="tags"><i>WordPress</i><i>WooCommerce</i><i>WPML</i><i>ACF</i></div>
+      </article>
+      <article class="svc rv">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.4 15.4 21 21M8 11.5l2 2 3.5-4"></path></svg>
+        <h3>SEO optimizasiya</h3>
+        <p>Texniki audit, semantik nüvə, məzmun strategiyası və link profili. Core Web Vitals göstəricilərinin yaşıl zonaya çıxarılması.</p>
+        <div class="tags"><i>Texniki audit</i><i>Search Console</i><i>Core Web Vitals</i></div>
+      </article>
+      <article class="svc rv">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="1.5"></rect><path d="m2.5 7 9.5 6.5L21.5 7"></path></svg>
+        <h3>Korporativ e-poçt</h3>
+        <p>ad@sirketiniz.az formatında peşəkar poçt. SPF, DKIM və DMARC qeydləri ilə məktublarınız «spam» qovluğuna düşmür.</p>
+        <div class="tags"><i>Google Workspace</i><i>SPF / DKIM</i><i>Miqrasiya</i></div>
+      </article>
+      <article class="svc rv">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="18" height="7" rx="1.5"></rect><rect x="3" y="13.5" width="18" height="7" rx="1.5"></rect><path d="M6.5 7h.01M6.5 17h.01"></path></svg>
+        <h3>Hosting və domen</h3>
+        <p>LiteSpeed serverlərdə NVMe hosting, gündəlik avtomatik bekap, pulsuz SSL və Cloudflare CDN. Domen köçürülməsi bizim üzərimizdədir.</p>
+        <div class="tags"><i>NVMe</i><i>Cloudflare</i><i>Gündəlik bekap</i></div>
+      </article>
+      <article class="svc rv">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 12.5c0 4-3.8 7.2-8.5 7.2-1.2 0-2.4-.2-3.4-.6L3.5 21l1.6-4.1c-1-1.2-1.6-2.7-1.6-4.4 0-4 3.8-7.2 8.5-7.2s8.5 3.2 8.5 7.2Z"></path><path d="M9 12.2h.01M12 12.2h.01M15 12.2h.01"></path></svg>
+        <h3>SMM idarəetmə</h3>
+        <p>Instagram və Facebook hesablarının aparılması: aylıq kontent plan, dizayn, kopiraytinq və Meta Ads hədəfli reklam kampaniyaları.</p>
+        <div class="tags"><i>Kontent plan</i><i>Meta Ads</i><i>Analitika</i></div>
+      </article>
+      <article class="svc rv">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2"></rect><path d="M10.3 9.6v4.8l4.2-2.4-4.2-2.4Z"></path></svg>
+        <h3>Video &amp; Reels</h3>
+        <p>Çəkiliş, montaj, rəng korreksiyası və motion qrafika. 9:16 formatında subtitrli reels — həftədə 8 videoya qədər hazır paket.</p>
+        <div class="tags"><i>9:16</i><i>Montaj</i><i>Subtitr</i></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="rule" style="margin-bottom:clamp(60px,8vw,100px)"><span></span></div>
+    <div class="split">
+      <div class="rv">
+        <p class="eyebrow">Niyə biz</p>
+        <p class="quote" style="margin-top:26px">Sayt hazır olandan sonra başlayan işlər, ondan əvvəlki işlərdən daha vacibdir. Biz məhz orada qalırıq.</p>
+      </div>
+      <div class="pts rv">
+        <div class="pt"><em>01</em><div><h4>Bir müqavilə, bir məsul şəxs</h4><p>Domen, hosting, poçt, sayt və sosial şəbəkələr üçün ayrı-ayrı şirkətlərlə danışmağa ehtiyac qalmır.</p></div></div>
+        <div class="pt"><em>02</em><div><h4>Sürət standart kimi</h4><p>Hər layihə mobil PageSpeed 90+ hədəfi ilə təhvil verilir — bu, həm istifadəçi, həm də Google üçün sıralama amilidir.</p></div></div>
+        <div class="pt"><em>03</em><div><h4>Girişlərin sahibi sizsiniz</h4><p>Domen, hosting və admin girişləri sizin adınıza qeydiyyatdan keçir. İstənilən anda başqa komandaya ötürə bilərsiniz.</p></div></div>
+        <div class="pt"><em>04</em><div><h4>Aylıq hesabat</h4><p>Trafik, axtarış mövqeləri, sosial şəbəkə əhatəsi və server vəziyyəti — hər ayın sonunda bir sənəddə.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="process" style="background:var(--ink-2);border-block:1px solid var(--line-soft)">
+  <div class="wrap">
+    <div class="head rv">
+      <div><p class="eyebrow">İş prinsipi</p><h2 style="margin-top:20px">Brifdən dəstəyə<br>altı mərhələ.</h2></div>
+      <p>Hər mərhələnin sonunda təsdiq alınır — sürprizsiz, aydın qrafik üzrə.</p>
+    </div>
+    <div class="steps rv">
+      <div class="step"><b>01</b><h4>Brif və audit</h4><p>Biznesi, rəqibləri və mövcud rəqəmsal aktivləri təhlil edirik.</p></div>
+      <div class="step"><b>02</b><h4>Strategiya</h4><p>Sayt strukturu, semantik nüvə və prototip razılaşdırılır.</p></div>
+      <div class="step"><b>03</b><h4>Dizayn</h4><p>Brend kimliyinə uyğun UI maket — desktop və mobil versiyalar.</p></div>
+      <div class="step"><b>04</b><h4>İnkişaf</h4><p>Kodlaşdırma, inteqrasiyalar, sürət və təhlükəsizlik tənzimləmələri.</p></div>
+      <div class="step"><b>05</b><h4>Test və start</h4><p>Brauzer testləri, SEO yoxlanışı, domen və poçt köçürülməsi.</p></div>
+      <div class="step"><b>06</b><h4>Dəstək</h4><p>Aylıq texniki xidmət, yeniləmələr, bekap və hesabatlar.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="plans">
+  <div class="wrap">
+    <div class="head rv">
+      <div><p class="eyebrow">Paketlər</p><h2 style="margin-top:20px">Şəffaf qiymətlər.</h2></div>
+      <p>Göstərilən məbləğlər başlanğıc qiymətlərdir; dəqiq təklif brifdən sonra verilir.</p>
+    </div>
+    <div class="plans rv">
+      <div class="plan">
+        <h3>Start</h3>
+        <div class="price">₼490 <small>-dan</small></div>
+        <ul>
+          <li>1–5 səhifəlik vizit sayt</li>
+          <li>Mobil adaptiv dizayn</li>
+          <li>Baza SEO quraşdırması</li>
+          <li>1 il domen + 3 ay hosting</li>
+          <li>3 korporativ poçt qutusu</li>
+          <li>1 ay texniki dəstək</li>
+        </ul>
+        <a class="btn btn-ghost" href="#contact">Seçim et</a>
+      </div>
+      <div class="plan top">
+        <h3>Biznes</h3>
+        <div class="price">₼1 190 <small>-dan</small></div>
+        <ul>
+          <li>10–20 səhifəlik korporativ sayt</li>
+          <li>3 dil (AZ / RU / EN)</li>
+          <li>Bloq və xəbər bölməsi</li>
+          <li>Genişləndirilmiş SEO paketi</li>
+          <li>Cloudflare + SSL + bekap</li>
+          <li>10 poçt qutusu, 6 ay dəstək</li>
+        </ul>
+        <a class="btn" href="#contact">Seçim et</a>
+      </div>
+      <div class="plan">
+        <h3>Premium</h3>
+        <div class="price">₼2 490 <small>-dan</small></div>
+        <ul>
+          <li>WooCommerce e-ticarət</li>
+          <li>Onlayn ödəniş inteqrasiyası</li>
+          <li>Anbar / 1C sinxronizasiyası</li>
+          <li>Sürət optimizasiyası (90+)</li>
+          <li>SMM start paketi — 1 ay</li>
+          <li>12 ay texniki dəstək</li>
+        </ul>
+        <a class="btn btn-ghost" href="#contact">Seçim et</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="rule" style="margin-bottom:clamp(60px,8vw,100px)"><span></span></div>
+    <div class="revs rv">
+      <blockquote class="rev">
+        <p>Sayt təhvil veriləndən sonra da suallarımız cavabsız qalmadı — poçt, hosting və yeniləmələr eyni nömrədən həll olunur.</p>
+        <footer>Müştəri rəyi · istehsalat şirkəti</footer>
+      </blockquote>
+      <blockquote class="rev">
+        <p>Üç ayda əsas sorğuların yarısı ilk səhifəyə qalxdı, Reels-lərdən sonra müraciət sayı iki dəfə artdı.</p>
+        <footer>Müştəri rəyi · tibb mərkəzi</footer>
+      </blockquote>
+    </div>
+    <p class="note">Bu blok nümunə mətnlə doldurulub — real müştəri rəyləri ilə əvəz olunacaq.</p>
+  </div>
+</section>
+
+<section class="sec contact" id="contact">
+  <div class="wrap">
+    <div class="cgrid">
+      <div class="rv">
+        <p class="eyebrow">Əlaqə</p>
+        <h2 style="margin-block:22px 20px">Layihənizi<br>müzakirə edək.</h2>
+        <p class="lede" style="font-size:1rem">Qısa brif göndərin — 24 saat ərzində ilkin qiymət və iş qrafiki ilə qayıdaq. İlk konsultasiya və mövcud saytın texniki auditi ödənişsizdir.</p>
+        <div class="cinfo" style="margin-top:36px">
+          <div class="cline"><em>Telefon</em><a href="tel:+994500000000">+994 50 000 00 00</a></div>
+          <div class="cline"><em>E-poçt</em><a href="mailto:info@mguliyev.com">info@mguliyev.com</a></div>
+          <div class="cline"><em>Ünvan</em><span>Bakı, Azərbaycan</span></div>
+          <div class="cline"><em>İş saatı</em><span>B.e–Cümə, 10:00–19:00</span></div>
+        </div>
+      </div>
+      <form class="rv" id="form1">
+        <div class="row">
+          <div><label for="n1">Ad, soyad</label><input id="n1" name="name" required></div>
+          <div><label for="p1">Telefon</label><input id="p1" name="phone" type="tel" placeholder="+994 __ ___ __ __" required></div>
+        </div>
+        <div><label for="s1">Maraqlandığınız xidmət</label>
+          <select id="s1" name="service">
+            <option>Veb sayt hazırlanması</option><option>SEO optimizasiya</option><option>Korporativ e-poçt</option>
+            <option>Hosting və domen</option><option>SMM idarəetmə</option><option>Video &amp; Reels</option><option>Kompleks paket</option>
+          </select>
+        </div>
+        <div><label for="m1">Layihə haqqında qısa</label><textarea id="m1" name="message" placeholder="Fəaliyyət sahəniz, mövcud saytınızın linki, təxmini büdcə…"></textarea></div>
+        <button class="btn" type="submit" style="justify-content:center">Müraciəti göndər</button>
+        <p class="status" id="st1" role="status"></p>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  <div class="wrap fgrid">
+    <span>© 2026 MGuliyev Studio · Bakı</span>
+    <nav><a href="#services">Xidmətlər</a><a href="#plans">Qiymətlər</a><a href="#contact">Əlaqə</a></nav>
+    <span>Məxfilik siyasəti</span>
+  </div>
+</footer>
+
+<script>
+document.documentElement.classList.add("js");
+var nav = document.getElementById("nav");
+addEventListener("scroll", function () { nav.classList.toggle("stuck", scrollY > 24); }, { passive: true });
+var io = new IntersectionObserver(function (es) {
+  es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+}, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+document.querySelectorAll(".rv").forEach(function (el, i) { el.style.transitionDelay = (i % 3) * 70 + "ms"; io.observe(el); });
+document.getElementById("form1").addEventListener("submit", function (e) {
+  e.preventDefault();
+  document.getElementById("st1").textContent = "Demo forma — canlı saytda müraciət e-poçtunuza və WhatsApp-a göndəriləcək.";
+});
+document.querySelectorAll(".lang button").forEach(function (b) {
+  b.addEventListener("click", function () {
+    document.querySelectorAll(".lang button").forEach(function (x) { x.setAttribute("aria-current", "false"); });
+    b.setAttribute("aria-current", "true");
+  });
+});
+</script>
+</body>
+</html>

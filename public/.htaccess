@@ -1,0 +1,26 @@
+# Конфигурация для Apache и LiteSpeed. На nginx файл не читается — там те же
+# правила задаются в конфиге сервера.
+
+# Демо-ролики: часть хостингов без явного типа отдаёт .mp4 как октет-поток,
+# и браузер отказывается его проигрывать.
+AddType video/mp4 .mp4
+AddType video/webm .webm
+
+# Разделы переехали вместе с переименованием: «Работы» -> «Портфолио»,
+# «Журнал» -> «Блог». Ссылки и закладки на старые адреса должны жить.
+RedirectMatch 301 ^/raboty/?$        /portfolio/
+RedirectMatch 301 ^/raboty/(.*)$     /portfolio/$1
+RedirectMatch 301 ^/zhurnal/?$       /blog/
+RedirectMatch 301 ^/zhurnal/(.*)$    /blog/$1
+
+# Картинки и ролики меняются вместе с именем файла, их можно держать в кеше
+# долго. Стили и скрипты — коротко: они версий в имени не имеют.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpeg      "access plus 1 year"
+  ExpiresByType image/png       "access plus 1 year"
+  ExpiresByType image/svg+xml   "access plus 1 year"
+  ExpiresByType video/mp4       "access plus 1 year"
+  ExpiresByType text/css        "access plus 1 day"
+  ExpiresByType text/javascript "access plus 1 day"
+</IfModule>

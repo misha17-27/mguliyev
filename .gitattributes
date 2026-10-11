@@ -1,0 +1,12 @@
+# Сайт работает на Linux-хостинге: в репозитории и на сервере держим LF,
+# иначе Windows подставит CRLF и это полезет в вывод PHP.
+* text=auto eol=lf
+
+# Двоичное не трогать.
+*.jpg  binary
+*.png  binary
+*.webp binary
+*.mp4  binary
+*.ico  binary
+*.woff binary
+*.woff2 binary

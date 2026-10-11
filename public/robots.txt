@@ -1,0 +1,5 @@
+# Сайт открыт для индексации целиком.
+User-agent: *
+Allow: /
+
+Sitemap: https://mguliyev.com/sitemap.xml

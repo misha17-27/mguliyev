@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap">
+<style>
+:root{
+  --void:#070A0D; --panel:#0C1117; --panel-2:#111922; --panel-3:#16212C;
+  --edge:#1E2A36; --edge-lt:#2A3947;
+  --ice:#E7EDF4; --slate:#93A2B2; --dim:#5F6E7D;
+  --indigo:#6E7BFF; --indigo-lt:#AFB6FF; --indigo-dk:#3C47B8;
+  --ok:#3FCF8E; --warn:#F2B441; --bad:#FF6B6B;
+  --f-disp:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"Courier New",monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--void);color:var(--ice);font-family:var(--f-body);font-weight:300;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+p{margin:0}
+svg{display:block}
+:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+
+.wrap{max-width:1240px;margin-inline:auto;padding-inline:clamp(18px,4vw,40px)}
+.sec{padding-block:clamp(66px,8vw,108px)}
+h1,h2,h3{font-family:var(--f-disp);font-weight:700;line-height:1.06;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2{font-size:clamp(1.85rem,3.6vw,2.8rem)}
+.kicker{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--indigo-lt);display:inline-flex;align-items:center;gap:9px}
+.kicker::before{content:"";width:7px;height:7px;background:var(--indigo);border-radius:1px}
+.sub{color:var(--slate);font-size:.96rem;max-width:62ch}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:40;background:rgba(7,10,13,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--edge)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:20px;height:66px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--f-disp);font-weight:800;font-size:1.06rem;letter-spacing:-.01em}
+.mark{width:30px;height:30px;border:1px solid var(--indigo);border-radius:4px;display:grid;place-items:center;font-family:var(--f-mono);font-size:.72rem;color:var(--indigo-lt);background:rgba(110,123,255,.1)}
+.menu{display:flex;gap:28px;font-size:.87rem;color:var(--slate)}
+.menu a:hover{color:var(--ice)}
+.nav-right{display:flex;align-items:center;gap:16px}
+.chip{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;color:var(--ok);border:1px solid rgba(63,207,142,.3);background:rgba(63,207,142,.07);padding:6px 11px;border-radius:3px}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.28}}
+@media(max-width:1040px){.menu{display:none}}
+@media(max-width:620px){.chip{display:none}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:var(--f-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:13px 22px;border-radius:4px;border:1px solid var(--indigo);background:var(--indigo);color:#080A14;font-weight:500;cursor:pointer;transition:background .25s,box-shadow .25s,transform .2s}
+.btn:hover{background:var(--indigo-lt);border-color:var(--indigo-lt);box-shadow:0 0 0 4px rgba(110,123,255,.16)}
+.btn:active{transform:translateY(1px)}
+.btn-o{background:transparent;color:var(--ice);border-color:var(--edge-lt)}
+.btn-o:hover{background:var(--panel-2);border-color:var(--indigo);box-shadow:none}
+.btn-sm{padding:10px 16px;font-size:.66rem}
+
+/* hero */
+.hero{padding-top:clamp(48px,6vw,80px);padding-bottom:clamp(56px,7vw,96px);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-320px;right:-160px;width:760px;height:760px;border-radius:50%;background:radial-gradient(circle,rgba(110,123,255,.16),transparent 62%);pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(30px,4vw,56px);align-items:center;position:relative}
+@media(max-width:980px){.hero-grid{grid-template-columns:1fr}}
+.hero h1{font-size:clamp(2.15rem,5.2vw,3.75rem);margin-block:20px 18px}
+.hero h1 span{color:var(--indigo-lt)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.meta-row{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:30px;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.05em;color:var(--dim)}
+.meta-row b{color:var(--ice);font-weight:500}
+
+/* panel */
+.panel{background:var(--panel);border:1px solid var(--edge);border-radius:6px;overflow:hidden}
+.panel-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--edge);background:var(--panel-2);font-family:var(--f-mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.panel-bd{padding:18px 16px 20px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--edge)}
+.tile{background:var(--panel);padding:18px 16px}
+.tile-lb{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.tile-val{font-family:var(--f-disp);font-size:1.75rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.tile-note{font-family:var(--f-mono);font-size:.64rem;color:var(--slate);margin-top:7px;display:flex;align-items:center;gap:6px}
+.up{color:var(--ok)}
+.rows{display:flex;flex-direction:column}
+.prow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;border-top:1px solid var(--edge);font-family:var(--f-mono);font-size:.72rem}
+.prow span:first-child{color:var(--slate)}
+.tag-ok{color:var(--ok)}
+.tag-warn{color:var(--warn)}
+
+/* services bento */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:6px;padding:clamp(20px,2.4vw,28px);display:flex;flex-direction:column;gap:12px;position:relative;transition:border-color .3s,background .3s,transform .3s}
+.card:hover{border-color:var(--indigo-dk);background:var(--panel-2);transform:translateY(-3px)}
+.card .code{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.14em;color:var(--indigo);border:1px solid rgba(110,123,255,.28);border-radius:3px;padding:4px 8px;align-self:flex-start;background:rgba(110,123,255,.07)}
+.card h3{font-size:1.22rem;font-weight:600}
+.card p{color:var(--slate);font-size:.9rem}
+.c-wide{grid-column:span 3}
+.c-half{grid-column:span 3}
+.c-third{grid-column:span 2}
+@media(max-width:900px){.bento{grid-template-columns:repeat(2,1fr)}.c-wide,.c-half,.c-third{grid-column:span 1}}
+@media(max-width:560px){.bento{grid-template-columns:1fr}}
+.mini{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:6px}
+.mini i{font-style:normal;font-family:var(--f-mono);font-size:.62rem;color:var(--dim);background:var(--panel-3);border-radius:3px;padding:4px 8px}
+
+/* stack table */
+.tblwrap{overflow-x:auto;border:1px solid var(--edge);border-radius:6px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.88rem}
+th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--edge)}
+thead th{font-family:var(--f-mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);background:var(--panel-2);font-weight:500}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--panel-2)}
+td.name{font-weight:500;color:var(--ice)}
+td.mono{font-family:var(--f-mono);font-size:.8rem;color:var(--slate);font-variant-numeric:tabular-nums}
+.yes{color:var(--ok);font-family:var(--f-mono)}
+.no{color:var(--dim);font-family:var(--f-mono)}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+@media(max-width:1000px){.pipe{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.pipe{grid-template-columns:repeat(2,1fr)}}
+.node{border:1px solid var(--edge);border-top:2px solid var(--indigo-dk);border-radius:5px;background:var(--panel);padding:18px 16px;display:flex;flex-direction:column;gap:8px;transition:border-top-color .3s,background .3s}
+.node:hover{border-top-color:var(--indigo);background:var(--panel-2)}
+.node b{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.1em;color:var(--indigo-lt)}
+.node h4{margin:0;font-family:var(--f-disp);font-size:1rem;font-weight:600}
+.node p{font-size:.82rem;color:var(--slate)}
+
+/* faq */
+.faq{display:flex;flex-direction:column;gap:10px;max-width:860px}
+details{border:1px solid var(--edge);border-radius:5px;background:var(--panel);overflow:hidden}
+details[open]{border-color:var(--edge-lt);background:var(--panel-2)}
+summary{cursor:pointer;padding:17px 20px;font-weight:500;font-size:.98rem;list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--f-mono);color:var(--indigo-lt);font-size:1.1rem}
+details[open] summary::after{content:"\2013"}
+details p{padding:0 20px 19px;color:var(--slate);font-size:.9rem;max-width:70ch}
+
+/* contact */
+.cwrap{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(20px,3vw,34px);align-items:start}
+@media(max-width:920px){.cwrap{grid-template-columns:1fr}}
+form{display:flex;flex-direction:column;gap:14px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.frow{grid-template-columns:1fr}}
+label{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:7px}
+input,select,textarea{width:100%;background:var(--void);border:1px solid var(--edge);color:var(--ice);font-family:var(--f-body);font-size:.93rem;padding:12px 14px;border-radius:4px;transition:border-color .25s,box-shadow .25s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(110,123,255,.14)}
+textarea{resize:vertical;min-height:104px}
+.status{font-family:var(--f-mono);font-size:.7rem;color:var(--indigo-lt);min-height:1.2em}
+.clines{display:flex;flex-direction:column}
+.cl{display:flex;justify-content:space-between;gap:14px;padding:13px 16px;border-top:1px solid var(--edge);font-size:.9rem}
+.cl:first-child{border-top:0}
+.cl em{font-style:normal;font-family:var(--f-mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding-top:3px}
+.cl a:hover{color:var(--indigo-lt)}
+
+footer.site{border-top:1px solid var(--edge);padding-block:30px;font-family:var(--f-mono);font-size:.72rem;color:var(--dim)}
+.fg{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center}
+.fg nav{display:flex;gap:20px}
+.fg a:hover{color:var(--ice)}
+
+.js .rv{opacity:0;transform:translateY(16px)}
+.js .rv.in{opacity:1;transform:none;transition:opacity .65s ease,transform .65s cubic-bezier(.2,.7,.3,1)}
+@media(prefers-reduced-motion:reduce){
+  .js .rv{opacity:1 !important;transform:none !important}
+  .dot{animation:none}
+  *{transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top"><span class="mark">MG</span>mguliyev<span style="color:var(--indigo-lt)">.</span></a>
+    <nav class="menu">
+      <a href="#services">Xidmətlər</a>
+      <a href="#stack">Texnologiya</a>
+      <a href="#pipeline">Proses</a>
+      <a href="#plans">Paketlər</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <span class="chip"><span class="dot"></span>Bütün sistemlər işlək</span>
+      <a class="btn btn-sm" href="#contact">Audit sifariş et</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="kicker">Rəqəmsal infrastruktur · Bakı</span>
+      <h1>Saytınız, poçtunuz və serveriniz — <span>bir idarə panelində.</span></h1>
+      <p class="sub">Veb sayt hazırlanması, SEO, korporativ e-poçt, hosting, SMM və Reels. Hər xidmət ölçülən göstəricilərlə təhvil verilir: sürət balı, işləmə vaxtı, çatdırılma faizi, axtarış mövqeyi.</p>
+      <div class="hero-cta">
+        <a class="btn" href="#contact">Pulsuz texniki audit</a>
+        <a class="btn btn-o" href="#services">Xidmət modulları</a>
+      </div>
+      <div class="meta-row">
+        <span>Orta cavab müddəti · <b>4 saat</b></span>
+        <span>Aktiv müştəri · <b>40+</b></span>
+        <span>Təhvil müddəti · <b>10–25 gün</b></span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd"><span>Müştəri paneli · nümunə</span><span style="color:var(--ok)">canlı</span></div>
+      <div class="tiles">
+        <div class="tile">
+          <div class="tile-lb">PageSpeed · mobil</div>
+          <svg viewBox="0 0 200 118" width="100%" height="96" role="img" aria-label="Mobil PageSpeed balı 94, yaşıl zona 90-dan başlayır">
+            <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="#1E2A36" stroke-width="12" stroke-linecap="round"></path>
+            <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="#3FCF8E" stroke-width="12" stroke-linecap="round" stroke-dasharray="236 252"></path>
+            <line x1="164" y1="36" x2="172" y2="29" stroke="#5F6E7D" stroke-width="2"></line>
+            <text x="20" y="115" fill="#5F6E7D" font-family="IBM Plex Mono, monospace" font-size="10">0</text>
+            <text x="172" y="115" fill="#5F6E7D" font-family="IBM Plex Mono, monospace" font-size="10" text-anchor="end">100</text>
+            <text x="178" y="26" fill="#5F6E7D" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="end">90</text>
+            <text x="100" y="92" fill="#E7EDF4" font-family="Archivo, sans-serif" font-size="40" font-weight="700" text-anchor="middle">94</text>
+          </svg>
+          <div class="tile-note"><span class="up">▲ 31</span> son auditdən sonra</div>
+        </div>
+        <div class="tile">
+          <div class="tile-lb">Axtarış mövqeyi · «beton zavodu»</div>
+          <svg viewBox="0 0 260 96" width="100%" height="96" role="img" aria-label="Açar sözün mövqeyi 8 həftədə 38-dən 4-ə qalxıb">
+            <line x1="8" y1="80" x2="252" y2="80" stroke="#1E2A36" stroke-width="1"></line>
+            <line x1="8" y1="46" x2="252" y2="46" stroke="#1E2A36" stroke-width="1" stroke-dasharray="3 4"></line>
+            <polygon points="12,75 46,63 80,56 114,43 148,34 182,26 216,21 246,17 246,80 12,80" fill="rgba(110,123,255,.16)"></polygon>
+            <polyline points="12,75 46,63 80,56 114,43 148,34 182,26 216,21 246,17" fill="none" stroke="#6E7BFF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"></polyline>
+            <circle cx="246" cy="17" r="4" fill="#AFB6FF"></circle>
+          </svg>
+          <div class="tile-note"><span class="up">38 → 4</span> 8 həftə ərzində</div>
+        </div>
+      </div>
+      <div class="panel-bd" style="border-top:1px solid var(--edge)">
+        <div class="tile-lb">Server işləmə vaxtı · son 30 gün</div>
+        <svg viewBox="0 0 210 30" width="100%" height="30" role="img" aria-label="Son 30 günün 29-u tam işlək, 1 gün qısa fasilə">
+          <g fill="#3FCF8E">
+            <rect x="0" y="0" width="5" height="30" rx="1"></rect><rect x="7" y="0" width="5" height="30" rx="1"></rect><rect x="14" y="0" width="5" height="30" rx="1"></rect>
+            <rect x="21" y="0" width="5" height="30" rx="1"></rect><rect x="28" y="0" width="5" height="30" rx="1"></rect><rect x="35" y="0" width="5" height="30" rx="1"></rect>
+            <rect x="42" y="0" width="5" height="30" rx="1"></rect><rect x="49" y="0" width="5" height="30" rx="1"></rect><rect x="56" y="0" width="5" height="30" rx="1"></rect>
+            <rect x="63" y="0" width="5" height="30" rx="1"></rect><rect x="70" y="0" width="5" height="30" rx="1"></rect>
+            <rect x="84" y="0" width="5" height="30" rx="1"></rect><rect x="91" y="0" width="5" height="30" rx="1"></rect><rect x="98" y="0" width="5" height="30" rx="1"></rect>
+            <rect x="105" y="0" width="5" height="30" rx="1"></rect><rect x="112" y="0" width="5" height="30" rx="1"></rect><rect x="119" y="0" width="5" height="30" rx="1"></rect>
+            <rect x="126" y="0" width="5" height="30" rx="1"></rect><rect x="133" y="0" width="5" height="30" rx="1"></rect><rect x="140" y="0" width="5" height="30" rx="1"></rect>
+            <rect x="147" y="0" width="5" height="30" rx="1"></rect><rect x="154" y="0" width="5" height="30" rx="1"></rect><rect x="161" y="0" width="5" height="30" rx="1"></rect>
+            <rect x="168" y="0" width="5" height="30" rx="1"></rect><rect x="175" y="0" width="5" height="30" rx="1"></rect><rect x="182" y="0" width="5" height="30" rx="1"></rect>
+            <rect x="189" y="0" width="5" height="30" rx="1"></rect><rect x="196" y="0" width="5" height="30" rx="1"></rect><rect x="203" y="0" width="5" height="30" rx="1"></rect>
+          </g>
+          <rect x="77" y="0" width="5" height="30" rx="1" fill="#F2B441"></rect>
+        </svg>
+        <div class="tile-note" style="justify-content:space-between"><span>99.98% · 1 planlı texniki iş</span><span style="color:var(--dim)">30 gün əvvəl → bu gün</span></div>
+      </div>
+      <div class="rows">
+        <div class="prow"><span>SSL sertifikatı</span><span class="tag-ok">etibarlı · 82 gün</span></div>
+        <div class="prow"><span>SPF / DKIM / DMARC</span><span class="tag-ok">konfiqurasiya edilib</span></div>
+        <div class="prow"><span>Gündəlik bekap</span><span class="tag-ok">bu gün 04:00</span></div>
+        <div class="prow"><span>WordPress yeniləmələri</span><span class="tag-warn">2 plagin gözləyir</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="services" style="border-top:1px solid var(--edge)">
+  <div class="wrap">
+    <div class="rv" style="margin-bottom:clamp(28px,3.5vw,44px)">
+      <span class="kicker">Xidmət modulları</span>
+      <h2 style="margin-top:16px">Ayrı-ayrı sifariş edin<br>və ya tam paket kimi.</h2>
+    </div>
+    <div class="bento rv">
+      <article class="card c-wide">
+        <span class="code">WEB</span>
+        <h3>Veb sayt hazırlanması</h3>
+        <p>Korporativ saytlar, e-ticarət və satış səhifələri. Fərdi dizayn, çoxdilli struktur, sahibinin özünün idarə edə biləcəyi admin panel. Təhvil şərti — mobil PageSpeed 90+.</p>
+        <div class="mini"><i>WordPress</i><i>WooCommerce</i><i>ACF</i><i>WPML</i><i>Elementor</i></div>
+      </article>
+      <article class="card c-half">
+        <span class="code">SEO</span>
+        <h3>Axtarış optimizasiyası</h3>
+        <p>Texniki audit, semantik nüvə, məzmun planı və link profili. Hər ay Search Console və Analytics əsasında mövqe hesabatı.</p>
+        <div class="mini"><i>Texniki audit</i><i>Core Web Vitals</i><i>Schema.org</i></div>
+      </article>
+      <article class="card c-third">
+        <span class="code">MAIL</span>
+        <h3>Korporativ e-poçt</h3>
+        <p>ad@sirketiniz.az. SPF, DKIM, DMARC qurulur — məktub «spam»a düşmür. Köhnə poçtdan miqrasiya itkisiz aparılır.</p>
+        <div class="mini"><i>Google Workspace</i><i>Zoho Mail</i></div>
+      </article>
+      <article class="card c-third">
+        <span class="code">HOST</span>
+        <h3>Hosting və domen</h3>
+        <p>LiteSpeed + NVMe, gündəlik bekap, pulsuz SSL, Cloudflare CDN və WAF. 99.9% işləmə vaxtı öhdəliyi.</p>
+        <div class="mini"><i>NVMe</i><i>Cloudflare</i><i>.az / .com</i></div>
+      </article>
+      <article class="card c-third">
+        <span class="code">SMM</span>
+        <h3>Sosial şəbəkələr</h3>
+        <p>Instagram və Facebook idarəetməsi: aylıq kontent plan, dizayn, kopiraytinq və Meta Ads kampaniyaları.</p>
+        <div class="mini"><i>Kontent plan</i><i>Meta Ads</i><i>Hesabat</i></div>
+      </article>
+      <article class="card c-wide">
+        <span class="code">VIDEO</span>
+        <h3>Video çəkiliş və Reels montajı</h3>
+        <p>Ssenari, çəkiliş, montaj, rəng korreksiyası, subtitr və motion qrafika. 9:16 vertikal format — Instagram Reels, TikTok və YouTube Shorts üçün. Aylıq paketdə 8–16 video.</p>
+        <div class="mini"><i>9:16</i><i>4K</i><i>Subtitr</i><i>Motion</i><i>Premiere Pro</i></div>
+      </article>
+      <article class="card c-half" style="border-color:var(--indigo-dk);background:linear-gradient(140deg,rgba(110,123,255,.1),var(--panel) 55%)">
+        <span class="code">FULL</span>
+        <h3>Kompleks abunə</h3>
+        <p>Bütün modullar bir aylıq ödənişdə: sayt dəstəyi, hosting, poçt, SEO və 8 Reels. Ayrı-ayrı sifarişdən orta hesabla 25% ucuz.</p>
+        <a class="btn btn-o btn-sm" href="#plans" style="align-self:flex-start;margin-top:4px">Paketlərə bax</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="stack" style="background:var(--panel);border-block:1px solid var(--edge)">
+  <div class="wrap">
+    <div class="rv" style="margin-bottom:clamp(24px,3vw,38px)">
+      <span class="kicker">Nəyi ölçürük</span>
+      <h2 style="margin-top:16px">Hər modulun<br>öz göstəricisi var.</h2>
+      <p class="sub" style="margin-top:14px">«Gözəl oldu» ölçü vahidi deyil. Aşağıdakı cədvəl — hər xidmət üzrə təhvil zamanı yoxlanan hədəflər.</p>
+    </div>
+    <div class="tblwrap rv">
+      <table>
+        <thead>
+          <tr><th>Modul</th><th>Əsas göstərici</th><th>Hədəf</th><th>Yoxlama aləti</th><th>Hesabat</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="name">Veb sayt</td><td>Mobil PageSpeed balı</td><td class="mono">90+</td><td class="mono">Lighthouse</td><td class="yes">aylıq</td></tr>
+          <tr><td class="name">SEO</td><td>İlk 10-da açar söz sayı</td><td class="mono">+15 / 6 ay</td><td class="mono">Search Console</td><td class="yes">aylıq</td></tr>
+          <tr><td class="name">E-poçt</td><td>Çatdırılma reytinqi</td><td class="mono">10/10</td><td class="mono">mail-tester</td><td class="yes">quraşdırmada</td></tr>
+          <tr><td class="name">Hosting</td><td>İşləmə vaxtı</td><td class="mono">99.9%</td><td class="mono">UptimeRobot</td><td class="yes">aylıq</td></tr>
+          <tr><td class="name">SMM</td><td>Əhatə və qarşılıqlı əlaqə</td><td class="mono">+30% / rüb</td><td class="mono">Meta Insights</td><td class="yes">aylıq</td></tr>
+          <tr><td class="name">Reels</td><td>Orta baxış sayı</td><td class="mono">müqavilə üzrə</td><td class="mono">Instagram</td><td class="no">rüblük</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="pipeline">
+  <div class="wrap">
+    <div class="rv" style="margin-bottom:clamp(24px,3vw,38px)">
+      <span class="kicker">Proses</span>
+      <h2 style="margin-top:16px">Altı mərhələ, hər birində təsdiq nöqtəsi.</h2>
+    </div>
+    <div class="pipe rv">
+      <div class="node"><b>01</b><h4>Brif</h4><p>Biznes, rəqiblər, mövcud aktivlərin auditi.</p></div>
+      <div class="node"><b>02</b><h4>Struktur</h4><p>Sayt xəritəsi, semantik nüvə, prototip.</p></div>
+      <div class="node"><b>03</b><h4>Dizayn</h4><p>UI maket — desktop və mobil versiya.</p></div>
+      <div class="node"><b>04</b><h4>İnkişaf</h4><p>Kod, inteqrasiyalar, sürət və təhlükəsizlik.</p></div>
+      <div class="node"><b>05</b><h4>Start</h4><p>Testlər, domen və poçtun köçürülməsi.</p></div>
+      <div class="node"><b>06</b><h4>Dəstək</h4><p>Yeniləmə, bekap, monitorinq, hesabat.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="plans" style="background:var(--panel);border-block:1px solid var(--edge)">
+  <div class="wrap">
+    <div class="rv" style="margin-bottom:clamp(24px,3vw,38px)">
+      <span class="kicker">Paketlər</span>
+      <h2 style="margin-top:16px">Nə daxildir — cədvəldə.</h2>
+      <p class="sub" style="margin-top:14px">Qiymətlər başlanğıc məbləğlərdir. Dəqiq təklif brifdən sonra 24 saat ərzində verilir.</p>
+    </div>
+    <div class="tblwrap rv">
+      <table>
+        <thead>
+          <tr><th>Nə daxildir</th><th>Start · ₼490</th><th>Biznes · ₼1 190</th><th>Premium · ₼2 490</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="name">Səhifə sayı</td><td class="mono">1–5</td><td class="mono">10–20</td><td class="mono">limitsiz</td></tr>
+          <tr><td class="name">Dil versiyası</td><td class="mono">1</td><td class="mono">3</td><td class="mono">3+</td></tr>
+          <tr><td class="name">Onlayn mağaza</td><td class="no">—</td><td class="no">—</td><td class="yes">WooCommerce</td></tr>
+          <tr><td class="name">Korporativ poçt qutusu</td><td class="mono">3</td><td class="mono">10</td><td class="mono">25</td></tr>
+          <tr><td class="name">Hosting daxil</td><td class="mono">3 ay</td><td class="mono">12 ay</td><td class="mono">12 ay</td></tr>
+          <tr><td class="name">SEO paketi</td><td class="mono">baza</td><td class="mono">genişləndirilmiş</td><td class="mono">tam</td></tr>
+          <tr><td class="name">SMM start</td><td class="no">—</td><td class="no">—</td><td class="yes">1 ay</td></tr>
+          <tr><td class="name">Texniki dəstək</td><td class="mono">1 ay</td><td class="mono">6 ay</td><td class="mono">12 ay</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px"><a class="btn" href="#contact">Təklif istə</a><a class="btn btn-o" href="#faq">Tez-tez verilən suallar</a></div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="rv" style="margin-bottom:clamp(22px,3vw,34px)"><span class="kicker">FAQ</span><h2 style="margin-top:16px">Ən çox soruşulanlar</h2></div>
+    <div class="faq rv">
+      <details open><summary>Domen və hosting kimin adına qeydiyyatdan keçir?</summary><p>Həmişə sizin və ya şirkətinizin adına. Bütün giriş məlumatları təhvil zamanı sizə verilir — istənilən anda başqa komandaya keçə bilərsiniz.</p></details>
+      <details><summary>Mövcud saytı köçürə bilərsinizmi?</summary><p>Bəli. Sayt, baza, poçt qutuları və DNS qeydləri fasiləsiz köçürülür. Adətən gecə saatlarında aparılır ki, iş prosesi dayanmasın.</p></details>
+      <details><summary>SEO nəticəsi nə vaxt görünür?</summary><p>Texniki düzəlişlərin effekti 2–4 həftəyə, rəqabətli sorğular üzrə sabit mövqe isə 3–6 aya görünür. Hər ay konkret rəqəmlərlə hesabat göndərilir.</p></details>
+      <details><summary>Reels üçün çəkiliş kim tərəfindən aparılır?</summary><p>Çəkiliş Bakı daxilində bizim operatorla, aylıq qrafik üzrə. Materialı özünüz çəkirsinizsə — yalnız montaj paketi də mümkündür.</p></details>
+      <details><summary>Ödəniş necə aparılır?</summary><p>50% işin başlanğıcında, 50% təhvil zamanı. Abunə xidmətləri aylıq və ya illik ödənilir; hüquqi şəxslər üçün müqavilə və hesab-faktura verilir.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="contact" style="background:var(--panel);border-top:1px solid var(--edge)">
+  <div class="wrap">
+    <div class="rv" style="margin-bottom:clamp(24px,3vw,36px)">
+      <span class="kicker">Əlaqə</span>
+      <h2 style="margin-top:16px">Saytınızın pulsuz texniki auditi.</h2>
+      <p class="sub" style="margin-top:14px">Sürət, mobil uyğunluq, SEO səhvləri, SSL və poçt konfiqurasiyası — 8 bənd üzrə yoxlanış və sizə aid PDF hesabat.</p>
+    </div>
+    <div class="cwrap">
+      <form class="panel rv" id="form2" style="padding:clamp(20px,2.6vw,28px)">
+        <div class="frow">
+          <div><label for="n2">Ad, soyad</label><input id="n2" name="name" required></div>
+          <div><label for="p2">Telefon / WhatsApp</label><input id="p2" name="phone" type="tel" placeholder="+994 __ ___ __ __" required></div>
+        </div>
+        <div class="frow">
+          <div><label for="u2">Saytınızın ünvanı</label><input id="u2" name="site" placeholder="misal.az"></div>
+          <div><label for="s2">Modul</label>
+            <select id="s2" name="service"><option>WEB · sayt</option><option>SEO</option><option>MAIL · poçt</option><option>HOST · hosting</option><option>SMM</option><option>VIDEO · Reels</option><option>FULL · kompleks</option></select>
+          </div>
+        </div>
+        <div><label for="m2">Qeyd</label><textarea id="m2" name="message" placeholder="Hansı problemi həll etmək istəyirsiniz?"></textarea></div>
+        <button class="btn" type="submit">Audit sorğusu göndər</button>
+        <p class="status" id="st2" role="status"></p>
+      </form>
+      <div class="panel rv">
+        <div class="panel-hd"><span>Birbaşa əlaqə</span><span class="dot" style="color:var(--ok)"></span></div>
+        <div class="clines">
+          <div class="cl"><em>Telefon</em><a href="tel:+994500000000">+994 50 000 00 00</a></div>
+          <div class="cl"><em>E-poçt</em><a href="mailto:info@mguliyev.com">info@mguliyev.com</a></div>
+          <div class="cl"><em>Ünvan</em><span>Bakı, Azərbaycan</span></div>
+          <div class="cl"><em>İş saatı</em><span>B.e–C, 10:00–19:00</span></div>
+          <div class="cl"><em>Cavab</em><span>orta hesabla 4 saat</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  <div class="wrap fg">
+    <span>© 2026 mguliyev.com · Bakı</span>
+    <nav><a href="#services">Xidmətlər</a><a href="#plans">Paketlər</a><a href="#faq">FAQ</a><a href="#contact">Əlaqə</a></nav>
+    <span>Məxfilik siyasəti</span>
+  </div>
+</footer>
+
+<script>
+document.documentElement.classList.add("js");
+var io = new IntersectionObserver(function (es) {
+  es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+}, { rootMargin: "0px 0px -6% 0px", threshold: 0.06 });
+document.querySelectorAll(".rv").forEach(function (el) { io.observe(el); });
+document.getElementById("form2").addEventListener("submit", function (e) {
+  e.preventDefault();
+  document.getElementById("st2").textContent = "Demo forma — canlı saytda sorğu e-poçtunuza və Telegram-a düşəcək.";
+});
+</script>
+</body>
+</html>

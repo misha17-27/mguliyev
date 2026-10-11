@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "php",
+      "runtimeExecutable": "C:\\Users\\Asus\\.config\\herd\\bin\\php.bat",
+      "runtimeArgs": ["-S", "localhost:5173", "-t", "public"],
+      "port": 5173
+    }
+  ]
+}
