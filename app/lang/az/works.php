@@ -1,0 +1,90 @@
+<?php
+/* Накладка портфолио. Ключи — slug группы и домен проекта,
+   а не позиция в массиве: список меняется, и привязка к номеру рассыпалась бы. */
+
+return [
+    'logistika' => [
+        'name' => 'Logistika və daşımalar',
+        'desc' => 'Konteynerlər, gömrük, anbar, kuryerlər, taksi və transferlər.',
+        'projects' => [
+            'itas.az'              => 'Konteyner daşımaları',
+            'caucasuscl.com'       => 'Gömrük rəsmiləşdirilməsi və logistika',
+            'azshipping.az'        => 'Yük daşımaları',
+            'marshal.az'           => 'Taksi parkı, Uber tərəfdaşı',
+            'moverteam.ca'         => 'Köçürmələrin təşkili',
+            'kuryer.net'           => 'Kuryer xidməti',
+            'alizadehgroup.net'    => 'Transferlər və korporativ daşımalar',
+            'dlc.az'               => 'Anbar kompleksi',
+        ],
+    ],
+    'torgovlya' => [
+        'name' => 'Mağazalar və ticarət',
+        'desc' => 'Kitab və güldən texnika və döşəklərə qədər, Avstriya, Macarıstan və Ukrayna bazarları da daxil.',
+        'projects' => [
+            'qarabagh.shop'        => '«Qarabağ» FK-nın rəsmi mağazası',
+            'store.az'             => 'Texnika mağazası',
+            'flower.az'            => 'Gül çatdırılması',
+            'avantaj.az'           => 'Telefon mağazası',
+            'bookmart.az'          => 'Kitab mağazası',
+            'vanilla.az'           => 'Sifarişlə tortlar',
+            'tomobuv.com.ua'       => 'Ayaqqabı mağazası',
+            'mozahome.com'         => 'Ev üçün mallar, Avstriya',
+            'mattress.hu'          => 'Döşəklər, Macarıstan',
+            'sleepandbed.hu'       => 'Döşəklər və yataq dəstləri, Macarıstan',
+            'ymkwatercolor.com'    => 'Sifarişlə akvarel portretlər',
+            'from-dubai.com'       => 'Dubaydan texnika',
+            'dutyfreegroup.az'     => 'Duty free',
+        ],
+    ],
+    'avto' => [
+        'name' => 'Avto və moto',
+        'desc' => 'Distribyutorlar, ehtiyat hissələri, servis, ABŞ-dan avtomobil gətirilməsi və elan platforması.',
+        'projects' => [
+            'lynkco.az'            => 'Lynk &amp; Co-nun rəsmi distribyutoru',
+            'grandmoto.az'         => 'Motosiklet distribyutoru',
+            'bestsol.az'           => 'Ağır texnika üçün ehtiyat hissələri',
+            'avtobutik.az'         => 'ABŞ-dan avtomobil seçimi və çatdırılması',
+            'avtoehtiyat.com'      => 'Avtomobil ehtiyat hissələrinin satış elanları',
+            'avtok1ub.az'          => 'Yağ dəyişimi, avtoservis',
+        ],
+    ],
+    'stroyka' => [
+        'name' => 'Tikinti və daşınmaz əmlak',
+        'desc' => 'Podratçılar, dam örtüyü, darvazalar, yaşayış kompleksi və xaricdə daşınmaz əmlak satışı.',
+        'projects' => [
+            'arka.az'              => 'Tikinti və dizayn',
+            'damchi.az'            => 'Dam örtüyü işləri',
+            'agrosport.az'         => 'İdman infrastrukturu',
+            'lifeonisland.com'     => 'Kiprdə daşınmaz əmlak',
+            'metalist.az'          => 'Darvazalar və roletlər',
+            'whitestone.com.az'    => 'Yaşayış kompleksi',
+        ],
+    ],
+    'promyshlen' => [
+        'name' => 'Sənaye və B2B',
+        'desc' => 'Neft-qaz, aqro, distribusiya, sənaye komponentləri, tibbi avadanlıq və konsaltinq.',
+        'projects' => [
+            'socarmidstream.az'    => 'SOCAR-ın neft-qaz infrastrukturu',
+            'elson-group.com'      => 'Aqroholdinq, məhsul ixracı',
+            'marsoverseas.az'      => 'İçkilərin distribusiyası',
+            'armada.az'            => 'Klinika və laboratoriyalar üçün avadanlıq',
+            'argflex.co.uk'        => 'Rezin və plastik məmulatlar, Britaniya',
+            'amec.az'              => 'Dəniz və mühəndislik konsaltinqi',
+            'smeltd.az'            => 'Konsaltinq',
+            'azeco.az'             => 'Tərəvəzçilik, Qusar rayonu',
+            'enemay.com'           => 'Maliyyə konsaltinqi və karyera mərkəzi',
+            'alfalat.com'          => 'Hüquq və vergi konsaltinqi',
+        ],
+    ],
+    'uslugi' => [
+        'name' => 'Xidmətlər və sağlamlıq',
+        'desc' => 'Pilates, kimyəvi təmizləmə, klininq, musiqi məktəbi və peşəkar təlim.',
+        'projects' => [
+            'pilatesbaku.az'       => 'Pilates studiyası',
+            'drymatic.az'          => 'Kimyəvi təmizləmə',
+            '166temizlik.az'       => 'Klininq xidmətləri',
+            'kvsdosi.com'          => 'Musiqi məktəbi',
+            'mtt.az'               => 'HRCI sertifikasiyasına hazırlıq',
+        ],
+    ],
+];

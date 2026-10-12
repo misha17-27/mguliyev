@@ -1,0 +1,90 @@
+<?php
+/* Накладка портфолио. Ключи — slug группы и домен проекта,
+   а не позиция в массиве: список меняется, и привязка к номеру рассыпалась бы. */
+
+return [
+    'logistika' => [
+        'name' => 'Logistics and transport',
+        'desc' => 'Containers, customs, warehousing, couriers, taxi and transfers.',
+        'projects' => [
+            'itas.az'              => 'Container shipping',
+            'caucasuscl.com'       => 'Customs clearance and logistics',
+            'azshipping.az'        => 'Freight transport',
+            'marshal.az'           => 'Taxi fleet, Uber partner',
+            'moverteam.ca'         => 'Moving services',
+            'kuryer.net'           => 'Courier service',
+            'alizadehgroup.net'    => 'Transfers and corporate transport',
+            'dlc.az'               => 'Warehouse complex',
+        ],
+    ],
+    'torgovlya' => [
+        'name' => 'Stores and retail',
+        'desc' => 'From books and flowers to electronics and mattresses, including the Austrian, Hungarian and Ukrainian markets.',
+        'projects' => [
+            'qarabagh.shop'        => 'Official FC Qarabag store',
+            'store.az'             => 'Electronics store',
+            'flower.az'            => 'Flower delivery',
+            'avantaj.az'           => 'Phone store',
+            'bookmart.az'          => 'Bookstore',
+            'vanilla.az'           => 'Custom cakes',
+            'tomobuv.com.ua'       => 'Shoe store',
+            'mozahome.com'         => 'Home goods, Austria',
+            'mattress.hu'          => 'Mattresses, Hungary',
+            'sleepandbed.hu'       => 'Mattresses and bed linen, Hungary',
+            'ymkwatercolor.com'    => 'Custom watercolour portraits',
+            'from-dubai.com'       => 'Electronics from Dubai',
+            'dutyfreegroup.az'     => 'Duty free',
+        ],
+    ],
+    'avto' => [
+        'name' => 'Cars and motorcycles',
+        'desc' => 'Distributors, spare parts, service, importing from the USA and a classifieds platform.',
+        'projects' => [
+            'lynkco.az'            => 'Official Lynk &amp; Co distributor',
+            'grandmoto.az'         => 'Motorcycle distributor',
+            'bestsol.az'           => 'Spare parts for heavy machinery',
+            'avtobutik.az'         => 'Sourcing and delivery of cars from the USA',
+            'avtoehtiyat.com'      => 'Classified ads for car parts',
+            'avtok1ub.az'          => 'Oil changes, car service',
+        ],
+    ],
+    'stroyka' => [
+        'name' => 'Construction and real estate',
+        'desc' => 'Contractors, roofing, gates, a residential complex and property sales abroad.',
+        'projects' => [
+            'arka.az'              => 'Construction and design',
+            'damchi.az'            => 'Roofing work',
+            'agrosport.az'         => 'Sports infrastructure',
+            'lifeonisland.com'     => 'Property in Cyprus',
+            'metalist.az'          => 'Gates and roller shutters',
+            'whitestone.com.az'    => 'Residential complex',
+        ],
+    ],
+    'promyshlen' => [
+        'name' => 'Industry and B2B',
+        'desc' => 'Oil and gas, agriculture, distribution, industrial components, medical equipment and consulting.',
+        'projects' => [
+            'socarmidstream.az'    => 'SOCAR oil and gas infrastructure',
+            'elson-group.com'      => 'Agricultural holding, export of produce',
+            'marsoverseas.az'      => 'Beverage distribution',
+            'armada.az'            => 'Equipment for clinics and laboratories',
+            'argflex.co.uk'        => 'Rubber and plastic products, UK',
+            'amec.az'              => 'Marine and engineering consulting',
+            'smeltd.az'            => 'Consulting',
+            'azeco.az'             => 'Vegetable growing, Qusar district',
+            'enemay.com'           => 'Financial consulting and career centre',
+            'alfalat.com'          => 'Legal and tax consulting',
+        ],
+    ],
+    'uslugi' => [
+        'name' => 'Services and health',
+        'desc' => 'Pilates, dry cleaning, cleaning services, a music school and professional training.',
+        'projects' => [
+            'pilatesbaku.az'       => 'Pilates studio',
+            'drymatic.az'          => 'Dry cleaning',
+            '166temizlik.az'       => 'Cleaning services',
+            'kvsdosi.com'          => 'Music school',
+            'mtt.az'               => 'Preparation for HRCI certification',
+        ],
+    ],
+];
