@@ -11,7 +11,7 @@ include __DIR__ . '/../../../app/partials/head.php';
       $cat = $catalog['podderzhka'];
     ?>
     <p class="lb"><a href="/uslugi/">Услуги</a></p>
-    <h1 class="disp h2" style="margin-block:18px 20px"><?= $cat['title'] ?></h1>
+    <h1 class="disp h2" style="margin-block:18px 20px"><?= $cat['h1'] ?? $cat['title'] ?></h1>
     <p class="sub"><?= $cat['lead'] ?></p>
 
     <div class="rows" style="margin-top:clamp(28px,4vw,52px)">
