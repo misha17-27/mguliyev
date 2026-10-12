@@ -1,8 +1,9 @@
 <?php
+require __DIR__ . '/../../app/bootstrap.php';
 $page = 'portfolio';
 $current = 'portfolio';
 include __DIR__ . '/../../app/partials/head.php';
-$groups = require __DIR__ . '/../../app/data/works.php';
+$groups = works();
 
 $shown = 0; $dead = 0; $covers = 0;
 foreach ($groups as $g) {
@@ -97,7 +98,7 @@ function pl($n, $one, $few, $many) {
     <div style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
       <h2 class="disp h2">Не нашли свою отрасль?</h2>
       <p class="sub" style="margin-top:16px">Список закрывает не всё. Расскажите о задаче — ответим, что для неё нужно.</p>
-      <p style="margin-top:22px"><a class="btn" href="/kontakty/">Обсудить проект</a></p>
+      <p style="margin-top:22px"><a class="btn" href="<?= u('/kontakty/') ?>">Обсудить проект</a></p>
     </div>
   </div>
 </section>

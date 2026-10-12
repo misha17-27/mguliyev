@@ -1,8 +1,9 @@
 <?php
+require __DIR__ . '/../../app/bootstrap.php';
 $page = 'about';
 $current = 'about';
 include __DIR__ . '/../../app/partials/head.php';
-$catalog = require __DIR__ . '/../../app/data/catalog.php';
+$catalog = catalog();
 ?>
 <main id="top">
 <section class="sec">
@@ -31,7 +32,7 @@ $catalog = require __DIR__ . '/../../app/data/catalog.php';
 
     <div class="rows" style="margin-top:clamp(30px,4vw,48px)">
       <?php foreach ($catalog as $slug => $cat): ?>
-      <a class="row" href="/uslugi/<?= $slug ?>/">
+      <a class="row" href="<?= u('/uslugi/' . $slug . '/') ?>">
         <span class="rname"><?= $cat['title'] ?></span>
         <span class="rdesc"><?= implode(' · ', array_map(fn($i) => $i[0], $cat['items'])) ?></span>
         <span class="rmeta">6 услуг</span>
@@ -78,15 +79,15 @@ $catalog = require __DIR__ . '/../../app/data/catalog.php';
       <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px">Как ведём проект</h2>
       <p class="sub">Путь от брифа до поддержки — шесть шагов, и он одинаковый для сайта на пять
         страниц и для магазина с интеграцией склада. Разобрали его на главной:
-        <a href="/#process" style="color:var(--duo-b)">как работаем</a>.</p>
+        <a href="<?= u('/') ?>#process" style="color:var(--duo-b)">как работаем</a>.</p>
     </div>
 
     <div style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
       <h2 class="disp h2">Расскажите о проекте</h2>
       <p class="sub" style="margin-top:16px">Чем занимается бизнес и что не устраивает сейчас.
         Этого достаточно, чтобы начать.</p>
-      <p style="margin-top:22px"><a class="btn" href="/kontakty/">Связаться</a>
-        <a class="btn btn-o" href="/portfolio/" style="margin-left:10px">Смотреть портфолио</a></p>
+      <p style="margin-top:22px"><a class="btn" href="<?= u('/kontakty/') ?>">Связаться</a>
+        <a class="btn btn-o" href="<?= u('/portfolio/') ?>" style="margin-left:10px">Смотреть портфолио</a></p>
     </div>
   </div>
 </section>

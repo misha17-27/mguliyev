@@ -4,7 +4,7 @@
     {
       "name": "php",
       "runtimeExecutable": "C:\\Users\\Asus\\.config\\herd\\bin\\php.bat",
-      "runtimeArgs": ["-S", "localhost:5173", "-t", "public"],
+      "runtimeArgs": ["-S", "localhost:5173", "-t", "public", "router.php"],
       "port": 5173
     }
   ]

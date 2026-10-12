@@ -1,6 +1,6 @@
 <?php
 /* Рендер одной статьи. Страница задаёт $slug до подключения. */
-$all = require __DIR__ . '/../data/articles.php';
+$all = articles();
 $art = null;
 foreach ($all as $a) { if ($a['slug'] === $slug) { $art = $a; break; } }
 if (!$art) { http_response_code(404); echo '<main class="sec"><div class="wrap"><h1 class="disp h2">Статья не найдена</h1></div></main>'; return; }
@@ -8,7 +8,7 @@ if (!$art) { http_response_code(404); echo '<main class="sec"><div class="wrap">
 <main id="top">
 <article class="sec art">
   <div class="wrap">
-    <p class="lb"><a href="/blog/">Блог</a> · <?= htmlspecialchars($art['rubric']) ?></p>
+    <p class="lb"><a href="<?= u('/blog/') ?>"><?= htmlspecialchars(t('nav.blog')) ?></a> · <?= htmlspecialchars($art['rubric']) ?></p>
     <h1 class="disp h2" style="margin-block:18px 16px"><?= htmlspecialchars($art['title']) ?></h1>
     <p class="art-meta"><?= htmlspecialchars($art['date']) ?> · <?= (int)$art['read'] ?> мин чтения</p>
     <p class="art-lead"><?= nl2br(htmlspecialchars($art['lead'])) ?></p>
@@ -26,7 +26,7 @@ if (!$art) { http_response_code(404); echo '<main class="sec"><div class="wrap">
       <?php endforeach; ?>
     </div>
 
-    <p class="lb" style="margin-top:clamp(34px,4vw,54px)"><a href="/blog/">← Все статьи</a></p>
+    <p class="lb" style="margin-top:clamp(34px,4vw,54px)"><a href="<?= u('/blog/') ?>">← <?= htmlspecialchars(t('blog.all')) ?></a></p>
   </div>
 </article>
 </main>

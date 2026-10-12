@@ -1,8 +1,9 @@
 <?php
+require __DIR__ . '/../../../app/bootstrap.php';
 $page = 'veb-sayty';
 $current = 'services';
 include __DIR__ . '/../../../app/partials/head.php';
-$catalog = require __DIR__ . '/../../../app/data/catalog.php';
+$catalog = catalog();
 $cat = $catalog['veb-sayty'];
 
 /* Главная посадочная по коммерческой цели студии. Цифры 49/48/36 и суммы
@@ -17,14 +18,14 @@ $lnk = 'color:var(--duo-b)';
 <main id="top">
 <section class="sec">
   <div class="wrap">
-    <p class="lb"><a href="/uslugi/">Услуги</a></p>
+    <p class="lb"><a href="<?= u('/uslugi/') ?>">Услуги</a></p>
     <h1 class="disp h2" style="margin-block:18px 20px"><?= $cat['h1'] ?></h1>
     <p class="sub">Делаем сайты в Баку с 2017 года — от сайта на пять страниц до магазина
       с онлайн-оплатой и обменом данными со складом. Создание сайта занимает от 10 до 25 дней,
       стартовая сумма — ₼700, а админку собираем так, чтобы ваш менеджер справлялся с ней без нас.</p>
     <p style="margin-top:clamp(24px,3vw,34px);display:flex;flex-wrap:wrap;gap:12px">
-      <a class="btn" href="/kontakty/">Обсудить проект</a>
-      <a class="btn btn-o" href="/portfolio/">Смотреть портфолио</a>
+      <a class="btn" href="<?= u('/kontakty/') ?>">Обсудить проект</a>
+      <a class="btn btn-o" href="<?= u('/portfolio/') ?>">Смотреть портфолио</a>
     </p>
   </div>
 </section>
@@ -48,7 +49,7 @@ $lnk = 'color:var(--duo-b)';
 
     <div class="rows" style="margin-top:clamp(24px,3vw,38px)">
       <?php foreach ($cat['items'] as $i => $it): ?>
-      <a class="row" href="/kontakty/">
+      <a class="row" href="<?= u('/kontakty/') ?>">
         <span class="rname"><?= $it[0] ?></span>
         <span class="rdesc"><?= $it[1] ?></span>
         <span class="rmeta"><?= str_pad($i + 1, 2, '0', STR_PAD_LEFT) ?></span>
@@ -80,7 +81,7 @@ $lnk = 'color:var(--duo-b)';
       </ul>
       <p class="sub" style="margin-top:clamp(18px,2.2vw,24px);font-size:.9rem">Что оплачивается
         отдельно — продление домена и хостинга, поддержка со второго месяца, продвижение —
-        перечислено на <a href="/tseny/" style="<?= $lnk ?>">странице цен</a>.</p>
+        перечислено на <a href="<?= u('/tseny/') ?>" style="<?= $lnk ?>">странице цен</a>.</p>
     </div>
 
     <div style="<?= $gap ?>">
@@ -91,7 +92,7 @@ $lnk = 'color:var(--duo-b)';
         торговля, авто, стройка, промышленность и услуги. Проверить, делали ли мы что-то
         для похожего бизнеса, — минута.</p>
       <p style="margin-top:clamp(20px,2.4vw,28px)">
-        <a class="btn btn-o" href="/portfolio/">Смотреть портфолио</a></p>
+        <a class="btn btn-o" href="<?= u('/portfolio/') ?>">Смотреть портфолио</a></p>
     </div>
 
     <div style="<?= $gap ?>">
@@ -106,7 +107,7 @@ $lnk = 'color:var(--duo-b)';
       <p class="sub" style="margin-top:clamp(18px,2.2vw,24px)">Точную сумму по вашему проекту
         называем после брифа — сайт на пять страниц и сайт на пятьдесят это разная работа.</p>
       <p style="margin-top:clamp(20px,2.4vw,28px)">
-        <a class="btn btn-o" href="/tseny/">Все пакеты и что считается отдельно</a></p>
+        <a class="btn btn-o" href="<?= u('/tseny/') ?>">Все пакеты и что считается отдельно</a></p>
     </div>
 
     <div style="<?= $gap ?>">
@@ -120,7 +121,7 @@ $lnk = 'color:var(--duo-b)';
         <details><summary>Что нужно от вас?</summary>
           <p>Разговор о бизнесе и клиентах на брифе. Материалы — тексты и фотографии,
             если они у вас есть; если нет, копирайтинг и съёмка есть в разделе
-            <a href="/uslugi/marketing/" style="<?= $lnk ?>">маркетинга</a>. И человек
+            <a href="<?= u('/uslugi/marketing/') ?>" style="<?= $lnk ?>">маркетинга</a>. И человек
             с вашей стороны, который отвечает на вопросы и утверждает этапы.</p></details>
         <details><summary>Чьи будут домен, хостинг и админка?</summary>
           <p>Ваши. Оформляются на вашу компанию с первого дня. Решите продолжать с другими —
@@ -141,7 +142,7 @@ $lnk = 'color:var(--duo-b)';
       <p class="sub" style="margin-top:16px">Ответим в течение 24 часов. После брифа пришлём
         предложение: состав работ, этапы и сумму.</p>
       <p style="margin-top:22px;display:flex;flex-wrap:wrap;gap:12px">
-        <a class="btn" href="/kontakty/">Обсудить проект</a>
+        <a class="btn" href="<?= u('/kontakty/') ?>">Обсудить проект</a>
         <a class="btn btn-o" href="tel:+994552155363">+994 55 215 53 63</a></p>
     </div>
 

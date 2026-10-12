@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/../app/bootstrap.php';
 $page = 'home';
 $current = '';
 include __DIR__ . '/../app/partials/head.php';
@@ -57,32 +58,32 @@ include __DIR__ . '/../app/partials/head.php';
       <p class="sub" style="font-size:.9rem;max-width:40ch">Услуги можно взять по отдельности, но лучший результат получается, когда они работают вместе.</p>
     </div>
     <div class="rows rv">
-      <a class="row" href="/uslugi/veb-sayty/">
+      <a class="row" href="<?= u('/uslugi/veb-sayty/') ?>">
         <span class="rname">Сайты</span>
         <span class="rdesc">Корпоративные сайты, интернет-магазины и лендинги. Индивидуальный дизайн, мультиязычность, понятная админка.</span>
         <span class="rmeta">10–25 дней</span>
       </a>
-      <a class="row" href="/uslugi/marketing/">
+      <a class="row" href="<?= u('/uslugi/marketing/') ?>">
         <span class="rname">SEO</span>
         <span class="rdesc">Технический аудит, семантика, контент и ссылочный профиль. Ежемесячный отчёт по позициям.</span>
         <span class="rmeta">3–6 месяцев</span>
       </a>
-      <a class="row" href="/uslugi/podderzhka/">
+      <a class="row" href="<?= u('/uslugi/podderzhka/') ?>">
         <span class="rname">Почта</span>
         <span class="rdesc">имя@вашакомпания.az. SPF, DKIM и DMARC — письма не уходят в спам. Перенос старых ящиков без потерь.</span>
         <span class="rmeta">1 день</span>
       </a>
-      <a class="row" href="/uslugi/podderzhka/">
+      <a class="row" href="<?= u('/uslugi/podderzhka/') ?>">
         <span class="rname">Хостинг</span>
         <span class="rdesc">Размещение сайта и почты, еженедельные резервные копии, SSL. Домен оформляется на вас.</span>
         <span class="rmeta">абонентская</span>
       </a>
-      <a class="row" href="/uslugi/marketing/">
+      <a class="row" href="<?= u('/uslugi/marketing/') ?>">
         <span class="rname">SMM</span>
         <span class="rdesc">Контент-план, дизайн, тексты и таргетированная реклама Meta Ads. Instagram и Facebook.</span>
         <span class="rmeta">ежемесячно</span>
       </a>
-      <a class="row" href="/uslugi/marketing/">
+      <a class="row" href="<?= u('/uslugi/marketing/') ?>">
         <span class="rname">Видео и Reels</span>
         <span class="rdesc">Съёмка, монтаж, цветокоррекция, субтитры и моушн-графика. Вертикальный формат 9:16.</span>
         <span class="rmeta">9:16</span>
@@ -249,14 +250,14 @@ include __DIR__ . '/../app/partials/head.php';
   <div class="wrap">
     <div class="shead rv">
       <h2 class="disp h2">Блог</h2>
-      <a class="pill" href="/blog/">Все статьи</a>
+      <a class="pill" href="<?= u('/blog/') ?>">Все статьи</a>
     </div>
-    <?php $arts = require __DIR__ . '/../app/data/articles.php'; ?>
+    <?php $arts = articles(); ?>
     <div class="posts rv">
       <?php foreach ($arts as $a): ?>
       <article class="post">
         <div class="pm"><span><?= htmlspecialchars($a['rubric']) ?></span><span><?= htmlspecialchars($a['date']) ?> · <?= (int)$a['read'] ?> мин</span></div>
-        <h3><a href="/blog/<?= $a['slug'] ?>/"><?= htmlspecialchars($a['title']) ?></a></h3>
+        <h3><a href="<?= u('/blog/' . $a['slug'] . '/') ?>"><?= htmlspecialchars($a['title']) ?></a></h3>
         <p><?= htmlspecialchars($a['desc']) ?></p>
       </article>
       <?php endforeach; ?>

@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/../../app/bootstrap.php';
 $page = 'contacts';
 $current = 'contact';
 include __DIR__ . '/../../app/partials/head.php';

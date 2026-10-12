@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/../../app/bootstrap.php';
 $page = 'price';
 $current = 'price';
 include __DIR__ . '/../../app/partials/head.php';
@@ -105,7 +106,7 @@ $packs = [
       <p class="sub" style="margin-top:16px">Хватит одного разговора: чем занимается бизнес,
         сколько примерно страниц и языков, есть ли каталог и оплата, что уже сделано и что не устраивает.
         Предложение присылаем в течение суток после брифа.</p>
-      <p style="margin-top:22px"><a class="btn" href="/kontakty/">Оставить заявку</a></p>
+      <p style="margin-top:22px"><a class="btn" href="<?= u('/kontakty/') ?>">Оставить заявку</a></p>
     </div>
   </div>
 </section>

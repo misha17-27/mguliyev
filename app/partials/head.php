@@ -1,47 +1,53 @@
 <?php
-/* Общая шапка. Страница задаёт $title, $description и $current до подключения.
-   Необязательно: $ogType ('website' по умолчанию, 'article' для статей). */
-$cfg = require __DIR__ . '/../config.php';
+/* Общая шапка. Страница задаёт $page (или $title и $description) и $current
+   до подключения. Необязательно: $ogType ('website' по умолчанию, 'article'
+   для статей), $langOnly — список языков, на которых страница существует. */
+/* Язык и данные уже подняты в app/bootstrap.php — шапка только рисует. */
+$cfg = I18n::$cfg;
 
 /* Заголовок и описание страница задаёт одним способом: либо ставит $page и
    берёт их из data/seo.php (так у всех обычных страниц), либо прописывает
    $title и $description сама (так у статей — их тексты живут в articles.php).
    Явно заданное всегда важнее. */
 $seo = require __DIR__ . '/../data/seo.php';
-$m   = $seo[$page ?? ''][$cfg['lang']] ?? $seo[$page ?? '']['ru'] ?? [];
+$m   = $seo[$page ?? ''][I18n::$lang] ?? $seo[$page ?? ''][$cfg['default_lang']] ?? [];
 
-$title       = $title       ?? $m['title']       ?? 'MGuliyev Studio — веб-студия в Баку';
-$description = $description ?? $m['description'] ?? 'Сайты и интернет-магазины, дизайн, продвижение и поддержка. Баку, с 2017 года.';
+$title       = $title       ?? $m['title']       ?? t('seo.fallback.title');
+$description = $description ?? $m['description'] ?? t('seo.fallback.desc');
 $current     = $current     ?? '';
 $ogType      = $ogType      ?? 'website';
 
-/* Канонический адрес: берём путь запроса без строки параметров и приводим
-   к виду со слэшем на конце — именно так страницы и связаны между собой. */
-$path = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
-if ($path === '' || substr($path, -9) === 'index.php') $path = rtrim($path, 'index.php');
-if (substr($path, -1) !== '/') $path .= '/';
-$canonical = $cfg['site_url'] . $path;
+/* На каких языках страница реально существует. По умолчанию на всех:
+   словарь откатывается на русский, поэтому пустых страниц не бывает.
+   Статьи блога могут сузить список — ссылаться на несуществующий перевод
+   это прямая ошибка для поисковика. */
+$langOnly = $langOnly ?? $cfg['languages'];
+
+$path      = I18n::path();
+$abs       = static fn(string $l) => $cfg['site_url'] . ($cfg['prefix'][$l] ?? '') . $path;
+$canonical = $abs(I18n::$lang);
 
 $esc = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES);
+$cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
 ?>
 <!DOCTYPE html>
-<html lang="<?= $esc($cfg['lang']) ?>">
+<html lang="<?= $esc(I18n::$lang) ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= $esc($title) ?></title>
 <meta name="description" content="<?= $esc($description) ?>">
 <link rel="canonical" href="<?= $esc($canonical) ?>">
-<?php /* Альтернативные языки выводим, только когда они действительно есть:
-         ссылка на несуществующий перевод — прямая ошибка для поисковика. */
-if (count($cfg['languages']) > 1): foreach ($cfg['languages'] as $l): ?>
-<link rel="alternate" hreflang="<?= $esc($l) ?>" href="<?= $esc($cfg['site_url'] . ($l === 'ru' ? '' : '/' . $l) . $path) ?>">
+<?php foreach ($langOnly as $l): ?>
+<link rel="alternate" hreflang="<?= $esc($l) ?>" href="<?= $esc($abs($l)) ?>">
 <?php endforeach; ?>
-<link rel="alternate" hreflang="x-default" href="<?= $esc($cfg['site_url'] . $path) ?>">
-<?php endif; ?>
+<link rel="alternate" hreflang="x-default" href="<?= $esc($abs($cfg['default_lang'])) ?>">
 <meta property="og:type" content="<?= $esc($ogType) ?>">
 <meta property="og:site_name" content="<?= $esc($cfg['site_name']) ?>">
-<meta property="og:locale" content="<?= $esc($cfg['locales'][$cfg['lang']] ?? 'ru_RU') ?>">
+<meta property="og:locale" content="<?= $esc($cfg['locales'][I18n::$lang] ?? 'ru_RU') ?>">
+<?php foreach ($langOnly as $l): if ($l === I18n::$lang) continue; ?>
+<meta property="og:locale:alternate" content="<?= $esc($cfg['locales'][$l]) ?>">
+<?php endforeach; ?>
 <meta property="og:url" content="<?= $esc($canonical) ?>">
 <meta property="og:title" content="<?= $esc($title) ?>">
 <meta property="og:description" content="<?= $esc($description) ?>">
@@ -59,7 +65,7 @@ if (count($cfg['languages']) > 1): foreach ($cfg['languages'] as $l): ?>
   <span class="tl-rec" aria-hidden="true"><i></i>rec</span>
   <div class="tl-bar">
     <span class="tl-fill" id="tlFill"></span>
-    <nav class="tl-marks" id="tlMarks" aria-label="Разделы страницы"></nav>
+    <nav class="tl-marks" id="tlMarks" aria-label="<?= $esc(t('nav.sections')) ?>"></nav>
     <span class="tl-head" id="tlHead"></span>
   </div>
   <span class="tl-time" id="tlTime" aria-hidden="true">00:00 / 00:00</span>
@@ -67,35 +73,46 @@ if (count($cfg['languages']) > 1): foreach ($cfg['languages'] as $l): ?>
 
 <header class="nav">
   <div class="wrap nav-in">
-    <a class="wm" href="/" aria-label="MGuliyev Studio — на главную"><img src="/images/brand/guliyev-white-logo.svg" alt="MGuliyev Studio" width="838" height="346"></a>
+    <a class="wm" href="<?= $esc(u('/')) ?>" aria-label="<?= $esc(t('nav.home')) ?>"><img src="/images/brand/guliyev-white-logo.svg" alt="MGuliyev Studio" width="838" height="346"></a>
     <nav class="menu">
-      <a href="/uslugi/"<?= $current === 'services' ? ' aria-current="page"' : '' ?>>Услуги</a>
-      <a href="/portfolio/"<?= $current === 'portfolio' ? ' aria-current="page"' : '' ?>>Портфолио</a>
-      <a href="/o-studii/"<?= $current === 'about' ? ' aria-current="page"' : '' ?>>О студии</a>
-      <a href="/tseny/"<?= $current === 'price' ? ' aria-current="page"' : '' ?>>Цены</a>
-      <a href="/blog/"<?= $current === 'blog' ? ' aria-current="page"' : '' ?>>Блог</a>
-      <a href="/kontakty/"<?= $current === 'contact' ? ' aria-current="page"' : '' ?>>Контакты</a>
+      <a href="<?= $esc(u('/uslugi/')) ?>"<?= $cur('services') ?>><?= $esc(t('nav.services')) ?></a>
+      <a href="<?= $esc(u('/portfolio/')) ?>"<?= $cur('portfolio') ?>><?= $esc(t('nav.portfolio')) ?></a>
+      <a href="<?= $esc(u('/o-studii/')) ?>"<?= $cur('about') ?>><?= $esc(t('nav.about')) ?></a>
+      <a href="<?= $esc(u('/tseny/')) ?>"<?= $cur('price') ?>><?= $esc(t('nav.price')) ?></a>
+      <a href="<?= $esc(u('/blog/')) ?>"<?= $cur('blog') ?>><?= $esc(t('nav.blog')) ?></a>
+      <a href="<?= $esc(u('/kontakty/')) ?>"<?= $cur('contact') ?>><?= $esc(t('nav.contacts')) ?></a>
     </nav>
     <div class="nav-right">
-      <?php /* Переключатель вернём, когда появятся /az/ и /en/: сейчас обе ссылки вели в 404. */ ?>
-      <a class="pill nav-cta" href="/kontakty/"><i></i>Обсудить проект</a>
-      <button class="burger" id="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
+      <nav class="lang" aria-label="<?= $esc(t('nav.language')) ?>">
+        <?php foreach ($cfg['languages'] as $l): $on = $l === I18n::$lang; ?>
+          <?php if ($on): ?><span aria-current="true"><?= $esc($cfg['lang_label'][$l]) ?></span>
+          <?php else: ?><a href="<?= $esc(($cfg['prefix'][$l] ?? '') . $path) ?>" hreflang="<?= $esc($l) ?>"><?= $esc($cfg['lang_label'][$l]) ?></a><?php endif; ?>
+        <?php endforeach; ?>
+      </nav>
+      <a class="pill nav-cta" href="<?= $esc(u('/kontakty/')) ?>"><i></i><?= $esc(t('cta.discuss')) ?></a>
+      <button class="burger" id="burger" type="button" aria-label="<?= $esc(t('nav.open_menu')) ?>" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
     </div>
   </div>
 </header>
 
 <div class="drawer" id="drawer">
   <nav>
-      <a href="/uslugi/"<?= $current === 'services' ? ' aria-current="page"' : '' ?>>Услуги</a>
-      <a href="/portfolio/"<?= $current === 'portfolio' ? ' aria-current="page"' : '' ?>>Портфолио</a>
-      <a href="/o-studii/"<?= $current === 'about' ? ' aria-current="page"' : '' ?>>О студии</a>
-      <a href="/tseny/"<?= $current === 'price' ? ' aria-current="page"' : '' ?>>Цены</a>
-      <a href="/blog/"<?= $current === 'blog' ? ' aria-current="page"' : '' ?>>Блог</a>
-      <a href="/kontakty/"<?= $current === 'contact' ? ' aria-current="page"' : '' ?>>Контакты</a>
+      <a href="<?= $esc(u('/uslugi/')) ?>"<?= $cur('services') ?>><?= $esc(t('nav.services')) ?></a>
+      <a href="<?= $esc(u('/portfolio/')) ?>"<?= $cur('portfolio') ?>><?= $esc(t('nav.portfolio')) ?></a>
+      <a href="<?= $esc(u('/o-studii/')) ?>"<?= $cur('about') ?>><?= $esc(t('nav.about')) ?></a>
+      <a href="<?= $esc(u('/tseny/')) ?>"<?= $cur('price') ?>><?= $esc(t('nav.price')) ?></a>
+      <a href="<?= $esc(u('/blog/')) ?>"<?= $cur('blog') ?>><?= $esc(t('nav.blog')) ?></a>
+      <a href="<?= $esc(u('/kontakty/')) ?>"<?= $cur('contact') ?>><?= $esc(t('nav.contacts')) ?></a>
   </nav>
   <div class="drawer-foot">
+    <nav class="lang" aria-label="<?= $esc(t('nav.language')) ?>" style="margin-bottom:6px">
+      <?php foreach ($cfg['languages'] as $l): $on = $l === I18n::$lang; ?>
+        <?php if ($on): ?><span aria-current="true"><?= $esc($cfg['lang_label'][$l]) ?></span>
+        <?php else: ?><a href="<?= $esc(($cfg['prefix'][$l] ?? '') . $path) ?>" hreflang="<?= $esc($l) ?>"><?= $esc($cfg['lang_label'][$l]) ?></a><?php endif; ?>
+      <?php endforeach; ?>
+    </nav>
     <a href="tel:+994552155363">+994 55 215 53 63</a>
     <a href="mailto:info@mguliyev.com">info@mguliyev.com</a>
-    <span style="color:var(--dim);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase">Баку · пн–пт 10:00–19:00</span>
+    <span style="color:var(--dim);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase"><?= $esc(t('footer.hours')) ?></span>
   </div>
 </div>

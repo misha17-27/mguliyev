@@ -1,8 +1,9 @@
 <?php
+require __DIR__ . '/../../app/bootstrap.php';
 $page = 'blog';
 $current = 'blog';
 include __DIR__ . '/../../app/partials/head.php';
-$arts = require __DIR__ . '/../../app/data/articles.php';
+$arts = articles();
 ?>
 <main id="top">
 <section class="sec">
@@ -12,11 +13,14 @@ $arts = require __DIR__ . '/../../app/data/articles.php';
       <p class="lb"><?= count($arts) ?> статьи</p>
     </div>
     <p class="sub">Разбираем то, о чём чаще всего спрашивают на брифах. Без кейсов и обещаний — только техника, которую можно проверить самому.</p>
+    <?php if (lang() !== 'ru'): ?>
+      <p class="note" style="margin-top:14px"><?= htmlspecialchars(t('blog.ru_only')) ?></p>
+    <?php endif; ?>
     <div class="posts" style="margin-top:clamp(28px,4vw,52px)">
       <?php foreach ($arts as $a): ?>
       <article class="post">
         <div class="pm"><span><?= htmlspecialchars($a['rubric']) ?></span><span><?= htmlspecialchars($a['date']) ?> · <?= (int)$a['read'] ?> мин</span></div>
-        <h3><a href="/blog/<?= $a['slug'] ?>/"><?= htmlspecialchars($a['title']) ?></a></h3>
+        <h3><a href="<?= u('/blog/' . $a['slug'] . '/') ?>"><?= htmlspecialchars($a['title']) ?></a></h3>
         <p><?= htmlspecialchars($a['desc']) ?></p>
       </article>
       <?php endforeach; ?>

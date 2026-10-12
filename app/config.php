@@ -5,16 +5,17 @@
 return [
     /* Боевой адрес без слэша на конце. Отсюда собираются canonical,
        og:url и адреса в sitemap.xml. */
-    'site_url' => 'https://mguliyev.com',
-
+    'site_url'  => 'https://mguliyev.com',
     'site_name' => 'MGuliyev Studio',
 
-    /* Языки. Основной — русский; az и en появятся позже.
-       Пока в списке один язык, hreflang не выводится: указывать
-       альтернативы, которых нет, хуже, чем не указывать вовсе. */
-    'lang'       => 'ru',
-    'locales'    => ['ru' => 'ru_RU'],
-    'languages'  => ['ru'],
+    /* Языки. Основной — русский, он живёт в корне и без префикса;
+       азербайджанский и английский — на /az/ и /en/.
+       Порядок в списке определяет порядок в переключателе языков. */
+    'default_lang' => 'ru',
+    'languages'    => ['ru', 'az', 'en'],
+    'prefix'       => ['ru' => '', 'az' => '/az', 'en' => '/en'],
+    'locales'      => ['ru' => 'ru_RU', 'az' => 'az_AZ', 'en' => 'en_US'],
+    'lang_label'   => ['ru' => 'RU', 'az' => 'AZ', 'en' => 'EN'],
 
     /* Картинка для соцсетей: 1200x630, логотип на тёмной стене. */
     'og_image' => '/images/brand/og-cover.jpg',

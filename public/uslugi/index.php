@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/../../app/bootstrap.php';
 $page = 'uslugi';
 $current = 'services';
 include __DIR__ . '/../../app/partials/head.php';
@@ -14,10 +15,10 @@ include __DIR__ . '/../../app/partials/head.php';
       ведёт один подрядчик, не нужно сводить между собой разных исполнителей
       и выяснять, на чьей стороне поломка.</p>
 
-    <?php $catalog = require __DIR__ . '/../../app/data/catalog.php'; ?>
+    <?php $catalog = catalog(); ?>
     <div class="rows" style="margin-top:clamp(28px,4vw,52px)">
       <?php foreach ($catalog as $slug => $cat): ?>
-      <a class="row" href="/uslugi/<?= $slug ?>/">
+      <a class="row" href="<?= u('/uslugi/' . $slug . '/') ?>">
         <span class="rname"><?= $cat['title'] ?></span>
         <span class="rdesc"><?= $cat['lead'] ?></span>
         <span class="rmeta">6 услуг</span>
