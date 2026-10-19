@@ -355,8 +355,29 @@ if (vfList && vfNow) {
 var leadForm = document.getElementById("lead");
 if (leadForm) {
   leadForm.addEventListener("submit", function (e) {
+    /* Без скрипта форма уходит обычным POST на /send.php и возвращается
+       с ?sent=1 — перехват только ради того, чтобы не перезагружать страницу. */
     e.preventDefault();
-    document.getElementById("lead-status").textContent = "Демо-форма. На боевом сайте заявка уйдёт на почту и в WhatsApp.";
+    var st = document.getElementById("lead-status");
+    var btn = leadForm.querySelector('button[type="submit"]');
+    if (btn) btn.disabled = true;
+    st.textContent = "…";
+    fetch(leadForm.action, {
+      method: "POST",
+      body: new FormData(leadForm),
+      headers: { "X-Requested-With": "fetch" }
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        st.textContent = d.message || "";
+        if (d.ok) leadForm.reset();
+      })
+      .catch(function () {
+        /* Сеть не ответила — отправляем обычным способом, чтобы заявка
+           не потерялась из-за одной неудачной попытки. */
+        leadForm.submit();
+      })
+      .then(function () { if (btn) btn.disabled = false; });
   });
 }
 

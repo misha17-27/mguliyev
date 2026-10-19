@@ -69,7 +69,13 @@ include __DIR__ . '/../../app/partials/head.php';
 
     <div id="zayavka" style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
       <h2 class="disp h2">Оставить заявку</h2>
-      <form id="lead" style="margin-top:clamp(24px,3vw,38px)">
+      <form id="lead" method="post" action="/send.php" style="margin-top:clamp(24px,3vw,38px)">
+      <?php /* Ловушка для ботов: человек этого поля не видит и не заполнит.
+             Рядом отметка времени — мгновенная отправка выдаёт автомат. */ ?>
+      <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"
+             style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      <input type="hidden" name="ts" value="<?= time() ?>">
+      <input type="hidden" name="back" value="<?= htmlspecialchars(I18n::u(I18n::path()), ENT_QUOTES) ?>">
         <div><label for="fn">Имя</label><input id="fn" name="name" autocomplete="name" required></div>
         <div><label for="fp">Телефон / WhatsApp</label><input id="fp" name="phone" type="tel" autocomplete="tel" placeholder="+994 __ ___ __ __" required></div>
         <div><label for="fs">Направление</label>
@@ -79,7 +85,7 @@ include __DIR__ . '/../../app/partials/head.php';
           <select id="fb" name="budget"><option>до ₼700</option><option>₼700 – ₼1 500</option><option>₼1 500 – ₼3 000</option><option>от ₼3 000</option></select>
         </div>
         <div class="full"><label for="fm">Коротко о задаче</label><textarea id="fm" name="message" placeholder="Сфера бизнеса, ссылка на текущий сайт, что хотите получить…"></textarea></div>
-        <div class="full" style="display:flex;align-items:center;gap:22px;flex-wrap:wrap"><button class="btn" type="submit">Отправить</button><p class="status" id="lead-status" role="status"></p></div>
+        <div class="full" style="display:flex;align-items:center;gap:22px;flex-wrap:wrap"><button class="btn" type="submit">Отправить</button><p class="status" id="lead-status" role="status"><?= isset($_GET['sent']) ? htmlspecialchars(t('form.ok')) : (isset($_GET['error']) ? htmlspecialchars(t('form.error')) : '') ?></p></div>
       </form>
     </div>
   </div>

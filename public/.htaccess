@@ -6,21 +6,57 @@
 AddType video/mp4 .mp4
 AddType video/webm .webm
 
+RewriteEngine On
+
+# Всё, что ниже, написано правилами mod_rewrite, в том числе редиректы.
+# Смешивать RedirectMatch с RewriteRule в одном файле нельзя: они
+# обрабатываются в разных фазах, и порядок строк перестаёт что-либо значить.
+# Например /az/glavnaya/ попал бы в правило языков раньше своего редиректа
+# и отдал бы 404 вместо перехода на /az/.
+
+# ---------------------------------------------------------------------------
+# ПЕРЕНОС СО СТАРОГО САЙТА НА WORDPRESS. Идёт первым блоком.
+#
+# На старом сайте корень был английским, а переводы жили на /ru/glavnaya/
+# и /az/glavnaya/. На новом корень русский — так решено. Поэтому адрес /
+# сохраняется, но язык на нём меняется с английского на русский,
+# а английская версия переезжает на /en/.
+RewriteRule ^ru/glavnaya-2/?$   /            [R=301,L]
+RewriteRule ^ru/glavnaya/?$     /            [R=301,L]
+RewriteRule ^ru/?$              /            [R=301,L]
+RewriteRule ^az/glavnaya/?$     /az/         [R=301,L]
+RewriteRule ^about/?$           /en/o-studii/  [R=301,L]
+RewriteRule ^contact/?$         /en/kontakty/  [R=301,L]
+RewriteRule ^projects/?$        /en/portfolio/ [R=301,L]
+
+# Служебные страницы старого сайта: содержания нет, но они попали в карту
+# сайта и могли быть проиндексированы — уводим на главную.
+RewriteRule ^(coming|test)/?$   /            [R=301,L]
+
+# Карты сайта Yoast: остаётся один адрес.
+RewriteRule ^sitemap_index\.xml$    /sitemap.xml  [R=301,L]
+RewriteRule ^[a-z-]+-sitemap\.xml$  /sitemap.xml  [R=301,L]
+
+# Административные адреса WordPress: на новом сайте их нет, и держать их
+# открытыми для перебора паролей незачем.
+RewriteRule ^(wp-admin|wp-login\.php|xmlrpc\.php) - [G,L]
+# ---------------------------------------------------------------------------
+
+# Разделы, переименованные уже на новом сайте: «Работы» -> «Портфолио»,
+# «Журнал» -> «Блог». Правило учитывает языковой префикс, поэтому
+# /az/raboty/ уходит на /az/portfolio/, а не на русскую версию.
+RewriteRule ^(az/|en/)?raboty/?$      /$1portfolio/     [R=301,L]
+RewriteRule ^(az/|en/)?raboty/(.+)$   /$1portfolio/$2   [R=301,L]
+RewriteRule ^(az/|en/)?zhurnal/?$     /$1blog/          [R=301,L]
+RewriteRule ^(az/|en/)?zhurnal/(.+)$  /$1blog/$2        [R=301,L]
+
 # Языковые версии: /az/... и /en/... обслуживаются теми же файлами, что и
 # русская. Префикс снимается здесь, а метка языка уходит в SITE_LANG —
 # её читает app/i18n.php. Одного комплекта страниц хватает на три языка.
-RewriteEngine On
 RewriteRule ^(az|en)$        /$1/            [R=301,L]
 RewriteRule ^(az|en)/?$      index.php       [E=SITE_LANG:$1,L]
 RewriteRule ^(az|en)/(.*/)?$ $2index.php     [E=SITE_LANG:$1,L]
 RewriteRule ^(az|en)/(.+)$   $2              [E=SITE_LANG:$1,L]
-
-# Разделы переехали вместе с переименованием: «Работы» -> «Портфолио»,
-# «Журнал» -> «Блог». Ссылки и закладки на старые адреса должны жить.
-RedirectMatch 301 ^/raboty/?$        /portfolio/
-RedirectMatch 301 ^/raboty/(.*)$     /portfolio/$1
-RedirectMatch 301 ^/zhurnal/?$       /blog/
-RedirectMatch 301 ^/zhurnal/(.*)$    /blog/$1
 
 # Картинки и ролики меняются вместе с именем файла, их можно держать в кеше
 # долго. Стили и скрипты — коротко: они версий в имени не имеют.

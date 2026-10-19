@@ -17,6 +17,14 @@ return [
     'locales'      => ['ru' => 'ru_RU', 'az' => 'az_AZ', 'en' => 'en_US'],
     'lang_label'   => ['ru' => 'RU', 'az' => 'AZ', 'en' => 'EN'],
 
+    /* Куда уходит заявка с формы. Отправитель должен быть ящиком
+       на этом же домене, иначе письмо не пройдёт проверку SPF. */
+    'form' => [
+        'to'      => 'info@mguliyev.com',
+        'from'    => 'MGuliyev Studio <noreply@mguliyev.com>',
+        'subject' => 'Заявка с сайта',
+    ],
+
     /* Картинка для соцсетей: 1200x630, логотип на тёмной стене. */
     'og_image' => '/images/brand/og-cover.jpg',
 ];
