@@ -45,6 +45,36 @@ img{max-width:100%;display:block}
 
 /* Плавный переход между страницами сайта (Chrome/Edge; где не поддержано — просто игнорируется) */
 @view-transition{navigation:auto}
+/* ---- Переходы между страницами ----------------------------------------
+   Само по себе @view-transition снимает страницу одним кадром и кроссфейдит
+   её целиком — вместе с фиксированной шапкой. Два полупрозрачных слоя
+   накладываются, и фон шапки на долю секунды темнеет. Поэтому неподвижное
+   выносим из общего снимка отдельными именами.
+
+   Имя обязано быть уникальным на странице: повторилось — браузер отменяет
+   ВЕСЬ переход, молча. Поэтому .nav .wm, а не .wm (второй логотип в подвале),
+   и поэтому .lang не именуется вовсе — переключатель языков отрисован дважды,
+   в шапке и в шторке меню. */
+.nav{view-transition-name:nav}
+.tl{view-transition-name:tl}
+.nav .wm{view-transition-name:logo}
+.pill.nav-cta{view-transition-name:cta}
+/* Шапка на двух страницах одинакова — кроссфейд ей не нужен, он и давал
+   потемнение. Показываем сразу новый снимок. */
+::view-transition-old(nav),::view-transition-old(logo),::view-transition-old(cta){animation:none;opacity:0}
+::view-transition-new(nav),::view-transition-new(logo),::view-transition-new(cta){animation:none;opacity:1}
+::view-transition-group(nav){animation-duration:.18s}
+/* Заголовок раздела один на странице и называется одинаково на всех —
+   пусть перетекает, а не перерисовывается. Заголовок первого экрана главной
+   сюда не попадает: он объявлен как .disp без .h2 и живёт своей анимацией. */
+main h1.h2{view-transition-name:page-title}
+.shead h1 + .lb{view-transition-name:page-kicker}
+::view-transition-group(page-title){animation-duration:.26s;animation-timing-function:cubic-bezier(.2,.7,.3,1)}
+/* Общий блок reduced-motion ниже по файлу переходы не покрывает: у них своё
+   дерево псевдоэлементов, и * до него не достаёт. Нужен отдельный рубильник. */
+@media(prefers-reduced-motion:reduce){
+  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none !important}
+}
 
 /* ---- Таймлайн: страница проигрывается как один ролик ----
    Панель ведёт себя как управление плеера: появляется, когда «просмотр» начался. */

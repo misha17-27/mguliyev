@@ -181,8 +181,8 @@ include __DIR__ . '/../app/partials/head.php';
 
 <section class="band">
   <div class="bcell"><b>2017</b><span>год основания студии</span></div>
-  <div class="bcell"><b>49</b><span>проектов в портфолио</span></div>
-  <div class="bcell"><b>6</b><span>направлений в одном подряде</span></div>
+  <div class="bcell"><b data-count="49">49</b><span>проектов в портфолио</span></div>
+  <div class="bcell"><b data-count="6">6</b><span>направлений в одном подряде</span></div>
 </section>
 
 <section class="sec" id="about">

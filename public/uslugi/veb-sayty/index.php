@@ -31,7 +31,7 @@ $lnk = 'color:var(--duo-b)';
 </section>
 
 <section class="band">
-  <div class="bcell"><b>6</b><span>типов сайтов в разделе</span></div>
+  <div class="bcell"><b data-count="6">6</b><span>типов сайтов в разделе</span></div>
   <div class="bcell"><b>10–25</b><span>дней на сайт</span></div>
   <div class="bcell"><b>₼700</b><span>стартовая сумма</span></div>
 </section>

@@ -352,6 +352,41 @@ if (vfList && vfNow) {
 
 /* Форма есть не на каждой странице: без проверки скрипт падал бы на внутренних,
    а вместе с ним не запускалось бы всё, что объявлено ниже. */
+/* ---- Счётчик в полосе цифр. Число в разметке уже стоит конечное, скрипт
+       только проигрывает подъём до него: без JS и при «меньше движения»
+       посетитель сразу видит правильное значение. Цифры в .bcell b
+       табличные, поэтому ширина при счёте не прыгает. ---- */
+(function () {
+  var nums = [].slice.call(document.querySelectorAll("[data-count]"));
+  if (!nums.length || !("IntersectionObserver" in window)) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  function run(el) {
+    var to = parseInt(el.getAttribute("data-count"), 10);
+    if (!isFinite(to) || to <= 0) return;
+    var dur = 900, t0 = 0;
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var k = Math.min(1, (ts - t0) / dur);
+      k = 1 - Math.pow(1 - k, 3);                 // замедление к концу
+      el.textContent = Math.round(to * k);
+      if (k < 1) requestAnimationFrame(step);
+      else el.textContent = to;                   // ровно то, что было в разметке
+    }
+    el.textContent = "0";
+    requestAnimationFrame(step);
+  }
+
+  var cio = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      cio.unobserve(e.target);                    // один раз за загрузку
+      run(e.target);
+    });
+  }, { threshold: 0.6 });
+  nums.forEach(function (n) { cio.observe(n); });
+})();
+
 var leadForm = document.getElementById("lead");
 if (leadForm) {
   leadForm.addEventListener("submit", function (e) {
