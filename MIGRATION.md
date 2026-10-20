@@ -125,6 +125,21 @@ mguliyev-new/app       шаблоны и данные — вне корня
 
 ---
 
+### Если переключаете основной домен сразу, без поддомена
+
+Так тоже можно — откат занимает столько же, сколько переключение. Разница
+в том, что первыми проверяющими становятся посетители: поведение `.htaccess`
+в Apache, отправка письма из формы и отдача `.mp4` на этом сервере
+до переключения ни разу не запускались.
+
+Чтобы окно было минутным:
+
+1. **Update from Remote → Deploy HEAD Commit** — иначе на сервере не
+   последняя версия.
+2. **MultiPHP Manager**: у домена PHP 7.4 или выше. Ниже — белый экран.
+3. Записать текущий document root. Это строка для отката.
+4. Переключить и сразу прогнать проверку из пункта 6.
+
 ## 5. Переключение
 
 cPanel → Domains → `mguliyev.com` → изменить document root на
@@ -141,12 +156,25 @@ cPanel → Domains → `mguliyev.com` → изменить document root на
 Проверьте, что старые адреса уводят куда надо:
 
 ```bash
-curl -sI https://mguliyev.com/about/ | head -2
-curl -sI https://mguliyev.com/ru/glavnaya/ | head -2
-curl -sI https://mguliyev.com/projects/ | head -2
+for u in / /az/ /en/ /portfolio/ /uslugi/veb-sayty/ /blog/ /kontakty/; do
+  printf "%-24s %s\n" "$u" "$(curl -s -o /dev/null -w '%{http_code}' https://mguliyev.com$u)"
+done
 ```
 
-Ожидается `301` и `Location` на новые адреса из таблицы выше.
+Все семь должны быть `200`. Затем редиректы и защита:
+
+```bash
+curl -sI https://mguliyev.com/about/        | grep -i '^location'   # /en/o-studii/
+curl -sI https://mguliyev.com/ru/glavnaya/  | grep -i '^location'   # /
+curl -sI https://mguliyev.com/projects/     | grep -i '^location'   # /en/portfolio/
+curl -sI https://mguliyev.com/app/config.php | head -1              # 404
+curl -sI https://mguliyev.com/images/demo/shot-1.mp4 | grep -i content-type  # video/mp4
+curl -sI https://mguliyev.com/             | grep -i x-robots       # пусто!
+```
+
+Последняя строка важна: заголовок `X-Robots-Tag` на боевом домене появляться
+не должен. Если он там есть — сервер отдаёт имя хоста не так, как ожидает
+правило в `.htaccess`, и правило надо убрать, иначе сайт выпадет из поиска.
 
 Затем:
 
