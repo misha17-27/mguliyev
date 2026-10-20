@@ -1,0 +1,31 @@
+# Панель управления.
+#
+# Весь код разделов лежит выше корня сайта, в ~/app/admin/. Здесь только
+# точка входа и оформление, поэтому запрещаем исполнение чего-либо ещё:
+# если в эту папку когда-нибудь попадёт посторонний файл — через ошибку
+# загрузки, распаковку архива или чужую руку в File Manager, — он не
+# выполнится.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Исполняется только index.php. Любой другой .php в этой папке и ниже —
+  # отказ. Правило стоит до остальных, чтобы его нельзя было обойти.
+  RewriteCond %{REQUEST_URI} !^/admin/index\.php$
+  RewriteRule \.(php|php[0-9]|phtml|phps|phar)(\.|$) - [F,L]
+
+  # Папка оформления отдаёт только стили и скрипт панели.
+  RewriteCond %{REQUEST_URI} !\.(css|js|svg|woff2?|png|jpe?g|webp|ico)$
+  RewriteRule ^assets/ - [F,L]
+</IfModule>
+
+# Поиск не должен индексировать панель. Заголовок, а не только метатег:
+# метатег виден лишь в HTML, а заголовок — и у файлов оформления.
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "no-referrer"
+</IfModule>
+
+Options -Indexes
+DirectoryIndex index.php

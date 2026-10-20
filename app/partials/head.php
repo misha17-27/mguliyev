@@ -112,8 +112,8 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
         <?php else: ?><a href="<?= $esc(($cfg['prefix'][$l] ?? '') . $path) ?>" hreflang="<?= $esc($l) ?>"><?= $esc($cfg['lang_label'][$l]) ?></a><?php endif; ?>
       <?php endforeach; ?>
     </nav>
-    <a href="tel:+994552155363">+994 55 215 53 63</a>
-    <a href="mailto:info@mguliyev.com">info@mguliyev.com</a>
-    <span style="color:var(--dim);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase"><?= $esc(t('footer.hours')) ?></span>
+    <a href="<?= $esc(tel_href()) ?>"><?= $esc(sv('phone')) ?></a>
+    <a href="mailto:<?= $esc(s('email')) ?>"><?= $esc(sv('email')) ?></a>
+    <span style="color:var(--dim);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase"><?= $esc(sv('hours')) ?></span>
   </div>
 </div>

@@ -13,12 +13,25 @@ include __DIR__ . '/../../app/partials/head.php';
     </div>
 
     <div class="cgrid" style="margin-top:0;border-top:0;padding-top:0">
-      <div class="cg"><em><?= t('contacts.t3') ?></em><a href="mailto:info@mguliyev.com">info@mguliyev.com</a></div>
-      <div class="cg"><em><?= t('contacts.t4') ?></em><a href="tel:+994552155363">+994 55 215 53 63</a></div>
+      <div class="cg"><em><?= t('contacts.t3') ?></em><a href="mailto:<?= e(s('email')) ?>"><?= e(sv('email')) ?></a></div>
+      <div class="cg"><em><?= t('contacts.t4') ?></em><a href="<?= e(tel_href()) ?>"><?= e(sv('phone')) ?></a></div>
       <div class="cg"><em><?= t('contacts.t5') ?></em><span><?= t('contacts.t6') ?></span></div>
       <div class="cg"><em><?= t('contacts.t7') ?></em><span><?= t('contacts.t8') ?></span></div>
     </div>
-    <p class="note">[УТОЧНИТЬ: WhatsApp на этом же номере? Тогда добавим кнопку со ссылкой wa.me] · [УТОЧНИТЬ: адрес офиса, если к вам можно приехать]</p>
+    <?php /* WhatsApp и адрес: кнопка и строка появляются, когда поля
+           заполнены в панели. Пока пусто — видимая пометка. */ ?>
+    <?php if (wa_href() !== '' || has_s('address')): ?>
+      <p style="margin-top:18px">
+        <?php if (wa_href() !== ''): ?>
+          <a class="btn btn-o" href="<?= e(wa_href()) ?>" target="_blank" rel="noopener">WhatsApp</a>
+        <?php endif; ?>
+        <?php if (has_s('address')): ?>
+          <span class="note" style="margin-left:12px"><?= e(s('address')) ?></span>
+        <?php endif; ?>
+      </p>
+    <?php else: ?>
+      <p class="note"><?= e(sv('whatsapp')) ?> · <?= e(sv('address')) ?></p>
+    <?php endif; ?>
 
     <div style="margin-top:clamp(40px,5vw,68px)">
       <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:18px"><?= t('contacts.t9') ?></h2>

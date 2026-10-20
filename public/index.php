@@ -281,10 +281,12 @@ include __DIR__ . '/../app/partials/head.php';
 <section class="sec" id="contact" style="background:var(--off);border-top:1px solid var(--line)">
   <div class="wrap">
     <p class="lb rv" style="margin-bottom:clamp(18px,2.4vw,32px)"><?= t('home.t131') ?></p>
-    <a class="mailto rv" href="mailto:info@mguliyev.com">info@mguliyev.com</a>
+    <a class="mailto rv" href="mailto:<?= e(s('email')) ?>"><?= e(sv('email')) ?></a>
     <div class="cgrid rv">
-      <div class="cg"><em><?= t('home.t132') ?></em><a href="tel:+994552155363">+994 55 215 53 63</a></div>
-      <div class="cg"><em>Instagram</em><a href="#">@mguliyev.studio</a></div>
+      <div class="cg"><em><?= t('home.t132') ?></em><a href="<?= e(tel_href()) ?>"><?= e(sv('phone')) ?></a></div>
+      <?php /* Ссылка появляется, только когда адрес профиля задан: ссылка
+           в никуда хуже отсутствия ссылки. */ ?>
+      <div class="cg"><em>Instagram</em><?php if (su('instagram') !== ''): ?><a href="<?= e(su('instagram')) ?>" target="_blank" rel="noopener me"><?= e(s('instagram_name') !== '' ? s('instagram_name') : su('instagram')) ?></a><?php else: ?><span><?= e(sv('instagram')) ?></span><?php endif; ?></div>
       <div class="cg"><em><?= t('home.t133') ?></em><span><?= t('home.t134') ?></span></div>
       <div class="cg"><em><?= t('home.t135') ?></em><span><?= t('home.t136') ?></span></div>
     </div>

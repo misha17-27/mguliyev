@@ -48,11 +48,11 @@ $packs = packs();
       <div>
         <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px"><?= t('price.t9') ?></h2>
         <ul class="plain">
-          <li><?= t('price.t10') ?> <span class="note">[УТОЧНИТЬ: цена продления]</span></li>
-          <li><?= t('price.t11') ?> <span class="note">[УТОЧНИТЬ: цена в месяц]</span></li>
-          <li><?= t('price.t12') ?> <span class="note">[УТОЧНИТЬ: цены]</span></li>
+          <li><?= t('price.t10') ?> <span class="note"><?= e(sv('price_renewal')) ?></span></li>
+          <li><?= t('price.t11') ?> <span class="note"><?= e(sv('price_support')) ?></span></li>
+          <li><?= t('price.t12') ?> <span class="note"><?= e(sv('price_promo')) ?></span></li>
           <li><?= t('price.t13') ?></li>
-          <li><?= t('price.t14') ?> <span class="note">[УТОЧНИТЬ: цены]</span></li>
+          <li><?= t('price.t14') ?> <span class="note"><?= e(sv('price_design')) ?></span></li>
         </ul>
       </div>
     </div>
@@ -60,7 +60,7 @@ $packs = packs();
     <div style="margin-top:clamp(40px,5vw,68px)">
       <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px"><?= t('price.t15') ?></h2>
       <p class="sub"><?= t('price.t16') ?></p>
-      <p class="note" style="margin-top:14px">[УТОЧНИТЬ: способы оплаты — перевод, карта, наличные]</p>
+      <p class="note" style="margin-top:14px"><?= e(sv('payment_methods')) ?></p>
     </div>
 
     <div class="faq" style="margin-top:clamp(40px,5vw,68px)">

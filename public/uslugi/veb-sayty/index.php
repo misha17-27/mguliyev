@@ -114,7 +114,7 @@ $lnk = 'color:var(--duo-b)';
       <p class="sub" style="margin-top:16px"><?= t('web.t53') ?></p>
       <p style="margin-top:22px;display:flex;flex-wrap:wrap;gap:12px">
         <a class="btn" href="<?= u('/kontakty/') ?>"><?= t('web.t54') ?></a>
-        <a class="btn btn-o" href="tel:+994552155363">+994 55 215 53 63</a></p>
+        <a class="btn btn-o" href="<?= e(tel_href()) ?>"><?= e(sv('phone')) ?></a></p>
     </div>
 
   </div>
