@@ -87,6 +87,12 @@ function admin_head(string $section): void
     <div class="who">
       <b><?= $e($user['email']) ?></b>
       <span class="role">редактор сайта</span>
+      <?php /* Выход и здесь, и в верхней строке: на телефоне верхняя строка
+               узкая, и кнопка оттуда убрана, иначе она уезжает за край. */ ?>
+      <form method="post" action="<?= $e(admin_url('logout')) ?>" style="margin-top:12px">
+        <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+        <button class="btn ghost sm" type="submit" style="color:#b7cddc;border-color:#17415f">Выйти</button>
+      </form>
     </div>
     <?php endif; ?>
   </aside>
