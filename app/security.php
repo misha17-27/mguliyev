@@ -254,8 +254,11 @@ function csrf_token(): string
 
 /** Сравнение постоянное по времени: обычное == отвечает тем быстрее,
     чем раньше расходятся строки, и по времени ответа ключ подбирается. */
-function csrf_ok(?string $given): bool
+function csrf_ok($given): bool
 {
+    /* Тип не объявляем: поле можно прислать массивом (_csrf[]=x), и
+       объявленный ?string ронял бы любую страницу панели с ошибкой 500
+       раньше, чем дело дойдёт до проверки. */
     return is_string($given) && !empty($_SESSION['csrf'])
         && hash_equals($_SESSION['csrf'], $given);
 }

@@ -85,8 +85,24 @@ if ($selfUrl !== '' && function_exists('curl_init')) {
     }
 }
 
+/* Неудачные входы за сутки — со всех адресов вместе. */
+$fails = Store::read('locks/login-total.json') ?? [];
+$hourNow = (int)floor(time() / 3600);
+$fails24 = 0; $fails1 = 0;
+foreach ($fails as $h => $n) {
+    if ((int)$h > $hourNow - 24) $fails24 += (int)$n;
+    if ((int)$h === $hourNow)    $fails1  += (int)$n;
+}
+
 admin_head('security');
 ?>
+<?php if ($fails24 >= 20 && !ts_on()): ?>
+  <div class="flash err">
+    За сутки — <b><?= $fails24 ?></b> неудачных попыток входа в панель, за этот час — <?= $fails1 ?>.
+    Похоже на подбор пароля с разных адресов: счётчик по адресу такой подбор не видит.
+    Включите капчу ниже — это закрывает его полностью.
+  </div>
+<?php endif; ?>
 
 <?php if (ts_is_test()): ?>
   <div class="flash warn">
@@ -239,6 +255,8 @@ admin_head('security');
     <table>
       <tr><th>Где</th><th>Что стоит</th></tr>
       <tr><td>Форма заявки</td><td>поле-ловушка · время заполнения от 3 секунд · не чаще одной заявки в минуту с адреса</td></tr>
+      <tr><td>Неудачных входов за сутки</td><td><b><?= $fails24 ?></b> · за этот час <?= $fails1 ?>
+        <span class="muted">— со всех адресов вместе</span></td></tr>
       <tr><td>Вход в панель</td><td>bcrypt · <?= ADMIN_LOGIN_LIMIT ?> попытки, потом <?= (int)(ADMIN_LOGIN_LOCK / 60) ?> минут запрета · одинаковый ответ на неверную почту и пароль</td></tr>
       <tr><td>Все формы панели</td><td>разовый ключ формы · проверка источника запроса</td></tr>
       <tr><td>Загрузка картинок</td><td>тип по содержимому файла · имя собирается заново · SVG не принимается</td></tr>

@@ -48,7 +48,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             /* Имя узла идёт прямо в адрес соединения — оставляем только
                то, из чего имя узла вообще может состоять. */
             'host'      => preg_replace('~[^A-Za-z0-9._-]~', '', post_one($_POST['host'] ?? '')) ?? '',
-            'port'      => $port > 0 && $port < 65536 ? $port : 465,
+            /* Только почтовые порты. Любой порт превращал раздел в сканер:
+               «соединиться с узлом X на порту Y» и показать весь ответ — это
+               ровно то, чем ищут открытые службы во внутренней сети хостинга. */
+            'port'      => in_array($port, [25, 465, 587, 2525], true) ? $port : 465,
             'enc'       => in_array($enc, ['ssl', 'tls', 'none'], true) ? $enc : 'ssl',
             'user'      => post_one($_POST['user'] ?? ''),
             'from'      => $from,
@@ -193,7 +196,11 @@ admin_head('mail');
         </div>
         <div>
           <label for="port">Порт</label>
-          <input type="number" id="port" name="port" value="<?= (int)$c['port'] ?>" min="1" max="65535">
+          <select id="port" name="port">
+            <?php foreach ([465 => '465 — SSL/TLS', 587 => '587 — STARTTLS', 25 => '25 — без шифрования', 2525 => '2525 — запасной'] as $pv => $pl): ?>
+              <option value="<?= $pv ?>"<?= (int)$c['port'] === $pv ? ' selected' : '' ?>><?= $e($pl) ?></option>
+            <?php endforeach; ?>
+          </select>
         </div>
         <div>
           <label for="enc">Шифрование</label>

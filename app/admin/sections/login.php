@@ -73,6 +73,17 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             admin_go(admin_url('dashboard'));
         } else {
             $n = attempts_fail('login', $key, ADMIN_LOGIN_LIMIT, ADMIN_LOGIN_WINDOW, ADMIN_LOGIN_LOCK);
+
+            /* Общий счётчик неудач — без адреса в ключе. Он НИЧЕГО НЕ
+               ЗАПИРАЕТ: общий запрет позволил бы одному человеку держать
+               владельца вне его же панели, просто тратя попытки. Он нужен,
+               чтобы подбор с тысяч адресов, невидимый для счётчика по
+               адресу, был виден в разделе «Безопасность». */
+            $all = Store::read('locks/login-total.json') ?? [];
+            $hour = (int)floor(time() / 3600);
+            $all = array_filter($all, static fn($v, $h) => (int)$h > $hour - 24, ARRAY_FILTER_USE_BOTH);
+            $all[$hour] = (int)($all[$hour] ?? 0) + 1;
+            Store::write('locks/login-total.json', $all);
             usleep(400000);
             $rest = ADMIN_LOGIN_LIMIT - $n;
             $err = 'Почта или пароль не подходят.'
