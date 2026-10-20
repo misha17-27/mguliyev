@@ -77,11 +77,27 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $rows = (array)($_POST['w'] ?? []);
     $out  = [];
     $seen = [];
+    $bad  = [];
 
     foreach ($rows as $idx => $row) {
         if (!is_array($row) || !empty($del[$idx])) continue;
-        $dom = post_domain($row['domain'] ?? '');
-        if ($dom === '' || isset($seen[$dom])) continue;    // пустой или повторный домен
+        $dom  = post_domain($row['domain'] ?? '');
+        $orig = post_domain($row['orig'] ?? '');
+
+        /* Удаляет проект ТОЛЬКО флажок «Удалить». Раньше пустой или
+           повторный домен молча выбрасывал запись вместе с описанием на
+           трёх языках и путём к снимку, а панель писала «Сохранено».
+           Стереть поле случайно в длинной форме легко, а заметить, что
+           проектов стало 14 вместо 15, — почти невозможно. */
+        if ($dom === '') {
+            $bad[] = 'у проекта ' . ($orig !== '' ? $orig : '№' . ((int)$idx + 1))
+                   . ' пустой или неверный домен';
+            continue;
+        }
+        if (isset($seen[$dom])) {
+            $bad[] = 'домен ' . $dom . ' встречается дважды';
+            continue;
+        }
         $seen[$dom] = true;
         $out[] = [
             'domain'   => $dom,
@@ -111,6 +127,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         if (isset($out[$pos], $out[$to])) {
             [$out[$pos], $out[$to]] = [$out[$to], $out[$pos]];
         }
+    }
+
+    if ($bad) {
+        /* Ничего не пишем: лучше не сохранить всё, чем сохранить
+           с молча пропавшим проектом. */
+        admin_flash('НЕ СОХРАНЕНО: ' . implode('; ', $bad) . '. Проект удаляется только '
+            . 'флажком «Удалить проект» — исправьте домен или поставьте флажок.', 'err');
+        admin_go(admin_url('portfolio', ['g' => $groups[$i]['slug']]));
     }
 
     $groups[$i]['projects'] = $out;
@@ -223,6 +247,7 @@ if ($cur === null):
                 <div>
                   <label>Домен</label>
                   <input type="text" name="w[<?= $idx ?>][domain]" value="<?= $e($w['domain']) ?>" class="mono">
+                  <input type="hidden" name="w[<?= $idx ?>][orig]" value="<?= $e($w['domain']) ?>">
                 </div>
                 <div>
                   <label>Снимок <span class="hint">путь внутри сайта, пусто — отраслевая подложка</span></label>

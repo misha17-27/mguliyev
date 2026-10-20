@@ -162,6 +162,20 @@ function admin_head(string $section): void
     if ($p = admin_store_problem()) {
         echo '<div class="flash err" role="alert">' . $e($p) . '</div>';
     }
+
+    /* Испорченный файл хранилища показываем на КАЖДОЙ странице панели.
+       Сайт в этом случае молча берёт данные из репозитория, и редактор
+       видит прежние тексты — легко решить, что правки «откатились»,
+       и сохранить заново поверх единственной копии. */
+    $broken = Store::broken(['works.json', 'catalog.json', 'packs.json', 'articles.json',
+        'texts.json', 'seo.json', 'settings.json', 'mail.json', 'security.json', 'auth.json']);
+    foreach ($broken as $rel => $why) {
+        echo '<div class="flash err" role="alert">Файл <b class="mono">' . $e($rel) . '</b> '
+           . 'в хранилище испорчен (' . $e($why) . '). Правки из него сейчас НЕ применяются — '
+           . 'сайт показывает данные разработчика. При следующем сохранении в этом разделе '
+           . 'испорченная копия будет отложена рядом с пометкой .broken, и её можно будет '
+           . 'восстановить вручную через cPanel → File Manager.</div>';
+    }
     ?>
 <?php
 }

@@ -36,17 +36,36 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $rows  = (array)($_POST['i'] ?? []);
     $items = [];
 
+    $bad = [];
     foreach ($rows as $idx => $row) {
         if (!is_array($row) || !empty($del[$idx])) continue;
         $name = post_langs($row['name'] ?? []);
-        if (($name[deflang()] ?? '') === '') continue;      // услуга без названия не нужна
+        /* Удаляет услугу только флажок: стёртое название — это скорее
+           случайность, чем намерение, и молча терять из-за неё описание
+           на трёх языках нельзя. */
+        if (($name[deflang()] ?? '') === '') {
+            $bad[] = 'у услуги №' . ((int)$idx + 1) . ' пустое русское название';
+            continue;
+        }
         $items[] = ['name' => $name, 'desc' => post_langs($row['desc'] ?? [], true)];
+    }
+
+    if ($bad) {
+        admin_flash('НЕ СОХРАНЕНО: ' . implode('; ', $bad) . '. Услуга удаляется только '
+            . 'флажком «Удалить услугу».', 'err');
+        admin_go(admin_url('uslugi', ['c' => $slug]));
     }
 
     $new = (array)($_POST['new'] ?? []);
     $nn  = post_langs($new['name'] ?? []);
     if (($nn[deflang()] ?? '') !== '') {
         $items[] = ['name' => $nn, 'desc' => post_langs($new['desc'] ?? [], true)];
+    }
+
+    if (!$items) {
+        admin_flash('Нельзя удалить все услуги направления: страница /uslugi/' . $slug
+            . '/ останется с пустым списком. Оставьте хотя бы одну.', 'err');
+        admin_go(admin_url('uslugi', ['c' => $slug]));
     }
 
     $cat[$slug]['items'] = $items;

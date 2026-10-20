@@ -26,6 +26,7 @@ final class Store
 {
     private static string $dir = '';
     private static array  $cache = [];
+    private static array  $broken = [];
 
     public static function boot(string $dir): void
     {
@@ -63,6 +64,7 @@ final class Store
                     $out = $d;
                 } else {
                     error_log('Store: не читается ' . $rel . ' — ' . json_last_error_msg());
+                    self::$broken[$rel] = json_last_error_msg();
                 }
             }
         }
@@ -79,6 +81,21 @@ final class Store
         if (!is_dir($d) && !@mkdir($d, 0770, true) && !is_dir($d)) {
             error_log('Store: не создаётся папка ' . $d);
             return false;
+        }
+
+        /* Испорченный файл перед перезаписью копируем в сторону.
+
+           Иначе первое же сохранение делает потерю необратимой: разбирать
+           нечего, сайт показывает данные из репозитория, редактор решает,
+           что правки «откатились», и сохраняет заново — поверх единственной
+           копии того, что можно было бы восстановить руками. */
+        if (is_file($p)) {
+            $old = (string)@file_get_contents($p);
+            if ($old !== '' && !is_array(json_decode($old, true))) {
+                $copy = $p . '.broken-' . date('Ymd-His');
+                @copy($p, $copy);
+                error_log('Store: испорченный ' . $rel . ' сохранён как ' . basename($copy));
+            }
         }
 
         $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -190,6 +207,26 @@ final class Store
         if (self::$dir === '') return false;
         if (is_dir(self::$dir)) return is_writable(self::$dir);
         return @mkdir(self::$dir, 0770, true) || is_dir(self::$dir);
+    }
+
+    /** Какие из файлов хранилища не читаются.
+
+        Проверяем не только то, что уже пытались прочитать на этой
+        странице, а все известные файлы: испорченный раздел, который
+        редактор сегодня не открывал, всё равно должен быть виден. */
+    public static function broken(array $known): array
+    {
+        $out = self::$broken;
+        foreach ($known as $rel) {
+            if (isset($out[$rel])) continue;
+            $p = self::path($rel);
+            if (!is_file($p)) continue;
+            $raw = (string)@file_get_contents($p);
+            if ($raw === '') continue;
+            json_decode($raw, true);
+            if (json_last_error() !== JSON_ERROR_NONE) $out[$rel] = json_last_error_msg();
+        }
+        return $out;
     }
 
     public static function forget(?string $rel = null): void

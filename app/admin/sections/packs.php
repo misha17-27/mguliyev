@@ -23,6 +23,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $del  = (array)($_POST['del'] ?? []);
     $out  = [];
     $seen = [];
+    $badPacks = [];
 
     foreach ($in as $key => $row) {
         if (!is_array($row)) continue;
@@ -33,7 +34,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $seen[$k] = true;
 
         $name = post_langs($row['name'] ?? []);
-        if (($name[deflang()] ?? '') === '') continue;         // пакет без названия не нужен
+        if (($name[deflang()] ?? '') === '') {
+            /* Удаляет пакет только флажок: стёртое название — случайность. */
+            $badPacks[] = 'у пакета ' . $k . ' пустое русское название';
+            continue;
+        }
 
         $out[] = [
             'key'     => $k,
@@ -62,6 +67,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 'missing' => post_langs($new['missing'] ?? [], true),
             ];
         }
+    }
+
+    if ($badPacks) {
+        admin_flash('НЕ СОХРАНЕНО: ' . implode('; ', $badPacks) . '. Пакет удаляется только '
+            . 'флажком «Удалить этот пакет».', 'err');
+        admin_go(admin_url('packs'));
     }
 
     if (!$out) {

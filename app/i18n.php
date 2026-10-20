@@ -49,9 +49,25 @@ final class I18n
         $ov = Store::read('texts.json');
         if ($ov) {
             foreach ($ov as $k => $byLang) {
-                if (is_array($byLang) && isset($byLang[$lang])
-                    && is_string($byLang[$lang]) && $byLang[$lang] !== '') {
+                if (!is_array($byLang) || !array_key_exists($lang, $byLang)
+                    || !is_string($byLang[$lang])) {
+                    continue;
+                }
+                if ($byLang[$lang] !== '') {
                     $d[$k] = $byLang[$lang];
+                    continue;
+                }
+                /* Пустое значение — это намерение, а не отсутствие правки.
+                   Раньше оно игнорировалось: редактор стирал строку, панель
+                   показывала пустое поле, а сайт вечно показывал прежний
+                   текст из репозитория. Теперь:
+                     основной язык — строку убрали, показываем пустоту;
+                     перевод — его убрали, показываем русский оригинал,
+                     как у любой непереведённой строки. */
+                if ($lang === (self::$cfg['default_lang'] ?? 'ru')) {
+                    $d[$k] = '';
+                } else {
+                    unset($d[$k]);
                 }
             }
         }
