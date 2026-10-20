@@ -111,8 +111,8 @@ Store::write($hour, [
 Store::write($lock, ['last' => $now]);
 attempts_sweep_due();
 
-$name  = trim((string)($_POST['name'] ?? ''));
-$phone = trim((string)($_POST['phone'] ?? ''));
+$name  = is_string($_POST['name'] ?? null)  ? trim($_POST['name'])  : '';
+$phone = is_string($_POST['phone'] ?? null) ? trim($_POST['phone']) : '';
 if ($name === '' || $phone === '') {
     finish(false, 'form.required', $back, $ajax);
 }
@@ -147,15 +147,20 @@ if (ts_on()) {
     $cap = ['ok' => true, 'skipped' => false, 'note' => ''];
 }
 
-$clean = static fn(string $s, int $max): string =>
-    mb_substr(preg_replace('/[\r\n]+/u', ' ', strip_tags($s)), 0, $max);
+/* Через clean_text: она чинит битый UTF-8. Без этого preg_replace с /u
+   на битой строке возвращал null, и имя или телефон молча обнулялись —
+   уже ПОСЛЕ проверки, что они заполнены. */
+$clean = static fn($s, int $max): string =>
+    mb_substr(clean_text(strip_tags(is_string($s) ? $s : '')), 0, $max);
 
 $fields = [
     'Имя'      => $clean($name, 120),
     'Телефон'  => $clean($phone, 60),
     'Услуга'   => $clean((string)($_POST['service'] ?? ''), 80),
     'Бюджет'   => $clean((string)($_POST['budget'] ?? ''), 80),
-    'Задача'   => mb_substr(strip_tags((string)($_POST['message'] ?? '')), 0, 4000),
+    /* clean_text чинит кодировку: битый UTF-8 ронял json_encode, и заявка
+       не записывалась на диск — при отказе почты она терялась целиком. */
+    'Задача'   => mb_substr(clean_text(strip_tags(is_string($_POST['message'] ?? null) ? $_POST['message'] : ''), true), 0, 4000),
     'Язык'     => I18n::$lang,
     'Страница' => $clean((string)($_POST['back'] ?? ''), 200),
 ];

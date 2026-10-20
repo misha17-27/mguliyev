@@ -210,6 +210,19 @@ function attempts_sweep_due(): void
     attempts_sweep('mailtest', 3600);
     attempts_sweep('cap',      1800);
     attempts_sweep('lead',      600);
+
+    /* Сессии панели. Каждый заход на /admin/ без входа создаёт файл
+       сессии — для ключа формы на странице входа он нужен. Встроенная
+       уборка PHP на многих хостингах выключена (gc_probability = 0),
+       и без этих строк папка росла бы от каждого бота, заглянувшего
+       по адресу /admin/. Срок — общий срок жизни сессии, 12 часов. */
+    $sd = Store::dir() . '/sessions';
+    if (is_dir($sd)) {
+        $now = time();
+        foreach (glob($sd . '/sess_*') ?: [] as $f) {
+            if ($now - (int)@filemtime($f) > 43200) @unlink($f);
+        }
+    }
 }
 
 /** Удалить просроченные счётчики. Вызывается изредка, чтобы папка

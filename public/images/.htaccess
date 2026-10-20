@@ -8,6 +8,22 @@
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # ЗАПРЕТЫ ИЗ public/.htaccess ПОВТОРЕНЫ ЗДЕСЬ НАРОЧНО.
+  #
+  # Правила mod_rewrite из родительского .htaccess НЕ наследуются: стоит
+  # в папке появиться своим RewriteRule, как правила родителя для неё
+  # отбрасываются целиком. Без этих строк под /images/ отдавались бы
+  # служебные папки вроде .git и файлы резервных копий — всё то, что
+  # корневой файл закрывает для остального сайта.
+  #
+  # Повторяем, а не пишем RewriteOptions Inherit: на LiteSpeed эта
+  # директива не документирована, а молча не сработавший запрет — ровно
+  # та дыра, которую здесь закрываем. Правится вместе с public/.htaccess.
+  RewriteRule (^|/)\.(?!well-known/) - [F,L]
+  RewriteRule (^|/)(error_log|php_errorlog)$ - [F,L]
+  RewriteRule \.(ya?ml|sql|bak|dist|inc|log|sh|swp|orig|rej)$ - [F,L]
+
   RewriteRule \.(php|php[0-9]|phtml|phps|phar|pl|py|cgi|sh|shtml|htm|html)(\.|$) - [F,L]
 </IfModule>
 

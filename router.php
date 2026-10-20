@@ -7,6 +7,13 @@
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
+/* Панель — вне языков, как и на боевом сервере (см. public/.htaccess). */
+if (preg_match('#^/(az|en)/admin(/|$)#', $path)) {
+    http_response_code(404);
+    echo 'Not found';
+    return true;
+}
+
 if (preg_match('#^/(az|en)(/.*)?$#', $path, $m)) {
     $_SERVER['SITE_LANG'] = $m[1];
     putenv('SITE_LANG=' . $m[1]);

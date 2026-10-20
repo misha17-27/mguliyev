@@ -99,9 +99,12 @@ function mail_encode_header(string $s): string
     $out = [];
     $chunk = '';
     foreach (preg_split('~~u', $s, -1, PREG_SPLIT_NO_EMPTY) as $ch) {
-        /* 42 знака исходного текста дают около 56 знаков base64 —
-           вместе с обёрткой =?UTF-8?B?…?= укладываемся в 76. */
-        if (mb_strlen($chunk, 'UTF-8') >= 42) {
+        /* Режем по БАЙТАМ, а не по знакам: кириллица — два байта на знак,
+           и 42 знака давали 84 байта, то есть 112 знаков base64 — больше
+           разрешённых 75 на одно закодированное слово. 45 байт дают ровно
+           60 знаков base64, с обёрткой =?UTF-8?B?…?= — 72. Знак при этом
+           не разрезается: проверка стоит до того, как его добавить. */
+        if (strlen($chunk) + strlen($ch) > 45) {
             $out[] = '=?UTF-8?B?' . base64_encode($chunk) . '?=';
             $chunk = '';
         }
@@ -187,7 +190,11 @@ function mail_send(string $to, string $subject, string $text, array $o = []): ar
 function smtp_read($fp, array &$log): array
 {
     $lines = [];
-    while (true) {
+    /* Потолок на число строк: сервер, присылающий бесконечный ответ
+       с дефисом, иначе держал бы процесс и раздувал журнал до предела
+       памяти. Настоящий EHLO — это десяток строк. */
+    $guard = 0;
+    while (++$guard <= 100) {
         $line = fgets($fp, 1024);
         if ($line === false) {
             $m = stream_get_meta_data($fp);

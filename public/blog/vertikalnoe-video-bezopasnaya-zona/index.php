@@ -5,8 +5,11 @@ $slug = 'vertikalnoe-video-bezopasnaya-zona';
    Раньше те же строки лежали ещё и здесь, и разошлись бы при первой правке. */
 foreach (articles() as $a) {
     if ($a['slug'] !== $slug) continue;
-    $title       = $a['seoTitle'] ?? ($a['title'] . ' — MGuliyev Studio');
-    $description = $a['seoDesc']  ?? $a['desc'];
+    /* ?: а не ??: поле из панели приходит пустой строкой, а не null,
+       и ?? пропускал её — страница получала пустой <title>, то есть
+       в выдаче вместо заголовка стоял адрес. */
+    $title       = ($a['seoTitle'] ?? '') !== '' ? $a['seoTitle'] : ($a['title'] . ' — MGuliyev Studio');
+    $description = ($a['seoDesc']  ?? '') !== '' ? $a['seoDesc']  : $a['desc'];
     break;
 }
 $current = 'blog';

@@ -47,8 +47,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
               . 'и вход заработает по паролю.'
             : 'Проверка «человек ли это» не пройдена. Обновите страницу и попробуйте ещё раз.';
     } else {
-        $email = clean_text($_POST['email'] ?? '');
-        $pw    = (string)($_POST['password'] ?? '');
+        /* is_string: поле можно прислать массивом (email[]=x), и функция
+           с объявленным строковым типом роняла бы страницу входа с 500. */
+        $email = clean_text(is_string($_POST['email'] ?? null) ? $_POST['email'] : '');
+        $pw    = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
         $auth  = admin_auth();
 
         /* Проверяем хэш даже при несовпавшей почте: иначе ответ на чужую

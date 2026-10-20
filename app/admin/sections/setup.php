@@ -28,10 +28,11 @@ if (!$storeProblem && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     if ($lock['until'] > time()) {
         $err = 'Слишком много попыток. Повторите через ' . ceil(($lock['until'] - time()) / 60) . ' мин.';
     } else {
-        $code  = strtoupper(clean_text($_POST['code'] ?? ''));
-        $email = clean_text($_POST['email'] ?? '');
-        $pw    = (string)($_POST['password'] ?? '');
-        $pw2   = (string)($_POST['password2'] ?? '');
+        $str   = static fn($v) => is_string($v) ? $v : '';
+        $code  = strtoupper(clean_text($str($_POST['code'] ?? null)));
+        $email = clean_text($str($_POST['email'] ?? null));
+        $pw    = $str($_POST['password'] ?? null);
+        $pw2   = $str($_POST['password2'] ?? null);
         $vals['email'] = $email;
 
         $want = admin_setup_code();
