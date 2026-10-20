@@ -146,7 +146,15 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     Store::forget('texts.json');
 
     admin_note_edit('page:' . $key);
-    admin_flash($changed ? 'Сохранено. Изменено значений: ' . $changed . '.' : 'Изменений не было.');
+
+    /* Проверяем до сообщения об успехе: «сохранено» при обрезанной форме —
+       худшее, что панель может сказать. */
+    $cut = admin_form_truncated(admin_count_fields($_POST['t'] ?? []));
+    if ($cut !== null) {
+        admin_flash($cut, 'err');
+    } else {
+        admin_flash($changed ? 'Сохранено. Изменено значений: ' . $changed . '.' : 'Изменений не было.');
+    }
     admin_go(admin_url('pages', ['p' => $key]));
 }
 
@@ -239,6 +247,9 @@ if ($cur === null):
   <form method="post" action="<?= $e(admin_url('pages')) ?>" data-guard="1">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
     <input type="hidden" name="page" value="<?= $e($cur['key']) ?>">
+    <?php /* Сколько полей словаря отправляем. Поле стоит ПЕРВЫМ: PHP
+             отбрасывает последние, значит объявление доедет в любом случае. */ ?>
+    <input type="hidden" name="_fields" value="<?= count($keys) * count(langs()) ?>">
 
     <div class="panel">
       <h3><?= $e($cur['name']) ?> <span class="pill grey mono"><?= $e($cur['url']) ?></span></h3>

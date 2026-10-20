@@ -75,10 +75,18 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         if (isset($store[$k]) && !$store[$k]) unset($store[$k]);
     }
 
+    /* Проверяем до сообщения об успехе: «сохранено» при обрезанной форме —
+       худшее, что панель может сказать. */
+    $cut = admin_form_truncated(admin_count_fields($in));
+
     if (Store::write('texts.json', $store)) {
-        admin_flash($changed
-            ? 'Сохранено. Изменено строк: ' . $changed . '.'
-            : 'Изменений не было.');
+        if ($cut !== null) {
+            admin_flash($cut, 'err');
+        } else {
+            admin_flash($changed
+                ? 'Сохранено. Изменено строк: ' . $changed . '.'
+                : 'Изменений не было.');
+        }
     } else {
         admin_flash('Не удалось сохранить.', 'err');
     }
@@ -126,6 +134,9 @@ admin_head('texts');
 <form method="post" action="<?= $e(admin_url('texts')) ?>" data-guard="1">
   <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
   <input type="hidden" name="g" value="<?= $e($g) ?>">
+  <?php /* Сколько полей отправляем. Поле стоит ПЕРВЫМ: PHP отбрасывает
+           последние, значит это объявление доедет в любом случае. */ ?>
+  <input type="hidden" name="_fields" value="<?= count($rows) * count(langs()) ?>">
 
   <?php foreach ($rows as $k => $byLang):
       $hay = mb_strtolower($k . ' ' . implode(' ', $byLang));
