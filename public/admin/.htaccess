@@ -10,9 +10,17 @@
   RewriteEngine On
 
   # Исполняется только index.php. Любой другой .php в этой папке и ниже —
-  # отказ. Правило стоит до остальных, чтобы его нельзя было обойти.
+  # отказ.
+  #
+  # Условия смотрят на АДРЕС запроса, а сам RewriteRule — на что угодно.
+  # Если бы расширение проверял RewriteRule, правило закрыло бы и вход:
+  # при обращении к /admin/ Apache подставляет index.php внутренним
+  # запросом, и для этого запроса относительный путь уже «index.php»,
+  # а REQUEST_URI всё ещё «/admin/» — условие-исключение не совпало бы,
+  # и панель отдавала бы 403 на собственном адресе.
   RewriteCond %{REQUEST_URI} !^/admin/index\.php$
-  RewriteRule \.(php|php[0-9]|phtml|phps|phar)(\.|$) - [F,L]
+  RewriteCond %{REQUEST_URI} \.(php|php[0-9]|phtml|phps|phar)(\.|$)
+  RewriteRule ^ - [F,L]
 
   # Папка оформления отдаёт только стили и скрипт панели.
   RewriteCond %{REQUEST_URI} !\.(css|js|svg|woff2?|png|jpe?g|webp|ico)$
