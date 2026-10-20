@@ -52,7 +52,10 @@ $text   = tr($w['text'] ?? []);
 $seo = portfolio_seo($g, $w);
 $title = $seo['title'];
 $description = $seo['description'];
-$ogImage = project_cover($w, $g);
+/* Картинка для соцсетей — снимок проекта. Без снимка обложкой служит
+   отраслевая подложка в SVG, а соцсети SVG не показывают: ссылка ушла бы
+   без превью. Тогда берём общую обложку студии. */
+$ogImage = !empty($w['image']) && !preg_match('~\.svg$~i', $w['image']) ? $w['image'] : null;
 
 include __DIR__ . '/../../app/partials/head.php';
 
