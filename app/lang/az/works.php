@@ -19,11 +19,9 @@ return [
     ],
     'torgovlya' => [
         'name' => 'Mağazalar və ticarət',
-        'desc' => 'Kitab və güldən texnika və döşəklərə qədər, Avstriya, Macarıstan və Ukrayna bazarları da daxil.',
+        'desc' => 'Kitabdan texnika, ayaqqabı və döşəklərə qədər, Avstriya, Macarıstan və Ukrayna bazarları da daxil.',
         'projects' => [
-            'qarabagh.shop'        => '«Qarabağ» FK-nın rəsmi mağazası',
             'store.az'             => 'Texnika mağazası',
-            'flower.az'            => 'Gül çatdırılması',
             'avantaj.az'           => 'Telefon mağazası',
             'bookmart.az'          => 'Kitab mağazası',
             'vanilla.az'           => 'Sifarişlə tortlar',
@@ -38,7 +36,7 @@ return [
     ],
     'avto' => [
         'name' => 'Avto və moto',
-        'desc' => 'Distribyutorlar, ehtiyat hissələri, servis, ABŞ-dan avtomobil gətirilməsi və elan platforması.',
+        'desc' => 'Distribyutorlar, ehtiyat hissələri, icarə, servis, ABŞ-dan avtomobil gətirilməsi və elan platforması.',
         'projects' => [
             'lynkco.az'            => 'Lynk &amp; Co-nun rəsmi distribyutoru',
             'grandmoto.az'         => 'Motosiklet distribyutoru',
@@ -46,11 +44,13 @@ return [
             'avtobutik.az'         => 'ABŞ-dan avtomobil seçimi və çatdırılması',
             'avtoehtiyat.com'      => 'Avtomobil ehtiyat hissələrinin satış elanları',
             'avtok1ub.az'          => 'Yağ dəyişimi, avtoservis',
+            'carclub.az'           => 'Avtomobil icarəsi',
+            'roveltrading.az'      => 'Akkumulyator, yağ və təkər distribyutoru',
         ],
     ],
     'stroyka' => [
         'name' => 'Tikinti və daşınmaz əmlak',
-        'desc' => 'Podratçılar, dam örtüyü, darvazalar, yaşayış kompleksi və xaricdə daşınmaz əmlak satışı.',
+        'desc' => 'Podratçılar, mühəndislik, dam örtüyü, interyer və mebel, yaşayış kompleksi və xaricdə əmlak satışı.',
         'projects' => [
             'arka.az'              => 'Tikinti və dizayn',
             'damchi.az'            => 'Dam örtüyü işləri',
@@ -58,6 +58,10 @@ return [
             'lifeonisland.com'     => 'Kiprdə daşınmaz əmlak',
             'metalist.az'          => 'Darvazalar və roletlər',
             'whitestone.com.az'    => 'Yaşayış kompleksi',
+            'tce.az'               => 'Layihələndirmə və tikinti-quraşdırma işləri',
+            'ceng.az'              => 'Mühəndislik sistemləri və avadanlıq təchizatı',
+            'arginterior.co.uk'    => 'Dülgərlik və interyer işləri, London',
+            'mybel.az'             => 'Fərdi mebel və interyer həlləri',
         ],
     ],
     'promyshlen' => [
@@ -74,17 +78,20 @@ return [
             'azeco.az'             => 'Tərəvəzçilik, Qusar rayonu',
             'enemay.com'           => 'Maliyyə konsaltinqi və karyera mərkəzi',
             'alfalat.com'          => 'Hüquq və vergi konsaltinqi',
+            'cenofex.ai'           => 'Konsaltinq: avtomatlaşdırma və süni intellekt',
         ],
     ],
     'uslugi' => [
         'name' => 'Xidmətlər və sağlamlıq',
-        'desc' => 'Pilates, kimyəvi təmizləmə, klininq, musiqi məktəbi və peşəkar təlim.',
+        'desc' => 'Pilates, kimyəvi təmizləmə, klininq, musiqi məktəbi, təlim, həkim qəbulu və ictimai layihə.',
         'projects' => [
             'pilatesbaku.az'       => 'Pilates studiyası',
             'drymatic.az'          => 'Kimyəvi təmizləmə',
             '166temizlik.az'       => 'Klininq xidmətləri',
             'kvsdosi.com'          => 'Musiqi məktəbi',
             'mtt.az'               => 'HRCI sertifikasiyasına hazırlıq',
+            'xaliqrzayev.com'      => 'Uroloq həkimin saytı',
+            'itkin.az'             => 'İtkin düşmüş şəxslərin reyestri, ictimai birlik',
         ],
     ],
 ];

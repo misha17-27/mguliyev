@@ -96,13 +96,13 @@ include __DIR__ . '/../app/partials/head.php';
   <div class="wrap">
     <div class="shead rv">
       <h2 class="disp h2">Портфолио</h2>
-      <p class="lb">избранное · всего 49 проектов</p>
+      <p class="lb">избранное · всего 55 проектов</p>
     </div>
     <div class="works rv">
-      <a class="work" href="https://qarabagh.shop" target="_blank" rel="noopener">
-        <div class="cover w1"><img class="media" src="/images/home/work-1.jpg" data-ph="/images/placeholder/work-1.svg" alt="Официальный интернет-магазин ФК «Карабах»" loading="lazy" width="1200" height="750"><b class="ph-only">Спорт</b></div>
-        <h3>Официальный магазин ФК «Карабах»</h3>
-        <div class="wmeta"><span>Интернет-магазин</span><b>qarabagh.shop</b></div>
+      <a class="work" href="https://elson-group.com" target="_blank" rel="noopener">
+        <div class="cover w1"><img class="media" src="/images/works/elson-group.com.jpg" data-ph="/images/placeholder/work-1.svg" alt="Сайт агрохолдинга Elson Group" loading="lazy" width="1200" height="750"><b class="ph-only">Агро</b></div>
+        <h3>Elson Group</h3>
+        <div class="wmeta"><span>Агрохолдинг, экспорт продукции</span><b>elson-group.com</b></div>
       </a>
       <a class="work" href="https://lynkco.az" target="_blank" rel="noopener">
         <div class="cover w2"><img class="media" src="/images/home/work-2.jpg" data-ph="/images/placeholder/work-2.svg" alt="Сайт официального дистрибьютора Lynk &amp; Co в Азербайджане" loading="lazy" width="1200" height="750"><b class="ph-only">Авто</b></div>
@@ -124,10 +124,10 @@ include __DIR__ . '/../app/partials/head.php';
         <h3>Store.az</h3>
         <div class="wmeta"><span>Магазин техники</span><b>store.az</b></div>
       </a>
-      <a class="work" href="https://flower.az" target="_blank" rel="noopener">
-        <div class="cover w6"><img class="media" src="/images/home/work-6.jpg" data-ph="/images/placeholder/work-6.svg" alt="Интернет-магазин цветов Flower.az" loading="lazy" width="1200" height="750"><b class="ph-only">Цветы</b></div>
-        <h3>Flower.az</h3>
-        <div class="wmeta"><span>Доставка цветов</span><b>flower.az</b></div>
+      <a class="work" href="https://ymkwatercolor.com" target="_blank" rel="noopener">
+        <div class="cover w6"><img class="media" src="/images/works/ymkwatercolor.com.jpg" data-ph="/images/placeholder/work-6.svg" alt="Интернет-магазин акварельных портретов YMK Watercolor" loading="lazy" width="1200" height="750"><b class="ph-only">Магазин</b></div>
+        <h3>YMK Watercolor</h3>
+        <div class="wmeta"><span>Портреты на заказ, продажа за рубеж</span><b>ymkwatercolor.com</b></div>
       </a>
     </div>
   </div>
@@ -181,7 +181,7 @@ include __DIR__ . '/../app/partials/head.php';
 
 <section class="band">
   <div class="bcell"><b>2017</b><span>год основания студии</span></div>
-  <div class="bcell"><b data-count="49">49</b><span>проектов в портфолио</span></div>
+  <div class="bcell"><b data-count="55">55</b><span>проектов в портфолио</span></div>
   <div class="bcell"><b data-count="6">6</b><span>направлений в одном подряде</span></div>
 </section>
 

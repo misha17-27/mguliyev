@@ -15,16 +15,16 @@
    отбирают друг у друга показы.
 
    В строках есть цифры: ₼700 / ₼1 190 / ₼1 800, сроки 10–25 дней и 3–6
-   месяцев, 49 проектов, 48 карточек, 36 снимков. При изменении прайса или
+   месяцев, 55 проектов и 34 снимков. При изменении прайса или
    портфолио их надо поправить и здесь — иначе сниппет разойдётся со страницей. */
 return [
     'home' => [
         'ru' => ['title' => 'Веб-студия в Баку: сайт под ключ — MGuliyev Studio',
-                 'description' => 'Сайты и интернет-магазины в Баку с 2017 года: 49 проектов в портфолио, срок 10–25 дней, пакеты от ₼700. Рядом дизайн, продвижение и поддержка.'],
+                 'description' => 'Сайты и интернет-магазины в Баку с 2017 года: 55 проекта в портфолио, срок 10–25 дней, пакеты от ₼700. Рядом дизайн, продвижение и поддержка.'],
         'az' => ['title' => 'Bakıda veb-studiya: açar təhvili sayt — MGuliyev Studio',
-                 'description' => 'Bakıda 2017-ci ildən sayt və internet mağazalar: portfolioda 49 layihə, müddət 10–25 gün, paketlər ₼700-dən. Dizayn, irəlilətmə və dəstək də var.'],
+                 'description' => 'Bakıda 2017-ci ildən sayt və internet mağazalar: portfolioda 55 layihə, müddət 10–25 gün, paketlər ₼700-dən. Dizayn, irəlilətmə və dəstək də var.'],
         'en' => ['title' => 'Baku Web Design Studio: Turnkey Websites — MGuliyev Studio',
-                 'description' => 'Websites and online stores in Baku since 2017: 49 projects in the portfolio, 10–25 days, packages from ₼700. Design, promotion and support too.'],
+                 'description' => 'Websites and online stores in Baku since 2017: 55 projects in the portfolio, 10–25 days, packages from ₼700. Design, promotion and support too.'],
     ],
     'uslugi' => [
         'ru' => ['title' => 'Услуги веб-студии в Баку: сайты, дизайн, продвижение',
@@ -68,11 +68,11 @@ return [
     ],
     'portfolio' => [
         'ru' => ['title' => 'Примеры сайтов студии из Баку: портфолио с 2017 года',
-                 'description' => '48 проектов с фильтром по шести отраслям: логистика, торговля, авто, стройка, промышленность и услуги. У 36 карточек — снимки самих сайтов.'],
+                 'description' => '55 проекта с фильтром по шести отраслям: логистика, торговля, авто, стройка, промышленность и услуги. У 34 карточек — снимки самих сайтов.'],
         'az' => ['title' => 'Portfolio: 2017-ci ildən Bakıda hazırladığımız saytlar',
-                 'description' => '48 layihə, altı sahə üzrə filtrlə: logistika, ticarət, avto, tikinti, sənaye və xidmətlər. 36 kartda saytların öz ekran görüntüləri var.'],
+                 'description' => '55 layihə, altı sahə üzrə filtrlə: logistika, ticarət, avto, tikinti, sənaye və xidmətlər. 34 kartda saytların öz ekran görüntüləri var.'],
         'en' => ['title' => 'Website Examples from a Baku Studio: Portfolio since 2017',
-                 'description' => '48 projects, filterable by six sectors: logistics, retail, automotive, construction, manufacturing and services. 36 cards show screenshots of the sites.'],
+                 'description' => '55 projects, filterable by six sectors: logistics, retail, automotive, construction, manufacturing and services. 34 cards show screenshots of the sites.'],
     ],
     'about' => [
         'ru' => ['title' => 'Кто делает ваш сайт: веб-студия в Баку с 2017 года',

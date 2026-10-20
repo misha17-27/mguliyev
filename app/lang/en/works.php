@@ -19,11 +19,9 @@ return [
     ],
     'torgovlya' => [
         'name' => 'Stores and retail',
-        'desc' => 'From books and flowers to electronics and mattresses, including the Austrian, Hungarian and Ukrainian markets.',
+        'desc' => 'From books to electronics, shoes and mattresses, including the Austrian, Hungarian and Ukrainian markets.',
         'projects' => [
-            'qarabagh.shop'        => 'Official FC Qarabag store',
             'store.az'             => 'Electronics store',
-            'flower.az'            => 'Flower delivery',
             'avantaj.az'           => 'Phone store',
             'bookmart.az'          => 'Bookstore',
             'vanilla.az'           => 'Custom cakes',
@@ -38,7 +36,7 @@ return [
     ],
     'avto' => [
         'name' => 'Cars and motorcycles',
-        'desc' => 'Distributors, spare parts, service, importing from the USA and a classifieds platform.',
+        'desc' => 'Distributors, spare parts, rental, service, importing from the USA and a classifieds platform.',
         'projects' => [
             'lynkco.az'            => 'Official Lynk &amp; Co distributor',
             'grandmoto.az'         => 'Motorcycle distributor',
@@ -46,11 +44,13 @@ return [
             'avtobutik.az'         => 'Sourcing and delivery of cars from the USA',
             'avtoehtiyat.com'      => 'Classified ads for car parts',
             'avtok1ub.az'          => 'Oil changes, car service',
+            'carclub.az'           => 'Car rental',
+            'roveltrading.az'      => 'Batteries, oils and tyres',
         ],
     ],
     'stroyka' => [
         'name' => 'Construction and real estate',
-        'desc' => 'Contractors, roofing, gates, a residential complex and property sales abroad.',
+        'desc' => 'Contractors, engineering, roofing, interiors and furniture, a residential complex and property abroad.',
         'projects' => [
             'arka.az'              => 'Construction and design',
             'damchi.az'            => 'Roofing work',
@@ -58,6 +58,10 @@ return [
             'lifeonisland.com'     => 'Property in Cyprus',
             'metalist.az'          => 'Gates and roller shutters',
             'whitestone.com.az'    => 'Residential complex',
+            'tce.az'               => 'Design and construction works',
+            'ceng.az'              => 'Engineering systems and equipment supply',
+            'arginterior.co.uk'    => 'Carpentry and interior fit-out, London',
+            'mybel.az'             => 'Bespoke furniture and interiors',
         ],
     ],
     'promyshlen' => [
@@ -74,17 +78,20 @@ return [
             'azeco.az'             => 'Vegetable growing, Qusar district',
             'enemay.com'           => 'Financial consulting and career centre',
             'alfalat.com'          => 'Legal and tax consulting',
+            'cenofex.ai'           => 'Consulting: automation and AI',
         ],
     ],
     'uslugi' => [
         'name' => 'Services and health',
-        'desc' => 'Pilates, dry cleaning, cleaning services, a music school and professional training.',
+        'desc' => 'Pilates, dry cleaning, cleaning services, a music school, training, a doctor and a public project.',
         'projects' => [
             'pilatesbaku.az'       => 'Pilates studio',
             'drymatic.az'          => 'Dry cleaning',
             '166temizlik.az'       => 'Cleaning services',
             'kvsdosi.com'          => 'Music school',
             'mtt.az'               => 'Preparation for HRCI certification',
+            'xaliqrzayev.com'      => 'Urologist\'s practice site',
+            'itkin.az'             => 'Registry of missing persons, public association',
         ],
     ],
 ];
