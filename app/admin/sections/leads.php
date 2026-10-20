@@ -17,20 +17,35 @@ $e = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 
 
 /** Все заявки, свежие сверху. Имя файла начинается с даты и времени,
     поэтому сортировка по имени и есть сортировка по времени. */
-function leads_all(): array
+function leads_all(int $limit = 0): array
 {
     $dir = Store::dir() . '/leads';
     if (!is_dir($dir)) return [];
 
+    /* Имена начинаются с даты и времени, поэтому сортировка имён — это
+       сортировка по времени, и читать можно только нужное количество
+       самых свежих. Раньше читались ВСЕ файлы на каждую отрисовку: при
+       тысячах заявок раздел с кнопкой удаления переставал открываться —
+       как раз тогда, когда она нужнее всего. */
+    $files = glob($dir . '/*.json') ?: [];
+    rsort($files, SORT_STRING);
+    if ($limit > 0) $files = array_slice($files, 0, $limit);
+
     $out = [];
-    foreach (glob($dir . '/*.json') ?: [] as $p) {
+    foreach ($files as $p) {
         $d = json_decode((string)@file_get_contents($p), true);
         if (!is_array($d)) continue;
         $d['file'] = basename($p);
         $out[] = $d;
     }
-    usort($out, static fn($a, $b) => strcmp($b['file'], $a['file']));
     return $out;
+}
+
+/** Сколько заявок всего — по именам файлов, не открывая их. */
+function leads_count(): int
+{
+    $dir = Store::dir() . '/leads';
+    return is_dir($dir) ? count(glob($dir . '/*.json') ?: []) : 0;
 }
 
 /** Имя файла заявки сверяем целиком, а не «чистим»: так ../ не пролезет
@@ -73,7 +88,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         }
         $edge = time() - $days * 86400;
         $n = 0;
-        foreach (leads_all() as $l) {
+        foreach (leads_all(0) as $l) {        // все, а не только показанные
             if ((int)($l['ts'] ?? 0) > 0 && (int)$l['ts'] < $edge && leads_valid_name($l['file'])) {
                 @unlink($dir . '/' . $l['file']);
                 $n++;
@@ -87,7 +102,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
 }
 
-$leads = leads_all();
+const LEADS_SHOWN = 200;
+
+$total = leads_count();
+$leads = leads_all(LEADS_SHOWN);
 $new   = count(array_filter($leads, static fn($l) => !empty($l['new'])));
 $bad   = count(array_filter($leads, static fn($l) => empty($l['sent'])));
 $open  = post_one($_GET['open'] ?? '');
@@ -104,10 +122,19 @@ admin_head('leads');
 <?php endif; ?>
 
 <div class="cards">
-  <div class="card"><div class="n"><?= count($leads) ?></div><div class="l">заявок всего</div></div>
+  <div class="card"><div class="n"><?= $total ?></div><div class="l">заявок всего</div></div>
   <div class="card"><div class="n"><?= $new ?></div><div class="l">не просмотрено</div></div>
-  <div class="card"><div class="n"><?= count($leads) - $bad ?></div><div class="l">ушло письмом</div></div>
+  <div class="card"><div class="n"><?= count($leads) - $bad ?></div><div class="l">ушло письмом<?= $total > LEADS_SHOWN ? ' из ' . LEADS_SHOWN . ' последних' : '' ?></div></div>
 </div>
+
+<?php if ($total > LEADS_SHOWN): ?>
+  <div class="note">
+    Показаны <b><?= LEADS_SHOWN ?></b> последних заявок из <b><?= $total ?></b>.
+    Старые лежат на сервере и видны через cPanel → File Manager, папка
+    <b class="mono">site-data/leads/</b>. Если их не нужно хранить —
+    ниже есть удаление по сроку.
+  </div>
+<?php endif; ?>
 
 <div class="panel">
   <?php admin_list_head(count($leads), 'Заявок'); ?>

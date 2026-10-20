@@ -4,6 +4,7 @@
 return [
     'form.captcha_failed'  => '«Siz robot deyilsiniz» yoxlaması keçmədi. Səhifəni yeniləyin və formu bir daha göndərin.',
     'form.retry'           => 'Göndərmək alınmadı. «Göndər» düyməsini bir daha basın — yazdıqlarınız yerindədir.',
+    'form.busy'            => 'Hazırda formadan həddən artıq müraciət var. Zəng edin və ya e-poçt yazın — eyni sürətlə cavab verəcəyik.',
     'form.captcha_nojs'    => 'Formu göndərmək üçün JavaScript açıq olmalıdır: onsuz «siz robot deyilsiniz» yoxlaması işləmir. Açmaq mümkün deyilsə — zəng edin və ya e-poçt yazın.',
     'form.captcha_broken'  => 'Yoxlama müvəqqəti işləmir. Bizə zəng edin və ya e-poçt yazın — eyni sürətlə cavab verəcəyik.',
     'form.captcha_stale'   => 'Yoxlamanın vaxtı bitdi — o beş dəqiqə etibarlıdır. Səhifəni yeniləyin və formu yenidən göndərin.',

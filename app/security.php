@@ -112,7 +112,21 @@ function client_ip(): string
 /** Ключ для файла счётчика: адрес в имени файла использовать нельзя. */
 function ip_key(string $salt = ''): string
 {
-    return substr(hash('sha256', client_ip() . '|' . $salt), 0, 32);
+    $ip = client_ip();
+
+    /* IPv6 считаем по сети /64, а не по адресу целиком.
+
+       Абоненту обычно выдают всю сеть /64 — это 2^64 адресов, и сменить
+       адрес внутри неё можно в каждом запросе. Счётчик по полному адресу
+       видел бы каждую попытку пароля как первую с нового адреса и не
+       срабатывал бы никогда. Сеть /64 — это и есть «один абонент». */
+    if (strpos($ip, ':') !== false) {
+        $bin = @inet_pton($ip);
+        if ($bin !== false && strlen($bin) === 16) {
+            $ip = bin2hex(substr($bin, 0, 8)) . '::/64';
+        }
+    }
+    return substr(hash('sha256', $ip . '|' . $salt), 0, 32);
 }
 
 /* --------------------------------------------------------------------
@@ -137,6 +151,7 @@ function attempts_get(string $bucket, string $key): array
     закрываем на $lock секунд. */
 function attempts_fail(string $bucket, string $key, int $limit, int $window, int $lock): int
 {
+    attempts_sweep_due();
     $rel = 'locks/' . $bucket . '-' . $key . '.json';
     $d = Store::read($rel) ?? [];
     $now = time();
@@ -167,6 +182,34 @@ function attempts_clear(string $bucket, string $key): void
     $rel = 'locks/' . $bucket . '-' . $key . '.json';
     @unlink(Store::path($rel));
     Store::forget($rel);
+}
+
+/** Подмести старые счётчики, если с прошлого раза прошло десять минут.
+
+    Раньше подметание запускалось случайно, раз в 20–50 запросов. Под
+    перебором файлы появлялись быстрее, чем исчезали: один запрос с нового
+    адреса — один файл, и папка съедала место и лимит файлов на хостинге.
+
+    Теперь подметание по времени, а не по случаю: не чаще раза в десять
+    минут, но обязательно. Значит в папке никогда не бывает больше, чем
+    набежало за десять минут плюс срок жизни счётчиков. */
+function attempts_sweep_due(): void
+{
+    $mark = Store::dir() . '/locks/swept.txt';
+    $last = is_file($mark) ? (int)@filemtime($mark) : 0;
+    if (time() - $last < 600) return;
+
+    if (!is_dir(dirname($mark))) @mkdir(dirname($mark), 0770, true);
+    @touch($mark);
+
+    /* Сроки подобраны по самому долгому окну каждого счётчика:
+       что старше, то уже ничего не ограничивает. */
+    attempts_sweep('login',    3600);
+    attempts_sweep('setup',    3600);
+    attempts_sweep('account',  3600);
+    attempts_sweep('mailtest', 3600);
+    attempts_sweep('cap',      1800);
+    attempts_sweep('lead',      600);
 }
 
 /** Удалить просроченные счётчики. Вызывается изредка, чтобы папка

@@ -294,10 +294,18 @@ function admin_new_leads(): int
 {
     $dir = Store::dir() . '/leads';
     if (!is_dir($dir)) return 0;
+    /* Меню рисуется на каждой странице панели, поэтому смотрим только
+       последние 300 заявок: новые по определению свежие. Без потолка
+       тысячи заявок замедлили бы каждую страницу панели. */
+    $files = glob($dir . '/*.json') ?: [];
+    rsort($files, SORT_STRING);
     $n = 0;
-    foreach (glob($dir . '/*.json') ?: [] as $p) {
-        $raw = (string)@file_get_contents($p, false, null, 0, 4096);
-        if (strpos($raw, '"new": true') !== false) $n++;
+    foreach (array_slice($files, 0, 300) as $p) {
+        /* Метка «new» стоит в конце файла, после полей заявки. Длинная
+           заявка не помещалась в первые 4 КБ, и метку не находили —
+           самые подробные обращения оставались незамеченными. */
+        $d = json_decode((string)@file_get_contents($p), true);
+        if (is_array($d) && !empty($d['new'])) $n++;
     }
     return $n;
 }

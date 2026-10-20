@@ -4,6 +4,7 @@
 return [
     'form.captcha_failed'  => 'The “are you human” check did not pass. Reload the page and send the form again.',
     'form.retry'           => 'Sending failed. Press “Send” again — what you typed is still there.',
+    'form.busy'            => 'The form is getting too many requests right now. Call us or send an email — we answer just as fast.',
     'form.captcha_nojs'    => 'Sending the form needs JavaScript enabled: without it the “are you human” check does not work. If you cannot enable it, call us or send an email.',
     'form.captcha_broken'  => 'The check is temporarily unavailable. Call us or send an email — we answer just as fast.',
     'form.captcha_stale'   => 'The check has expired — it is valid for five minutes. Reload the page and send the form again.',

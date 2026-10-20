@@ -177,7 +177,11 @@ admin_head('media');
 
   <form method="post" action="<?= $e(admin_url('media')) ?>" enctype="multipart/form-data">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?= $MAX ?>">
+    <?php /* Подсказка PHP о размере — по большему из пределов. PHP проверяет
+             её ДО того, как мы узнаём, видео это или картинка, и с пределом
+             для картинок отбивал бы любое видео крупнее 6 МБ. Точная
+             проверка по типу файла идёт дальше, на сервере. */ ?>
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?= max($MAX, $MAX_VIDEO) ?>">
     <div class="row">
       <div>
         <label for="file">Изображение или видео</label>
