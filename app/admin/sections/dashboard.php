@@ -9,6 +9,21 @@
 
 $e = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
+require_once __DIR__ . '/../../mailer.php';
+
+/* Состояние сайта: что настроено, что сломано, что ждёт внимания.
+   Сводку открывают каждый день — проблема должна быть видна здесь,
+   а не в разделе, куда никто не заходит. */
+$mailCfg   = mail_cfg();
+$mailSmtp  = mail_smtp_ready($mailCfg);
+$leadsDir  = Store::dir() . '/leads';
+$leadsNew  = admin_new_leads();
+$leadsBad  = 0;
+foreach (glob($leadsDir . '/*.json') ?: [] as $lf) {
+    $raw = (string)@file_get_contents($lf, false, null, 0, 4096);
+    if (strpos($raw, '"sent": false') !== false) $leadsBad++;
+}
+
 $works    = works_canon();
 $cat      = catalog_canon();
 $packs    = packs_canon();
@@ -69,6 +84,30 @@ foreach (['works' => 'Портфолио', 'catalog' => 'Услуги', 'packs' 
 admin_head('dashboard');
 ?>
 
+<?php if ($leadsBad): ?>
+  <div class="flash err">
+    Письмо не ушло по <b><?= $leadsBad ?></b> <?= $leadsBad === 1 ? 'заявке' : 'заявкам' ?> —
+    сами заявки сохранены, но в почте их нет.
+    <a href="<?= $e(admin_url('mail')) ?>" style="color:#fff;text-decoration:underline">Проверить почту</a> ·
+    <a href="<?= $e(admin_url('leads')) ?>" style="color:#fff;text-decoration:underline">Посмотреть заявки</a>
+  </div>
+<?php elseif (!$mailSmtp): ?>
+  <div class="note">
+    Письма уходят встроенной функцией <b>mail()</b>. На виртуальном хостинге это
+    чаще всего значит, что заявка либо не доходит, либо попадает в спам: письмо
+    отправлено с адреса сервера и не проходит проверку SPF.
+    <a href="<?= $e(admin_url('mail')) ?>"><b>Настроить отправку через почтовый ящик</b></a> —
+    и обязательно отправить проверочное письмо.
+  </div>
+<?php endif; ?>
+
+<?php if ($leadsNew): ?>
+  <div class="flash">
+    Новых заявок: <b><?= $leadsNew ?></b>.
+    <a href="<?= $e(admin_url('leads')) ?>" style="color:#fff;text-decoration:underline">Открыть</a>
+  </div>
+<?php endif; ?>
+
 <?php if (ts_is_test()): ?>
   <div class="flash warn">
     В разделе «Безопасность» стоят <b>тестовые ключи Cloudflare</b> — капча ничего
@@ -79,7 +118,10 @@ admin_head('dashboard');
 
 <div class="cards">
   <div class="card"><div class="n"><?= $projects ?></div><div class="l">проектов в портфолио</div></div>
-  <div class="card"><div class="n"><?= count($works) ?></div><div class="l">отраслей</div></div>
+  <div class="card">
+    <div class="n"><?= $leadsNew ?></div>
+    <div class="l"><a class="l" href="<?= $e(admin_url('leads')) ?>">новых заявок</a></div>
+  </div>
   <div class="card"><div class="n"><?= count($arts) ?></div><div class="l">статей в блоге</div></div>
   <div class="card"><div class="n"><?= count($texts) ?></div><div class="l">строк в словаре</div></div>
 </div>
