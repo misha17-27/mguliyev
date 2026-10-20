@@ -8,8 +8,9 @@ $cfg = I18n::$cfg;
 /* Заголовок и описание страница задаёт одним способом: либо ставит $page и
    берёт их из data/seo.php (так у всех обычных страниц), либо прописывает
    $title и $description сама (так у статей — их тексты живут в articles.php).
-   Явно заданное всегда важнее. */
-$seo = require __DIR__ . '/../data/seo.php';
+   Явно заданное всегда важнее.
+   seo_canon() — это data/seo.php плюс правки из панели управления. */
+$seo = seo_canon();
 $m   = $seo[$page ?? ''][I18n::$lang] ?? $seo[$page ?? ''][$cfg['default_lang']] ?? [];
 
 $title       = $title       ?? $m['title']       ?? t('seo.fallback.title');

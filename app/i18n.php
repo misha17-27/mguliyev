@@ -12,6 +12,8 @@
    не оказывается сломанным.
 */
 
+require_once __DIR__ . '/store.php';
+
 final class I18n
 {
     public static string $lang = 'ru';
@@ -22,6 +24,7 @@ final class I18n
     public static function boot(array $cfg): void
     {
         self::$cfg = $cfg;
+        Store::boot((string)($cfg['data_dir'] ?? ''));
         self::$lang = self::detect($cfg);
         self::$base = self::load($cfg['default_lang']);
         self::$dict = self::$lang === $cfg['default_lang'] ? self::$base : self::load(self::$lang);
@@ -38,7 +41,21 @@ final class I18n
     private static function load(string $lang): array
     {
         $p = __DIR__ . '/lang/' . $lang . '.php';
-        return is_file($p) ? (array) require $p : [];
+        $d = is_file($p) ? (array) require $p : [];
+
+        /* Поверх файла — правки из панели. Накладка, а не замена: панель
+           правит отдельные строки, и новые ключи, добавленные разработчиком
+           в словарь, должны появляться на сайте без пересохранения из панели. */
+        $ov = Store::read('texts.json');
+        if ($ov) {
+            foreach ($ov as $k => $byLang) {
+                if (is_array($byLang) && isset($byLang[$lang])
+                    && is_string($byLang[$lang]) && $byLang[$lang] !== '') {
+                    $d[$k] = $byLang[$lang];
+                }
+            }
+        }
+        return $d;
     }
 
     /** Строка по ключу без экранирования. Нужна там, где значение

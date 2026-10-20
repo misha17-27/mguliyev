@@ -1,0 +1,28 @@
+# Эта папка не должна быть доступна из сети.
+#
+# При правильной раскладке она и так недоступна: корень сайта — ~/public_html,
+# а app/ лежит рядом, выше корня, и обратиться к ней по адресу нельзя.
+# Файл нужен на случай, когда раскладка нарушена: кто-то развернул репозиторий
+# целиком в корень сайта, или сменил document root, или скопировал папку
+# внутрь public_html, чтобы «быстро посмотреть». Тогда без этого файла
+# по адресу /app/data/articles.php отдавался бы исходник или шёл бы на
+# исполнение код, рассчитанный на подключение из страницы.
+#
+# Запрет полный: внутри нет ни одного файла, который должен открываться
+# по адресу. Страницы подключают их через include, а он .htaccess не касается.
+
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^ - [F,L]
+</IfModule>
+
+Options -Indexes -ExecCGI
+RemoveHandler .php .php5 .php7 .php8 .phtml .phar
