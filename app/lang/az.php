@@ -2,6 +2,10 @@
 /* Azərbaycanca. Açar yoxdursa, sayt rusca mətni göstərir — bax app/i18n.php. */
 
 return [
+    'form.captcha_failed'  => '«Siz robot deyilsiniz» yoxlaması keçmədi. Səhifəni yeniləyin və formu bir daha göndərin.',
+    'form.captcha_nojs'    => 'Formu göndərmək üçün JavaScript açıq olmalıdır: onsuz «siz robot deyilsiniz» yoxlaması işləmir. Açmaq mümkün deyilsə — zəng edin və ya e-poçt yazın.',
+    'form.captcha_broken'  => 'Yoxlama müvəqqəti işləmir. Bizə zəng edin və ya e-poçt yazın — eyni sürətlə cavab verəcəyik.',
+    'form.captcha_stale'   => 'Yoxlamanın vaxtı bitdi — o beş dəqiqə etibarlıdır. Səhifəni yeniləyin və formu yenidən göndərin.',
     'nav.home'               => 'MGuliyev Studio — ana səhifəyə',
     'nav.services'           => 'Xidmətlər',
     'nav.portfolio'          => 'Portfolio',

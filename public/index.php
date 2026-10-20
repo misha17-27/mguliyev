@@ -306,6 +306,13 @@ include __DIR__ . '/../app/partials/head.php';
         <select id="fb" name="budget"><option><?= t('home.t146') ?></option><option>₼500 – ₼1 500</option><option>₼1 500 – ₼3 000</option><option><?= t('home.t147') ?></option></select>
       </div>
       <div class="full"><label for="fm"><?= t('home.t148') ?></label><textarea id="fm" name="message" placeholder="<?= t('home.t161') ?>"></textarea></div>
+      <?php /* Проверка «человек ли это». Виджет сам кладёт в форму скрытое
+               поле с токеном, поэтому и отправка через fetch, и обычная
+               отправка формы работают без правок в скрипте. */ ?>
+      <?php if (ts_on()): ?>
+        <div class="full"><?= ts_widget('lead') ?></div>
+        <noscript><p class="status" style="color:var(--duo-b)"><?= e(t('form.captcha_nojs')) ?></p></noscript>
+      <?php endif; ?>
       <div class="full" style="display:flex;align-items:center;gap:22px;flex-wrap:wrap"><button class="btn" type="submit"><?= t('home.t149') ?></button><p class="status" id="lead-status" role="status"><?= isset($_GET['sent']) ? htmlspecialchars(t('form.ok')) : (isset($_GET['error']) ? htmlspecialchars(t('form.error')) : '') ?></p></div>
     </form>
   </div>

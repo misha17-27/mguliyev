@@ -16,6 +16,7 @@
 require_once __DIR__ . '/../i18n.php';
 require_once __DIR__ . '/../content.php';
 require_once __DIR__ . '/../security.php';
+require_once __DIR__ . '/../turnstile.php';
 
 const ADMIN_SESSION_IDLE  = 7200;    // 2 часа без действий
 const ADMIN_SESSION_MAX   = 43200;   // 12 часов всего
@@ -72,13 +73,11 @@ function admin_boot(): void
     header('X-Content-Type-Options: nosniff');
     header('Referrer-Policy: no-referrer');
     header('Cache-Control: no-store, no-cache, must-revalidate, private');
-    /* Своя политика: в панели есть встроенные стили элементов и свой скрипт,
-       но ни одного обработчика в разметке и ни одного внешнего скрипта. */
-    header("Content-Security-Policy: default-src 'self'; script-src 'self'; "
-         . "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-         . "font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; "
-         . "connect-src 'self'; form-action 'self'; frame-ancestors 'none'; "
-         . "base-uri 'self'; object-src 'none'");
+    /* Политика та же, что у сайта, из одной константы: её значение всё
+       равно перебивает public/.htaccess, а разойдясь, две политики дали бы
+       пересечение — то есть сломали бы то, что разрешено одной из них.
+       Здесь заголовок нужен страховкой на случай, когда .htaccess не читается. */
+    header('Content-Security-Policy: ' . CSP_POLICY);
 }
 
 /* ------------------------------------------------------- учётная запись */

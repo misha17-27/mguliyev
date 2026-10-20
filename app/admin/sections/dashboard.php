@@ -69,6 +69,14 @@ foreach (['works' => 'Портфолио', 'catalog' => 'Услуги', 'packs' 
 admin_head('dashboard');
 ?>
 
+<?php if (ts_is_test()): ?>
+  <div class="flash warn">
+    В разделе «Безопасность» стоят <b>тестовые ключи Cloudflare</b> — капча ничего
+    не проверяет по-настоящему.
+    <a href="<?= $e(admin_url('security')) ?>" style="color:#fff;text-decoration:underline">Заменить на свои</a>
+  </div>
+<?php endif; ?>
+
 <div class="cards">
   <div class="card"><div class="n"><?= $projects ?></div><div class="l">проектов в портфолио</div></div>
   <div class="card"><div class="n"><?= count($works) ?></div><div class="l">отраслей</div></div>

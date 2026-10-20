@@ -5,6 +5,33 @@
 
 require_once __DIR__ . '/store.php';
 
+/* Политика безопасности содержимого — одна на сайт и на панель.
+
+   ПОЧЕМУ ЗДЕСЬ, А НЕ ТОЛЬКО В .htaccess. Заголовок из PHP до браузера
+   не доезжает: Header always set из public/.htaccess перебивает его.
+   Под FPM — заменой в той же таблице заголовков, под mod_php — тем, что
+   браузер получает две политики и применяет их пересечение. Поэтому
+   ослабить политику из PHP невозможно в принципе, и правка обязана быть
+   в .htaccess. Значение здесь нужно для двух других вещей: оно идёт
+   страховкой, когда .htaccess не читается вовсе (сменили корень сайта,
+   поставили nginx), и его показывает раздел «Безопасность», сверяя с тем,
+   что реально пришло в заголовке.
+
+   ЗНАЧЕНИЕ ОБЯЗАНО СОВПАДАТЬ СО СТРОКОЙ В public/.htaccess ДОСЛОВНО.
+   Если они разойдутся, браузер под mod_php получит две разные политики
+   и применит самую строгую из них — то есть сломается то, что по одной
+   из строк разрешено. Раздел «Безопасность» в панели это показывает.
+
+   Хосты challenges.cloudflare.com нужны капче Turnstile: script-src для
+   api.js, frame-src для окна проверки (без неё цепочка frame-src →
+   child-src → default-src 'self' запрещает чужой iframe), connect-src
+   страховкой. 'unsafe-inline' для скриптов НЕ нужен: виджет ставится
+   неявной отрисовкой, без единого встроенного скрипта. Хосты стоят
+   в политике всегда, даже когда капча выключена: .htaccess не умеет
+   читать настройки из хранилища, а разрешённый, но не используемый
+   источник сам по себе ничего не открывает. */
+const CSP_POLICY = "default-src 'self'; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://challenges.cloudflare.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
+
 /** Адрес посетителя.
 
     Сайт стоит за Cloudflare, поэтому REMOTE_ADDR — это всегда адрес

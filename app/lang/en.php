@@ -2,6 +2,10 @@
 /* English. A missing key falls back to the Russian string — see app/i18n.php. */
 
 return [
+    'form.captcha_failed'  => 'The “are you human” check did not pass. Reload the page and send the form again.',
+    'form.captcha_nojs'    => 'Sending the form needs JavaScript enabled: without it the “are you human” check does not work. If you cannot enable it, call us or send an email.',
+    'form.captcha_broken'  => 'The check is temporarily unavailable. Call us or send an email — we answer just as fast.',
+    'form.captcha_stale'   => 'The check has expired — it is valid for five minutes. Reload the page and send the form again.',
     'nav.home'               => 'MGuliyev Studio — home page',
     'nav.services'           => 'Services',
     'nav.portfolio'          => 'Portfolio',

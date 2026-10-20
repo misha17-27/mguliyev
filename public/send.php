@@ -12,9 +12,12 @@
      — ограничение частоты по адресу: не чаще одной заявки в минуту.
    Это не останавливает целевой спам, но отсекает основную массу переборщиков. */
 
+/* require_once, а не require: bootstrap.php уже подтягивает turnstile.php,
+   а тот — security.php. Повторное подключение того же файла объявило бы
+   функции второй раз и уронило бы приём заявки целиком. */
 require __DIR__ . '/../app/bootstrap.php';
-require __DIR__ . '/../app/security.php';
-require __DIR__ . '/../app/mailer.php';
+require_once __DIR__ . '/../app/security.php';
+require_once __DIR__ . '/../app/mailer.php';
 
 $cfg  = I18n::$cfg;
 $ajax = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'fetch';
@@ -73,6 +76,18 @@ if ($prev && $now - (int)($prev['last'] ?? 0) < 60) {
     finish(false, 'form.often', $back, $ajax);
 }
 
+/* Капча. Стоит после ограничения частоты: перебор по кругу упрётся
+   в него раньше, и мы не будем дёргать Cloudflare на каждого бота.
+
+   Недоступность Cloudflare не отбивает заявку: цена отказа — потерянный
+   заказчик, который не вернётся, а ловушка, метка времени и ограничение
+   частоты остаются на месте. Решённый отказ (success:false) пропускается
+   никогда — это уже не сбой, а ответ. */
+$cap = ts_verify($_POST['cf-turnstile-response'] ?? null, 'lead');
+if (!$cap['ok']) {
+    finish(false, ts_message($cap), $back, $ajax);
+}
+
 $name  = trim((string)($_POST['name'] ?? ''));
 $phone = trim((string)($_POST['phone'] ?? ''));
 if ($name === '' || $phone === '') {
@@ -99,6 +114,12 @@ foreach ($fields as $k => $v) {
 /* Адрес в письме — настоящий адрес посетителя, а не адрес Cloudflare:
    иначе во всех заявках стоял бы один и тот же, и толку от него нет. */
 $body .= "\n" . date('d.m.Y H:i') . ' · ' . client_ip();
+
+/* Пропуск по недоступности Cloudflare должен быть виден в письме,
+   иначе он тихий: владелец не отличит проверенную заявку от непроверенной. */
+if (!empty($cap['skipped'])) {
+    $body .= "\n\n[Капча не проверена: " . $cap['note'] . ']';
+}
 
 /* Отправляем через app/mailer.php: он сам решит, идти через SMTP
    (если ящик настроен в панели) или через встроенную mail(). Заголовки

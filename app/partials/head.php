@@ -72,6 +72,11 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@600;700;800&amp;family=Cormorant+Garamond:ital,wght@1,500;1,600&amp;family=Golos+Text:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="/assets/css/style.css">
+<?php /* Скрипт капчи. Подключается, только когда ключи заданы в панели:
+         лишний внешний скрипт на каждой странице никому не нужен.
+         Самохостить его нельзя — документация запрещает проксировать
+         и кешировать этот файл. */ ?>
+<?= ts_script() ?>
 </head>
 <body>
 <div class="tl" id="tl">

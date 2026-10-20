@@ -10,3 +10,4 @@ $cfg = require __DIR__ . '/config.php';
 require_once __DIR__ . '/i18n.php';
 I18n::boot($cfg);
 require_once __DIR__ . '/content.php';
+require_once __DIR__ . '/turnstile.php';

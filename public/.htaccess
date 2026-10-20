@@ -42,7 +42,17 @@ Options -Indexes
   # ноль инлайновых скриптов и ноль обработчиков в атрибутах, проверено.
   # Для стилей послабление нужно: в разметке 110 атрибутов style.
   # frame-ancestors 'none' заменяет X-Frame-Options.
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+  #
+  # ЗНАЧЕНИЕ ОБЯЗАНО СОВПАДАТЬ С КОНСТАНТОЙ CSP_POLICY В app/security.php.
+  # Правится здесь: заголовок из PHP до браузера не доезжает, его перебивает
+  # эта строка. Если строки разойдутся, под mod_php браузер получит две разные
+  # политики и применит самую строгую — сломается то, что разрешено одной из них.
+  # Раздел «Безопасность» в панели сверяет их и показывает расхождение.
+  #
+  # challenges.cloudflare.com нужен капче Turnstile: script-src для api.js,
+  # frame-src для окна проверки, connect-src страховкой. 'unsafe-inline' для
+  # скриптов по-прежнему НЕ нужен — виджет рисуется без встроенного скрипта.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://challenges.cloudflare.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
 </IfModule>
 # ---------------------------------------------------------------------------
 

@@ -20,6 +20,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
     if ($left > 0) {
         $err = 'Слишком много попыток. Вход закрыт на ' . ceil($left / 60) . ' мин.';
+    } elseif (!($cap = ts_verify($_POST['cf-turnstile-response'] ?? null, 'admin-login'))['ok']) {
+        /* Неудача капчи НЕ считается попыткой входа: иначе чужая страница,
+           отправляющая форму без токена, выжигала бы владельцу все пять
+           попыток и закрывала ему вход на пятнадцать минут. Пароль при
+           этом не проверялся вовсе, так что и подбора здесь нет. */
+        usleep(300000);
+        $err = $cap['bucket'] === 'config'
+            ? 'Капча настроена неверно (' . implode(', ', $cap['codes']) . '). '
+              . 'Исправьте ключи в разделе «Безопасность» или уберите их, чтобы войти.'
+            : 'Проверка «человек ли это» не пройдена. Обновите страницу и попробуйте ещё раз.';
     } else {
         $email = clean_text($_POST['email'] ?? '');
         $pw    = (string)($_POST['password'] ?? '');
@@ -64,6 +74,7 @@ $flash = admin_take_flash();
 <meta name="robots" content="noindex,nofollow">
 <title>Вход — панель MGuliyev Studio</title>
 <?php admin_assets(); ?>
+<?= ts_script() ?>
 </head>
 <body>
 <div class="login">
@@ -85,6 +96,10 @@ $flash = admin_take_flash();
 
     <label for="password">Пароль</label>
     <input type="password" id="password" name="password" required autocomplete="current-password">
+
+    <?php if (ts_on()): ?>
+      <div style="margin-top:16px"><?= ts_widget('admin-login', 'light') ?></div>
+    <?php endif; ?>
 
     <button class="btn" style="width:100%;margin-top:18px" type="submit"
             <?= $left > 0 ? 'disabled' : '' ?>>Войти</button>
