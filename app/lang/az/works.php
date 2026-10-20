@@ -38,7 +38,7 @@ return [
         'name' => 'Avto və moto',
         'desc' => 'Distribyutorlar, ehtiyat hissələri, icarə, servis, ABŞ-dan avtomobil gətirilməsi və elan platforması.',
         'projects' => [
-            'lynkco.az'            => 'Lynk &amp; Co-nun rəsmi distribyutoru',
+            'lynkco.az'            => 'Lynk & Co-nun rəsmi distribyutoru',
             'grandmoto.az'         => 'Motosiklet distribyutoru',
             'bestsol.az'           => 'Ağır texnika üçün ehtiyat hissələri',
             'avtobutik.az'         => 'ABŞ-dan avtomobil seçimi və çatdırılması',

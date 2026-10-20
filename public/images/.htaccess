@@ -1,0 +1,20 @@
+# Сюда административная панель будет писать загруженные файлы.
+# Ни один файл отсюда не должен исполняться.
+#
+# Почему недостаточно проверки расширения при загрузке: при handler-варианте
+# подключения PHP (cPanel EA4 без FPM) Apache выдаёт обработчик по ЛЮБОМУ
+# расширению в имени, а не только по последнему. Файл upload.php.jpg
+# проходит проверку «последнее расширение .jpg» и выполняется как код.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule \.(php|php[0-9]|phtml|phps|phar|pl|py|cgi|sh|shtml|htm|html)(\.|$) - [F,L]
+</IfModule>
+
+RemoveHandler .php .php5 .php7 .php8 .phtml .phar
+RemoveType .php .php5 .php7 .php8 .phtml .phar
+Options -Indexes
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+</IfModule>

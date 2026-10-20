@@ -82,3 +82,20 @@ function articles(): array
     unset($a);
     return $all;
 }
+
+/** Пакеты на странице цен. Накладка адресуется по ключу пакета. */
+function packs(): array
+{
+    $base = require __DIR__ . '/data/packs.php';
+    $ov   = overlay('packs');
+    if (!$ov) return $base;
+    foreach ($base as &$p) {
+        $o = $ov[$p[0]] ?? null;
+        if (!$o) continue;
+        foreach ([1, 3, 4, 5, 6] as $i) {
+            if (!empty($o[$i])) $p[$i] = $o[$i];
+        }
+    }
+    unset($p);
+    return $base;
+}

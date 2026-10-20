@@ -24,21 +24,16 @@ foreach ($groups as $i => $g) {
     foreach ($g[3] as $w) { $items[] = [$i, $g, $w]; }
 }
 
-/* Склонение после числа: 1 проект, 2 проекта, 5 проектов. */
-function pl($n, $one, $few, $many) {
-    $n = abs($n) % 100; $d = $n % 10;
-    if ($n > 10 && $n < 20) return $many;
-    if ($d > 1 && $d < 5)   return $few;
-    if ($d === 1)           return $one;
-    return $many;
-}
+/* Склонение живёт в app/i18n.php: правила у трёх языков разные,
+   и формы хранятся в словаре, а не в шаблоне. */
+$unit = static fn(int $n): string => plural($n, 'units.project');
 ?>
 <main id="top">
 <section class="sec">
   <div class="wrap">
     <div class="shead">
       <h1 class="disp h2"><?= t('portfolio.t1') ?></h1>
-      <p class="lb">с 2017 года · <?= $total ?> <?= pl($total, 'проект', 'проекта', 'проектов') ?></p>
+      <p class="lb"><?= tn('portfolio.since', ['n' => $total, 'u' => $unit($total)]) ?></p>
     </div>
     <p class="sub"><?= t('portfolio.t2') ?></p>
 
@@ -49,7 +44,11 @@ function pl($n, $one, $few, $many) {
       <?php endforeach; ?>
     </nav>
 
-    <p class="wf-live lb" role="status" aria-live="polite">Показаны все <?= $shown ?> <?= pl($shown, 'проект', 'проекта', 'проектов') ?></p>
+    <p class="wf-live lb" role="status" aria-live="polite"
+       data-lang="<?= e(lang()) ?>"
+       data-units="<?= e(I18n::raw('units.project')) ?>"
+       data-all="<?= e(I18n::raw('portfolio.all')) ?>"
+       data-group="<?= e(I18n::raw('portfolio.group')) ?>"><?= tn('portfolio.all', ['n' => $shown, 'u' => $unit($shown)]) ?></p>
 
     <div class="works" id="wgrid">
       <?php foreach ($items as $it):
@@ -74,23 +73,15 @@ function pl($n, $one, $few, $many) {
     <div style="margin-top:clamp(48px,6vw,84px);display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(20px,3vw,40px)">
       <div>
         <h2 class="disp" style="font-size:clamp(1.3rem,2.4vw,1.7rem);margin-bottom:12px"><?= t('portfolio.t6') ?></h2>
-        <p class="sub" style="font-size:.9rem"><?= $dead ?> <?= pl($dead, 'домен', 'домена', 'доменов') ?>
-          сейчас не <?= pl($dead, 'открывается', 'открываются', 'открываются') ?> или <?= pl($dead, 'отдаёт', 'отдают', 'отдают') ?>
-          пустую страницу. Мы не убираем такие проекты из портфолио — работа была сделана. Но и ссылку не ставим:
-          вместо неё пометка «архив». Заработает сайт — вернём ссылку.</p>
+        <p class="sub" style="font-size:.9rem"><?= tp($dead, 'portfolio.arch_p') ?></p>
       </div>
       <div>
         <h2 class="disp" style="font-size:clamp(1.3rem,2.4vw,1.7rem);margin-bottom:12px"><?= t('portfolio.t7') ?></h2>
-        <p class="sub" style="font-size:.9rem">Все <?= $shown ?>, которые мы готовы показать поимённо:
-          с доменом и строкой о сфере деятельности. Список пополняется —
-          проект попадает сюда, когда проверены адрес и чем занимается заказчик,
-          а не когда его просто вспомнили.</p>
+        <p class="sub" style="font-size:.9rem"><?= tn('portfolio.list_p', ['n' => $shown]) ?></p>
       </div>
       <div>
         <h2 class="disp" style="font-size:clamp(1.3rem,2.4vw,1.7rem);margin-bottom:12px"><?= t('portfolio.t8') ?></h2>
-        <p class="sub" style="font-size:.9rem">У <?= $covers ?> <?= pl($covers, 'проекта', 'проектов', 'проектов') ?>
-          стоят снимки самих сайтов, у остальных <?= $shown - $covers ?> — отраслевая подложка.
-          Скриншоты добавляются по одному, без правки вёрстки.</p>
+        <p class="sub" style="font-size:.9rem"><?= tp($covers, 'portfolio.covers_p', ['m' => $shown - $covers]) ?></p>
       </div>
     </div>
 

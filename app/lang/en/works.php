@@ -38,7 +38,7 @@ return [
         'name' => 'Cars and motorcycles',
         'desc' => 'Distributors, spare parts, rental, service, importing from the USA and a classifieds platform.',
         'projects' => [
-            'lynkco.az'            => 'Official Lynk &amp; Co distributor',
+            'lynkco.az'            => 'Official Lynk & Co distributor',
             'grandmoto.az'         => 'Motorcycle distributor',
             'bestsol.az'           => 'Spare parts for heavy machinery',
             'avtobutik.az'         => 'Sourcing and delivery of cars from the USA',

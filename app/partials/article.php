@@ -10,7 +10,7 @@ if (!$art) { http_response_code(404); echo '<main class="sec"><div class="wrap">
   <div class="wrap">
     <p class="lb"><a href="<?= u('/blog/') ?>"><?= htmlspecialchars(t('nav.blog')) ?></a> · <?= htmlspecialchars($art['rubric']) ?></p>
     <h1 class="disp h2" style="margin-block:18px 16px"><?= htmlspecialchars($art['title']) ?></h1>
-    <p class="art-meta"><?= htmlspecialchars($art['date']) ?> · <?= (int)$art['read'] ?> мин чтения</p>
+    <p class="art-meta"><?= e($art['date']) ?> · <?= tn('blog.read_full', ['n' => (int)$art['read']]) ?></p>
     <p class="art-lead"><?= nl2br(htmlspecialchars($art['lead'])) ?></p>
 
     <?php foreach ($art['body'] as $s): ?>

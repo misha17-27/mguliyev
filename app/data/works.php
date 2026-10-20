@@ -34,7 +34,7 @@ return [
         ['dutyfreegroup.az',  'Duty free',                           null, true],
     ]],
     ['Авто и мото', 'Дистрибьюторы, запчасти, аренда, сервис, пригон из США и площадка объявлений.', 'avto', [
-        ['lynkco.az',       'Официальный дистрибьютор Lynk &amp; Co', '/images/home/work-2.jpg'],
+        ['lynkco.az',       'Официальный дистрибьютор Lynk & Co', '/images/home/work-2.jpg'],
         ['grandmoto.az',    'Дистрибьютор мотоциклов',                '/images/home/work-4.jpg'],
         ['bestsol.az',      'Запчасти для тяжёлой техники',           '/images/works/bestsol.az.jpg'],
         ['avtobutik.az',    'Подбор и доставка автомобилей из США',   '/images/works/avtobutik.az.jpg'],

@@ -447,12 +447,26 @@ if (leadForm) {
   var none = document.querySelector(".wf-none");
   if (!chips.length || !cards.length) return;
 
-  function pl(n, one, few, many) {
+  /* Строки и правило склонения приходят с сервера в data-атрибутах:
+     язык знает только PHP, а дублировать здесь три словаря незачем. */
+  var L = live ? live.getAttribute("data-lang") : "ru";
+  var UNITS = (live && live.getAttribute("data-units") || "").split("|");
+  var T_ALL = live && live.getAttribute("data-all") || "";
+  var T_GRP = live && live.getAttribute("data-group") || "";
+
+  function unit(n) {
+    if (!UNITS.length) return "";
+    if (L === "az") return UNITS[0];
+    if (L !== "ru") return UNITS[n === 1 ? 0 : Math.min(1, UNITS.length - 1)];
     var h = Math.abs(n) % 100, d = h % 10;
-    if (h > 10 && h < 20) return many;
-    if (d > 1 && d < 5) return few;
-    if (d === 1) return one;
-    return many;
+    var i = (h > 10 && h < 20) ? 2 : (d > 1 && d < 5) ? 1 : (d === 1) ? 0 : 2;
+    return UNITS[Math.min(i, UNITS.length - 1)];
+  }
+
+  function fill(tpl, vars) {
+    return Object.keys(vars).reduce(function (s, k) {
+      return s.split("{" + k + "}").join(vars[k]);
+    }, tpl);
   }
 
   function apply(f, label) {
@@ -469,8 +483,9 @@ if (leadForm) {
     });
     if (none) none.hidden = n > 0;
     if (live) {
-      var word = n + " " + pl(n, "проект", "проекта", "проектов");
-      live.textContent = f === "all" ? "Показаны все " + word : label + " — " + word;
+      live.textContent = f === "all"
+        ? fill(T_ALL, { n: n, u: unit(n) })
+        : fill(T_GRP, { g: label, n: n, u: unit(n) });
     }
     /* Перезапуск анимации: класс снимаем и ставим заново в следующем кадре,
        иначе браузер считает её той же самой и ничего не проигрывает. */

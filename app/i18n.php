@@ -41,10 +41,17 @@ final class I18n
         return is_file($p) ? (array) require $p : [];
     }
 
+    /** Строка по ключу без экранирования. Нужна там, где значение
+        не попадает в разметку напрямую — например формам склонения. */
+    public static function raw(string $key): string
+    {
+        return self::$dict[$key] ?? self::$base[$key] ?? $key;
+    }
+
     /** Строка по ключу. Нет перевода — отдаём русский, нет и его — сам ключ. */
     public static function t(string $key): string
     {
-        return self::$dict[$key] ?? self::$base[$key] ?? $key;
+        return self::raw($key);
     }
 
     /** Есть ли у ключа перевод именно на текущем языке. */
@@ -78,3 +85,43 @@ final class I18n
 function t(string $key): string { return I18n::t($key); }
 function u(string $path, ?string $lang = null): string { return I18n::u($path, $lang); }
 function lang(): string { return I18n::$lang; }
+
+/** Экранирование вывода. Данные страниц и переводы правятся из панели,
+    поэтому любой их вывод должен быть безопасным по умолчанию. */
+function e(?string $s): string
+{
+    return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+/** Форма слова после числа. Правила разные: в русском три формы,
+    в азербайджанском после числительного форма не меняется вовсе,
+    в английском две. Формы хранятся в словаре через вертикальную черту. */
+function plural(int $n, string $key): string
+{
+    $forms = explode('|', I18n::raw($key));
+    $lang  = I18n::$lang;
+    if ($lang === 'az') return $forms[0];
+    if ($lang !== 'ru') return $forms[$n === 1 ? 0 : (count($forms) > 1 ? 1 : 0)];
+    $h = abs($n) % 100; $d = $h % 10;
+    $i = ($h > 10 && $h < 20) ? 2 : (($d > 1 && $d < 5) ? 1 : (($d === 1) ? 0 : 2));
+    return $forms[min($i, count($forms) - 1)];
+}
+
+/** Строка словаря с подстановками: tn('portfolio.all', ['n' => 55, 'u' => '...']). */
+function tn(string $key, array $vars): string
+{
+    $s = t($key);
+    foreach ($vars as $k => $v) $s = str_replace('{' . $k . '}', e((string)$v), $s);
+    return $s;
+}
+
+/** Строка со склонением и подстановкой: форма выбирается по числу,
+    затем в неё подставляются значения. Так правило согласования
+    живёт в словаре языка, а шаблон страницы о нём не знает. */
+function tp(int $n, string $key, array $vars = []): string
+{
+    $s = plural($n, $key);
+    $vars += ['n' => $n];
+    foreach ($vars as $k => $v) $s = str_replace('{' . $k . '}', e((string)$v), $s);
+    return $s;
+}

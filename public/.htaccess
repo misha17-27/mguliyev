@@ -13,9 +13,10 @@ AddType video/webm .webm
 # отдавал «Index of /». Любая папка без index.php показывала бы содержимое.
 Options -Indexes
 
-# Точечные файлы: .htaccess, .git, .gitignore, .env и прочее. Правило
-# на файлы, а не на папки, поэтому .well-known/acme-challenge/<токен>
-# для выпуска сертификатов остаётся доступным — имя токена с точки не начинается.
+# Второй слой защиты точечных файлов: срабатывает, даже если mod_rewrite
+# выключат. Сам по себе НЕ закрывает точечные папки — FilesMatch смотрит
+# только на последний сегмент имени, и для /.git/config это «config».
+# Настоящая защита — правило по пути ниже, сразу после RewriteEngine On.
 <IfModule mod_authz_core.c>
   <FilesMatch "^\.">
     Require all denied
@@ -47,6 +48,18 @@ Options -Indexes
 </IfModule>
 
 RewriteEngine On
+
+# Любой сегмент пути, начинающийся с точки. FilesMatch для этого не годится:
+# он смотрит только на последний сегмент, и /.git/config для него — файл
+# «config», без точки. Стоит до всех остальных правил, иначе /az/.git/config
+# уйдёт в языковое и проверку обойдёт. Исключение одно — .well-known,
+# через него выпускаются сертификаты.
+RewriteRule (^|/)\.(?!well-known/) - [F,L]
+
+# Служебные файлы: PHP на cPanel кладёт error_log рядом со скриптом,
+# а деплой его никогда не уберёт — он только копирует.
+RewriteRule (^|/)(error_log|php_errorlog)$ - [F,L]
+RewriteRule \.(ya?ml|sql|bak|dist|inc|log|sh|swp|orig|rej)$ - [F,L]
 
 # Всё, что ниже, написано правилами mod_rewrite, в том числе редиректы.
 # Смешивать RedirectMatch с RewriteRule в одном файле нельзя: они
