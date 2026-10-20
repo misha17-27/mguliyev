@@ -12,7 +12,13 @@
 
    ЯЗЫК — ТОТ, ЧТО ВЫБРАН ВВЕРХУ. Тексты правятся на одном языке за раз,
    под переводом виден русский оригинал. Сохранение меняет только этот
-   язык, остальные остаются как были.
+   язык, остальные остаются как были. Язык приходит вместе с формой, а не
+   берётся из сессии: сессия общая для всех вкладок, и переключение языка
+   в одной вкладке иначе сохранило бы форму другой поверх русского текста.
+
+   НОВОЕ ЗАВОДИТСЯ НА РУССКОМ. Отрасль или проект без русского названия —
+   это пустой заголовок на русском сайте и запасной текст ни для кого.
+   Поэтому формы добавления всегда русские, а переводы — после.
 
    ЧТО ЗАЩИЩЕНО:
    — метка версии: вкладка, открытая утром, не откатит дневные правки;
@@ -61,7 +67,33 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $what = post_one($_POST['do'] ?? '');
     $gs   = post_slug($_POST['g'] ?? '');
     $ps   = post_slug($_POST['p'] ?? '');
-    $back = admin_url('portfolio', array_filter(['g' => $gs, 'p' => $ps]));
+    $back = admin_url('portfolio', array_filter(['g' => $gs, 'p' => $what === 'add-project' ? 'new' : $ps]));
+
+    /* Язык правки — из самой формы. См. комментарий в начале файла. */
+    $L = post_one($_POST['lang'] ?? '');
+    if (in_array($what, ['add-group', 'save-group', 'add-project', 'save-project'], true)) {
+        if (!in_array($L, langs(), true)) {
+            admin_flash('НЕ СОХРАНЕНО: форма пришла без языка правки — похоже, страница '
+                . 'устарела. Обновите её и внесите изменения заново.', 'err');
+            admin_go($back);
+        }
+        if (($what === 'add-group' || $what === 'add-project') && $L !== $DEF) {
+            admin_flash('НЕ СОХРАНЕНО: новые отрасли и проекты заводятся на русском — '
+                . 'он основа для переводов. Переводы добавляются после.', 'err');
+            admin_go($back);
+        }
+    }
+
+    /* Ошибка не должна стирать то, что человек успел вписать: форма
+       откроется снова с его текстом. Хранится до следующей отрисовки. */
+    $keep = static function () use ($what, $gs, $ps, $L): void {
+        $f = [];
+        foreach (['name', 'slug', 'desc', 'intro', 'domain', 'move_to', 'image', 'archived',
+                  'text', 'seo_title', 'seo_desc'] as $k) {
+            if (isset($_POST[$k]) && is_string($_POST[$k])) $f[$k] = post_one($_POST[$k], true);
+        }
+        $_SESSION['pf_draft'] = ['do' => $what, 'g' => $gs, 'p' => $ps, 'lang' => $L, 'f' => $f];
+    };
 
     if (admin_stale('works.json')) {
         admin_flash('Портфолио правили из другого места, пока эта страница была открыта. '
@@ -78,13 +110,17 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         /* Хранилище пустое — начинаем с данных репозитория. */
         if (!$groups) $groups = works_canon();
 
+        /* Дата правки — для карты сайта: поисковику сообщаем, что страница
+           менялась, только когда менялась именно она. */
+        $today = date('Y-m-d');
+
         /* ------------------------------------------------ новая отрасль */
         if ($what === 'add-group') {
             $name = post_one($_POST['name'] ?? '');
             $k    = post_slug($_POST['slug'] ?? '');
             if ($name === '' || $k === '') { $err = 'Нужны и название, и адрес латиницей.'; return null; }
             foreach ($groups as $g) if ($g['slug'] === $k) { $err = 'Отрасль с адресом «' . $k . '» уже есть.'; return null; }
-            $groups[] = ['slug' => $k, 'name' => [$L => $name], 'desc' => [], 'projects' => []];
+            $groups[] = ['slug' => $k, 'name' => [$L => $name], 'desc' => [], 'projects' => [], 'updated' => $today];
             $msg = 'Отрасль добавлена. Её страница: /portfolio/' . $k . '/';
             $go  = admin_url('portfolio', ['g' => $k]);
             return $groups;
@@ -115,6 +151,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 'title'       => post_one($_POST['seo_title'] ?? ''),
                 'description' => post_one($_POST['seo_desc'] ?? '', true),
             ];
+            $groups[$gi]['updated'] = $today;
             $msg = 'Отрасль сохранена (' . strtoupper($L) . ').';
             return $groups;
         }
@@ -126,6 +163,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $list = &$groups[$gi]['projects'];
             if (isset($list[$to])) [$list[$pi], $list[$to]] = [$list[$to], $list[$pi]];
             unset($list);
+            $groups[$gi]['updated'] = $today;
             $msg = 'Порядок изменён.';
             $go  = admin_url('portfolio', ['g' => $gs]);
             return $groups;
@@ -136,6 +174,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if ($pi === null) { $err = 'Проект не найден.'; return null; }
             $dom = $groups[$gi]['projects'][$pi]['domain'];
             array_splice($groups[$gi]['projects'], $pi, 1);
+            $groups[$gi]['updated'] = $today;
             $msg = 'Проект ' . $dom . ' удалён. Его страница больше не открывается.';
             $go  = admin_url('portfolio', ['g' => $gs]);
             return $groups;
@@ -163,10 +202,36 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 return null;
             }
 
+            /* Неверный путь к снимку — отказ, а не тихая замена на «снимка
+               нет»: иначе опечатка в пути молча стирала бы стоящий снимок. */
+            $imgIn = post_one($_POST['image'] ?? '');
+            $img   = post_image($imgIn);
+            if ($imgIn !== '' && $img === null) {
+                $err = 'Путь к снимку не подходит: нужен путь внутри сайта вида /images/works/' . $dom
+                     . '.jpg (jpg, png, webp, gif, svg или avif). Снимок оставлен прежним.';
+                return null;
+            }
+            $root = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/\\');
+            if ($img !== null && $root !== '' && !is_file($root . $img)) {
+                $err = 'Файла ' . $img . ' на сайте нет. Загрузите его в разделе «Изображения» '
+                     . 'и скопируйте путь оттуда. Снимок оставлен прежним.';
+                return null;
+            }
+
             $w = $what === 'save-project' ? $groups[$gi]['projects'][$pi] : ['desc' => []];
+
+            /* Сменили домен — сменился адрес страницы. Прежний остаётся
+               у проекта и ведёт на новый, см. portfolio_find(). */
+            $was = $what === 'save-project' ? project_slug($w['domain']) : null;
+            $al  = (array)($w['aliases'] ?? []);
+            if ($was !== null && $was !== $slug) $al[] = $was;
+            $al  = array_values(array_unique(array_diff($al, [$slug])));
+            if ($al) $w['aliases'] = $al; else unset($w['aliases']);
+
             $w['domain']   = $dom;
-            $w['image']    = post_image($_POST['image'] ?? '');
+            $w['image']    = $img;
             $w['archived'] = !empty($_POST['archived']);
+            $w['updated']  = $today;
             $w['desc'][$L] = $desc;
             $w['text'][$L] = post_one($_POST['text'] ?? '', true);
             $w['seo'][$L]  = [
@@ -190,10 +255,15 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             } else {
                 $groups[$ti]['projects'][] = $w;
             }
+            $groups[$gi]['updated'] = $today;
+            $groups[$ti]['updated'] = $today;
 
             $newG = $groups[$ti]['slug'];
             $msg  = ($what === 'add-project' ? 'Проект добавлен. ' : 'Проект сохранён (' . strtoupper($L) . '). ')
                   . 'Страница: /portfolio/' . $newG . '/' . $slug . '/';
+            if ($was !== null && ($was !== $slug || $ti !== $gi)) {
+                $msg .= ' Адрес страницы сменился — прежний ведёт на новый сам.';
+            }
             $go   = admin_url('portfolio', ['g' => $newG, 'p' => $slug]);
             return $groups;
         }
@@ -203,6 +273,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     });
 
     if ($err !== null) {
+        $keep();
         admin_flash('НЕ СОХРАНЕНО: ' . $err, 'err');
         admin_go($back);
     }
@@ -223,6 +294,20 @@ $ps  = $ps === 'new' ? 'new' : post_slug($ps);
 [$gi, $pi] = $gs !== '' ? pf_locate($groups, $gs, $ps !== '' && $ps !== 'new' ? $ps : null) : [null, null];
 $grp = $gi !== null ? $groups[$gi] : null;
 $prj = ($grp !== null && $pi !== null) ? $grp['projects'][$pi] : null;
+
+/* Новый проект заполняется на русском, какой бы язык ни был выбран. */
+$topL = $L;
+if ($grp !== null && $prj === null && $ps === 'new') $L = $DEF;
+
+/* Текст, вписанный перед ошибкой сохранения: вернуть его в форму. */
+$draft = $_SESSION['pf_draft'] ?? null;
+unset($_SESSION['pf_draft']);
+$df = static function (string $do, ?string $g, ?string $p) use ($draft, &$L): ?array {
+    if (!is_array($draft) || ($draft['do'] ?? '') !== $do || ($draft['lang'] ?? '') !== $L) return null;
+    if ($g !== null && ($draft['g'] ?? '') !== $g) return null;
+    if ($p !== null && ($draft['p'] ?? '') !== $p) return null;
+    return (array)($draft['f'] ?? []);
+};
 
 $isT = $L !== $DEF;
 $ph  = $isT ? ' placeholder="пусто — на сайте будет русский текст"' : '';
@@ -273,7 +358,7 @@ if ($grp === null):
         ?>
         <tr>
           <td class="num"><?= admin_num($i) ?></td>
-          <td class="pic"><?= admin_thumb('/images/groups/' . $g['slug'] . '.svg', '') ?></td>
+          <td class="pic"><?= admin_thumb(group_cover($g['slug']), '') ?></td>
           <td><b class="clamp"><?= $e(tr($g['name'], $DEF)) ?></b>
               <span class="muted clamp"><?= $e(tr($g['desc'], $DEF)) ?></span></td>
           <td><span class="path" title="<?= $e('/portfolio/' . $g['slug'] . '/') ?>">/portfolio/<?= $e($g['slug']) ?>/</span></td>
@@ -290,20 +375,26 @@ if ($grp === null):
     </div>
   </div>
 
+  <?php $d = $df('add-group', null, null) ?? []; ?>
   <div class="panel" id="dobavit">
     <h3>Добавить отрасль</h3>
+    <?php if ($L !== $DEF): ?>
+      <p class="muted">Новая отрасль заводится на русском — он основа для переводов.
+         Перевести название можно сразу после, на странице отрасли.</p>
+    <?php endif; ?>
     <form method="post" action="<?= $e(admin_url('portfolio')) ?>">
       <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
       <?= admin_ver_field('works.json') ?>
       <input type="hidden" name="do" value="add-group">
+      <input type="hidden" name="lang" value="<?= $e($DEF) ?>">
       <div class="row">
         <div>
-          <label>Название <span class="pill grey"><?= $e(strtoupper($L)) ?></span></label>
-          <input type="text" name="name" placeholder="Образование и курсы">
+          <label>Название <span class="pill grey"><?= $e(strtoupper($DEF)) ?></span></label>
+          <input type="text" name="name" value="<?= $e($d['name'] ?? '') ?>" placeholder="Образование и курсы">
         </div>
         <div>
           <label>Адрес <span class="hint">латиницей: станет /portfolio/адрес/</span></label>
-          <input type="text" name="slug" class="mono" placeholder="obrazovanie">
+          <input type="text" name="slug" class="mono" value="<?= $e($d['slug'] ?? '') ?>" placeholder="obrazovanie">
         </div>
       </div>
       <div class="btnrow"><button class="btn" type="submit">Добавить</button></div>
@@ -316,7 +407,19 @@ elseif ($prj !== null || $ps === 'new'):
     $isNew = $prj === null;
     $w = $prj ?? ['domain' => '', 'desc' => [], 'image' => null, 'archived' => false, 'text' => [], 'seo' => []];
     $slug = $isNew ? '' : project_slug($w['domain']);
-    $auto = $isNew ? ['title' => '', 'description' => ''] : portfolio_seo($grp, $w);
+    $auto = $isNew ? ['title' => '', 'description' => ''] : portfolio_seo($grp, $w, $L);
+    $moveTo = $grp['slug'];
+
+    $d = $isNew ? $df('add-project', $grp['slug'], null) : $df('save-project', $grp['slug'], $slug);
+    if ($d !== null) {
+        $w['domain']   = $d['domain'] ?? $w['domain'];
+        $w['image']    = ($d['image'] ?? '') !== '' ? $d['image'] : null;
+        $w['archived'] = !empty($d['archived']);
+        $w['desc'][$L] = $d['desc'] ?? '';
+        $w['text'][$L] = $d['text'] ?? '';
+        $w['seo'][$L]  = ['title' => $d['seo_title'] ?? '', 'description' => $d['seo_desc'] ?? ''];
+        $moveTo = $d['move_to'] ?? $moveTo;
+    }
 ?>
   <p style="margin:0 0 16px;display:flex;gap:8px;flex-wrap:wrap">
     <a class="btn ghost sm" href="<?= $e(admin_url('portfolio')) ?>">← Все отрасли</a>
@@ -329,6 +432,7 @@ elseif ($prj !== null || $ps === 'new'):
     <input type="hidden" name="do" value="<?= $isNew ? 'add-project' : 'save-project' ?>">
     <input type="hidden" name="g" value="<?= $e($grp['slug']) ?>">
     <input type="hidden" name="p" value="<?= $e($slug) ?>">
+    <input type="hidden" name="lang" value="<?= $e($L) ?>">
 
     <div class="panel">
       <h3><?= $isNew ? 'Новый проект' : $e(tr($w['desc'], $DEF)) ?>
@@ -337,18 +441,21 @@ elseif ($prj !== null || $ps === 'new'):
         <p class="muted" style="margin-top:6px">Страница:
           <span class="path"><?= $e(portfolio_url($grp['slug'], $slug, $L)) ?></span>
           · язык переключается вверху, справа</p>
+      <?php elseif ($topL !== $DEF): ?>
+        <p class="muted" style="margin-top:6px">Новый проект заполняется на русском — он основа
+          для переводов. Перевод на <?= $e(strtoupper($topL)) ?> — сразу после сохранения.</p>
       <?php endif; ?>
 
       <div class="row">
         <div>
-          <label>Домен <span class="hint">из него собирается адрес страницы</span></label>
+          <label>Домен <span class="hint">из него собирается адрес страницы; при смене прежний адрес ведёт на новый</span></label>
           <input type="text" name="domain" class="mono" value="<?= $e($w['domain']) ?>" placeholder="example.az" required>
         </div>
         <div>
           <label>Отрасль</label>
           <select name="move_to">
             <?php foreach ($groups as $g): ?>
-              <option value="<?= $e($g['slug']) ?>"<?= $g['slug'] === $grp['slug'] ? ' selected' : '' ?>><?= $e(tr($g['name'], $DEF)) ?></option>
+              <option value="<?= $e($g['slug']) ?>"<?= $g['slug'] === $moveTo ? ' selected' : '' ?>><?= $e(tr($g['name'], $DEF)) ?></option>
             <?php endforeach; ?>
           </select>
         </div>
@@ -423,7 +530,15 @@ elseif ($prj !== null || $ps === 'new'):
 /* --------------------------------------------------------- 3. ОТРАСЛЬ */
 else:
     $n = count($grp['projects']);
-    $auto = portfolio_seo($grp);
+    $auto = portfolio_seo($grp, null, $L);
+
+    $d = $df('save-group', $grp['slug'], null);
+    if ($d !== null) {
+        $grp['name'][$L]  = $d['name'] ?? '';
+        $grp['desc'][$L]  = $d['desc'] ?? '';
+        $grp['intro'][$L] = $d['intro'] ?? '';
+        $grp['seo'][$L]   = ['title' => $d['seo_title'] ?? '', 'description' => $d['seo_desc'] ?? ''];
+    }
 ?>
   <p style="margin:0 0 16px"><a class="btn ghost sm" href="<?= $e(admin_url('portfolio')) ?>">← Все отрасли</a></p>
 
@@ -432,6 +547,7 @@ else:
     <?= admin_ver_field('works.json') ?>
     <input type="hidden" name="do" value="save-group">
     <input type="hidden" name="g" value="<?= $e($grp['slug']) ?>">
+    <input type="hidden" name="lang" value="<?= $e($L) ?>">
 
     <div class="panel">
       <h3><?= $e(tr($grp['name'], $DEF)) ?>

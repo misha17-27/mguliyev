@@ -20,6 +20,7 @@ final class I18n
     public static array  $cfg  = [];
     private static array $dict = [];
     private static array $base = [];
+    private static array $other = [];
 
     public static function boot(array $cfg): void
     {
@@ -79,6 +80,23 @@ final class I18n
     public static function raw(string $key): string
     {
         return self::$dict[$key] ?? self::$base[$key] ?? $key;
+    }
+
+    /** Строка словаря на ЗАДАННОМ языке, без экранирования.
+
+        Нужна панели: сама она работает на русском, а подсказку «что уйдёт
+        в выдачу» должна показывать на том языке, который сейчас правят.
+        Иначе редактор AZ видел бы русский заголовок и думал, что так
+        страница и выйдет в поиске. */
+    public static function rawIn(string $key, string $lang): string
+    {
+        if ($lang === self::$lang) return self::raw($key);
+        if (!isset(self::$other[$lang])) {
+            self::$other[$lang] = in_array($lang, self::$cfg['languages'] ?? [], true)
+                ? ($lang === (self::$cfg['default_lang'] ?? 'ru') ? self::$base : self::load($lang))
+                : [];
+        }
+        return self::$other[$lang][$key] ?? self::$base[$key] ?? $key;
     }
 
     /** Строка по ключу, ГОТОВАЯ К ВЫВОДУ В РАЗМЕТКУ.
@@ -148,10 +166,10 @@ function e(?string $s): string
 /** Форма слова после числа. Правила разные: в русском три формы,
     в азербайджанском после числительного форма не меняется вовсе,
     в английском две. Формы хранятся в словаре через вертикальную черту. */
-function plural(int $n, string $key): string
+function plural(int $n, string $key, ?string $lang = null): string
 {
-    $forms = explode('|', I18n::raw($key));
-    $lang  = I18n::$lang;
+    $lang  = $lang ?? I18n::$lang;
+    $forms = explode('|', I18n::rawIn($key, $lang));
     if ($lang === 'az') return $forms[0];
     if ($lang !== 'ru') return $forms[$n === 1 ? 0 : (count($forms) > 1 ? 1 : 0)];
     $h = abs($n) % 100; $d = $h % 10;

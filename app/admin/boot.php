@@ -269,9 +269,19 @@ function post_image($v): ?string
 {
     $v = post_one($v);
     if ($v === '') return null;
+
+    /* Полный адрес своего же сайта — частая вставка из браузера:
+       https://mguliyev.com/images/… превращаем в /images/…. Чужой
+       адрес не принимаем: картинка должна лежать на этом сайте. */
+    $host = (string)parse_url((string)(I18n::$cfg['site_url'] ?? ''), PHP_URL_HOST);
+    if ($host !== '' && preg_match('~^https?://(?:www\.)?' . preg_quote(preg_replace('~^www\.~', '', $host), '~') . '(/.*)$~i', $v, $m)) {
+        $v = $m[1];
+    }
+
     $v = '/' . ltrim(str_replace("\\", '/', $v), '/');
     if (strpos($v, '..') !== false) return null;
-    return preg_match('~^/images/[A-Za-z0-9._/-]+\.(jpe?g|png|webp|svg|avif)$~i', $v) ? $v : null;
+    /* gif — потому что раздел «Изображения» его принимает и выдаёт путь. */
+    return preg_match('~^/images/[A-Za-z0-9._/-]+\.(jpe?g|png|webp|gif|svg|avif)$~i', $v) ? $v : null;
 }
 
 /** Ключ записи: латиница, цифры, дефис. Используется в адресах и в JSON,
@@ -290,7 +300,11 @@ function post_domain($v): string
     $v = mb_strtolower(post_one($v));
     $v = preg_replace('~^https?://~', '', $v) ?? $v;
     $v = rtrim(explode('/', $v)[0], '.');
-    return preg_match('~^[a-z0-9.-]{3,80}$~', $v) ? $v : '';
+    /* Настоящий домен: метки через точку и зона из букв (или xn-- для
+       кириллических). Без точки проходили опечатки вроде «itasaz», и на
+       сайте появлялась ссылка https://itasaz — а домен «new» вдобавок
+       совпадал со служебным адресом формы нового проекта. */
+    return preg_match('~^(?=.{3,80}$)(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2,}|xn--[a-z0-9-]+)$~', $v) ? $v : '';
 }
 
 /** Отметка о правке: что и когда правили, и кто.

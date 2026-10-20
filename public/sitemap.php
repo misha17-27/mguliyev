@@ -24,12 +24,13 @@ $langs = langs();
 /** Абсолютный адрес страницы на языке. */
 $abs = static fn(string $path, string $l): string => $base . u($path, $l);
 
-/** Дата изменения файла хранилища — честная отметка «когда менялось». */
-$mtime = static function (string $rel): ?string {
-    $p = Store::dir() . '/' . $rel;
-    return is_file($p) ? date('Y-m-d', (int)filemtime($p)) : null;
-};
-$worksMod = $mtime('works.json');
+/* Дата изменения — только та, что относится к самой странице. Дата
+   файла хранилища не годится: перестановка двух проектов стрелкой
+   «обновляла» бы разом все полторы сотни адресов, и поисковик, увидев,
+   что даты не совпадают с правками, перестал бы им верить вовсе.
+   Панель ставит дату отрасли и проекту, когда правят именно их;
+   где её нет — дату не пишем совсем. */
+$day = static fn($v): ?string => is_string($v) && preg_match('~^\d{4}-\d{2}-\d{2}$~', $v) ? $v : null;
 
 /* [путь, языки, приоритет, дата изменения] */
 $urls = [];
@@ -40,9 +41,10 @@ foreach (catalog_canon() as $slug => $c) {
     $urls[] = ['/uslugi/' . $slug . '/', $langs, '0.8', null];
 }
 foreach (works_canon() as $g) {
-    $urls[] = ['/portfolio/' . $g['slug'] . '/', $langs, '0.7', $worksMod];
+    $urls[] = ['/portfolio/' . $g['slug'] . '/', $langs, '0.7', $day($g['updated'] ?? null)];
     foreach ($g['projects'] as $w) {
-        $urls[] = ['/portfolio/' . $g['slug'] . '/' . project_slug($w['domain']) . '/', $langs, '0.5', $worksMod];
+        $urls[] = ['/portfolio/' . $g['slug'] . '/' . project_slug($w['domain']) . '/', $langs, '0.5',
+                   $day($w['updated'] ?? null)];
     }
 }
 foreach (articles_canon() as $a) {

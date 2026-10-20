@@ -68,11 +68,11 @@ return [
     ],
     'portfolio' => [
         'ru' => ['title' => 'Примеры сайтов студии из Баку: портфолио с 2017 года',
-                 'description' => '55 проекта с фильтром по шести отраслям: логистика, торговля, авто, стройка, промышленность и услуги. У 34 карточек — снимки самих сайтов.'],
+                 'description' => '55 проектов в шести отраслях, у каждой своя страница: логистика, торговля, авто, стройка, промышленность и услуги. У 34 — снимки самих сайтов.'],
         'az' => ['title' => 'Portfolio: 2017-ci ildən Bakıda hazırladığımız saytlar',
-                 'description' => '55 layihə, altı sahə üzrə filtrlə: logistika, ticarət, avto, tikinti, sənaye və xidmətlər. 34 kartda saytların öz ekran görüntüləri var.'],
+                 'description' => '55 layihə altı sahədə, hər sahənin öz səhifəsi var: logistika, ticarət, avto, tikinti, sənaye və xidmətlər. 34 layihədə saytın öz şəkli var.'],
         'en' => ['title' => 'Website Examples from a Baku Studio: Portfolio since 2017',
-                 'description' => '55 projects, filterable by six sectors: logistics, retail, automotive, construction, manufacturing and services. 34 cards show screenshots of the sites.'],
+                 'description' => '55 projects in six sectors, each with its own page: logistics, retail, automotive, construction, manufacturing and services. 34 show the live sites.'],
     ],
     'about' => [
         'ru' => ['title' => 'Кто делает ваш сайт: веб-студия в Баку с 2017 года',

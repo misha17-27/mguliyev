@@ -151,6 +151,13 @@ RewriteRule ^portfolio/[a-z0-9-]+/$                     portfolio/index.php    [
 # сотен адресов на трёх языках, и вручную она отставала бы от сайта.
 RewriteRule ^sitemap\.xml$  sitemap.php  [L]
 
+# Раздел на другом языке без завершающей косой: /en/portfolio -> /en/portfolio/.
+# Без этого правила адрес переписывался в каталог portfolio без косой, и
+# сервер сам добавлял её — но к уже переписанному адресу, без /en/:
+# человек попадал на русскую страницу. Только адреса из латиницы, цифр и
+# дефисов, то есть адреса страниц: у файлов в имени есть точка.
+RewriteRule ^(az|en)/([a-z0-9-]+(?:/[a-z0-9-]+)*)$  /$1/$2/  [R=301,L]
+
 RewriteRule ^(az|en)$        /$1/            [R=301,L]
 RewriteRule ^(az|en)/?$      index.php       [E=SITE_LANG:$1,L]
 RewriteRule ^(az|en)/(.*/)?$ $2index.php     [E=SITE_LANG:$1,L]

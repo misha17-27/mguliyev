@@ -56,6 +56,12 @@ function tr($m, ?string $lang = null): string
     foreach ([$lang, deflang()] as $l) {
         if (isset($m[$l]) && is_string($m[$l]) && $m[$l] !== '') return $m[$l];
     }
+    /* Нет ни перевода, ни оригинала — берём любой заполненный язык.
+       Так бывает с записью, которую начали не с русского: пустой
+       заголовок страницы хуже заголовка на соседнем языке. */
+    foreach ($m as $v) {
+        if (is_string($v) && $v !== '') return $v;
+    }
     return '';
 }
 
@@ -429,6 +435,10 @@ function wa_href(): string
 
    Адрес разбирается из пути запроса, а не из параметров: так его нельзя
    подменить хвостом ?c=… и получить одну страницу под чужим адресом.
+
+   Сменили домен — адрес страницы сменился. Прежний остаётся у проекта
+   в 'aliases' и ведёт на новый постоянным редиректом: на старый адрес
+   уже могли сослаться, и поисковик успел его запомнить.
    ==================================================================== */
 
 /** Адрес проекта из домена: itas.az -> itas-az. */
@@ -464,58 +474,105 @@ function portfolio_route(): array
     на новый адрес, а не в никуда. Где он оказался — в 'cat'. */
 function portfolio_find(?string $cat, ?string $proj = null): array
 {
-    $out = ['group' => null, 'project' => null, 'cat' => null];
+    $out = ['group' => null, 'project' => null, 'cat' => null, 'slug' => null];
+    $old = null;
     foreach (works_canon() as $g) {
         if ($proj !== null) {
             foreach ($g['projects'] as $w) {
-                if (project_slug($w['domain']) === $proj) {
-                    return ['group' => $g, 'project' => $w, 'cat' => $g['slug']];
+                $s = project_slug($w['domain']);
+                if ($s === $proj) {
+                    return ['group' => $g, 'project' => $w, 'cat' => $g['slug'], 'slug' => $s];
+                }
+                /* Прежний адрес проекта. Ищем до конца: если тот же адрес
+                   уже стал НЫНЕШНИМ у другого проекта, отдаём его. */
+                if ($old === null && in_array($proj, (array)($w['aliases'] ?? []), true)) {
+                    $old = ['group' => $g, 'project' => $w, 'cat' => $g['slug'], 'slug' => $s];
                 }
             }
         } elseif ($g['slug'] === $cat) {
-            return ['group' => $g, 'project' => null, 'cat' => $g['slug']];
+            return ['group' => $g, 'project' => null, 'cat' => $g['slug'], 'slug' => null];
         }
     }
-    return $out;
+    return $old ?? $out;
 }
 
 /** Обложка проекта: снимок сайта или отраслевая подложка. */
 function project_cover(array $w, array $g): string
 {
-    return !empty($w['image']) ? $w['image'] : '/images/groups/' . $g['slug'] . '.svg';
+    return !empty($w['image']) ? $w['image'] : group_cover($g['slug']);
+}
+
+/** Подложка отрасли. Своя есть только у отраслей из репозитория:
+    отрасли, добавленной из панели, рисовать её некому, и ссылка вела бы
+    на несуществующий файл — пустая серая карточка у каждого проекта.
+    Тогда берём одну из общих подложек, всегда одну и ту же для отрасли. */
+function group_cover(string $slug): string
+{
+    static $seen = [];
+    $rel  = '/images/groups/' . $slug . '.svg';
+    $root = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/\\');
+    if ($root === '') return $rel;
+    $seen[$slug] = $seen[$slug] ?? is_file($root . $rel);
+    return $seen[$slug] ? $rel : '/images/placeholder/work-' . (crc32($slug) % 6 + 1) . '.svg';
 }
 
 /** Заголовок и описание для поиска — свои, если заданы в панели,
     иначе собранные из того, что о странице известно. Собираются из
     строк словаря, поэтому на каждом языке — своя фраза, а не перевод
     русской подстановкой. */
-function portfolio_seo(array $g, ?array $w = null): array
+function portfolio_seo(array $g, ?array $w = null, ?string $lang = null): array
 {
-    $lang = I18n::$lang;
+    $lang = $lang ?? I18n::$lang;
     $own  = $w !== null ? ($w['seo'][$lang] ?? []) : ($g['seo'][$lang] ?? []);
-    $name = tr($w !== null ? $w['desc'] : $g['name']);
+    $name = tr($w !== null ? $w['desc'] : $g['name'], $lang);
 
     if ($w !== null) {
-        $vars = ['name' => $name, 'domain' => $w['domain'], 'cat' => tr($g['name'])];
-        $tt = 'portfolio.p_title';
-        $td = 'portfolio.p_desc';
+        $vars = ['name' => $name, 'domain' => $w['domain'], 'cat' => tr($g['name'], $lang)];
+        $tt = ['portfolio.p_title', 'portfolio.p_title2'];
+        $td = ['portfolio.p_desc', 'portfolio.p_desc2'];
     } else {
         $n = count($g['projects']);
-        $vars = ['name' => $name, 'desc' => tr($g['desc']), 'n' => $n,
-                 'u' => plural($n, 'units.project')];
-        $tt = 'portfolio.c_title';
-        $td = 'portfolio.c_desc';
+        $vars = ['name' => $name, 'desc' => tr($g['desc'], $lang), 'n' => $n,
+                 'u' => plural($n, 'units.project', $lang)];
+        $tt = ['portfolio.c_title', 'portfolio.c_title2'];
+        $td = ['portfolio.c_desc', 'portfolio.c_desc2'];
     }
 
-    $fill = static function (string $key) use ($vars): string {
-        $s = I18n::raw($key);
-        foreach ($vars as $k => $v) $s = str_replace('{' . $k . '}', (string)$v, $s);
+    return [
+        'title'       => ($own['title'] ?? '') !== '' ? $own['title'] : seo_fit($tt, $vars, 60, $lang),
+        'description' => ($own['description'] ?? '') !== '' ? $own['description'] : seo_fit($td, $vars, 158, $lang),
+        'own'         => ($own['title'] ?? '') !== '' || ($own['description'] ?? '') !== '',
+    ];
+}
+
+/** Строка для выдачи, уложенная в длину: заголовок до 60 знаков,
+    описание до 158. Длиннее поисковик обрезает сам — и режет с конца,
+    то есть первым теряется название студии или домен, по которым
+    страницу в выдаче и узнают.
+
+    Шаблоны — от полного к короткому, берётся первый, что поместился.
+    Не поместился и самый короткий — укорачиваем название по границе
+    слова: оно в начале строки, и обрезанное многоточием читается. */
+function seo_fit(array $keys, array $vars, int $max, string $lang): string
+{
+    $fill = static function (string $key, array $v) use ($lang): string {
+        $s = I18n::rawIn($key, $lang);
+        foreach ($v as $k => $x) $s = str_replace('{' . $k . '}', (string)$x, $s);
         return trim(preg_replace('~\s+~u', ' ', $s) ?? $s);
     };
 
-    return [
-        'title'       => ($own['title'] ?? '') !== '' ? $own['title'] : $fill($tt),
-        'description' => ($own['description'] ?? '') !== '' ? $own['description'] : $fill($td),
-        'own'         => ($own['title'] ?? '') !== '' || ($own['description'] ?? '') !== '',
-    ];
+    $s = '';
+    foreach ($keys as $k) {
+        $s = $fill($k, $vars);
+        if (mb_strlen($s) <= $max) return $s;
+    }
+
+    $name = (string)($vars['name'] ?? '');
+    $keep = mb_strlen($name) - (mb_strlen($s) - $max) - 1;   // место под многоточие
+    if ($keep < 12) return $s;                                // резать нечего — пусть режет поисковик
+    $part = mb_substr($name, 0, $keep);
+    $sp   = mb_strrpos($part, ' ');
+    if ($sp !== false && $sp > $keep / 2) $part = mb_substr($part, 0, $sp);
+    $vars['name'] = rtrim($part, " ,.;:—-") . '…';
+    return $fill((string)end($keys), $vars);
 }
