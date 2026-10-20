@@ -83,24 +83,27 @@ if ($art === null):
   </div>
 
   <div class="panel">
-    <h3>Статьи — <?= count($arts) ?></h3>
+    <?php admin_list_head(count($arts), 'Статей'); ?>
     <div class="tablewrap">
       <table>
-        <tr><th>Статья</th><th>Рубрика</th><th>Дата</th><th>Чтение</th><th>Переводы</th><th class="right"></th></tr>
-        <?php foreach ($arts as $a): ?>
         <tr>
+          <th class="num">№</th><th>Статья</th><th class="addr">Адрес</th>
+          <th>Рубрика</th><th>Дата</th><th>Чтение</th><th>Текст есть на</th><th class="right"></th>
+        </tr>
+        <?php foreach ($arts as $i => $a): ?>
+        <tr>
+          <td class="num"><?= admin_num($i) ?></td>
           <td><b><?= $e(tr($a['title'], deflang())) ?></b><br>
-              <span class="muted mono">/blog/<?= $e($a['slug']) ?>/</span></td>
+              <span class="muted"><?= $e(mb_strimwidth(tr($a['desc'], deflang()), 0, 64, '…', 'UTF-8')) ?></span></td>
+          <td class="addr mono">/blog/<?= $e($a['slug']) ?>/</td>
           <td><?= $e(tr($a['rubric'], deflang())) ?></td>
           <td><?= $e($a['date']) ?></td>
-          <td><?= (int)$a['read'] ?> мин</td>
-          <td>
-            <?php foreach (langs() as $l):
-              $has = !empty($a['body'][$l]); ?>
-              <span class="pill <?= $has ? '' : 'grey' ?>"><?= $e(strtoupper($l)) ?></span>
-            <?php endforeach; ?>
-          </td>
-          <td class="right"><a class="btn sm" href="<?= $e(admin_url('blog', ['a' => $a['slug']])) ?>">Править</a></td>
+          <td><?= (int)$a['read'] ?>&nbsp;мин</td>
+          <td class="dotcell"><?= admin_lang_dots($a['body'], 'текст статьи') ?></td>
+          <td class="right"><div class="acts">
+            <a class="btn sm" href="<?= $e(admin_url('blog', ['a' => $a['slug']])) ?>">Изменить</a>
+            <a class="btn ghost sm" href="/blog/<?= $e($a['slug']) ?>/" target="_blank" rel="noopener">Открыть</a>
+          </div></td>
         </tr>
         <?php endforeach; ?>
       </table>

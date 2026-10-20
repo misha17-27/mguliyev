@@ -161,8 +161,9 @@ legend{color:#0e2f47;font-weight:700;font-size:13px;padding:0 6px}
   /* Заголовок не должен распирать строку: на узком экране он сокращается,
      а место отдаётся переключателю языков. */
   .bar h1{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-  /* Выход убран отсюда — он есть в боковом меню, внизу. */
-  .bar-r > form{display:none}
+  /* На узком экране в строке остаётся только главное: язык и выход.
+     «Открыть сайт» убираем — он есть в боковом меню. */
+  .open-site{display:none}
   .langsw{padding:2px}
   .langsw a{padding:6px 10px;font-size:12.5px}
   .row,.row3,.rowk{grid-template-columns:1fr}
@@ -170,3 +171,42 @@ legend{color:#0e2f47;font-weight:700;font-size:13px;padding:0 6px}
 @media(prefers-reduced-motion:reduce){
   .side{transition:none}
 }
+
+/* ---------------------------------------------- списки разделов ----
+   Вид повторяет панель caucasuscl.com: номер, миниатюра, название,
+   адрес, точки заполненности, кнопки действий справа. */
+.listhead{display:flex;justify-content:space-between;align-items:center;gap:14px;
+          flex-wrap:wrap;margin-bottom:16px}
+.listhead .total{color:#5b6f7d;font-size:13.5px}
+.listhead .total b{color:#0f1c26;font-size:15px}
+td.num,th.num{width:46px;color:#5b6f7d;font-weight:800;font-size:13px;
+              font-variant-numeric:tabular-nums}
+td.pic,th.pic{width:96px}
+td.pic img{display:block;width:84px;aspect-ratio:16/10;object-fit:cover;border-radius:7px;
+           background:#eef2f4;border:1px solid #e5ecef}
+td.pic .nopic{display:flex;width:84px;aspect-ratio:16/10;border-radius:7px;background:#f4f7f8;
+              border:1px dashed #cfd9df;align-items:center;justify-content:center;
+              color:#9fb2bf;font-size:11px}
+td.addr,th.addr{color:#0f8a4f}
+td.addr a{color:#0f8a4f}
+td.addr a:hover{text-decoration:underline}
+.acts{display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap}
+.acts form{margin:0}
+.btn.x{background:#dc2626;padding:6px 11px;font-size:14px;line-height:1;border-radius:8px}
+.btn.x:hover{background:#b91c1c}
+
+/* Точка заполненности: зелёная — есть, серая — нет. Подпись в title,
+   потому что цвет сам по себе ничего не сообщает тому, кто его не различает. */
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;background:#cfd9df;
+     vertical-align:-1px}
+.dot.on{background:#0f8a4f}
+.dot.half{background:#f5c518}
+.dotcell{white-space:nowrap}
+.dotcell .dot + .dot{margin-left:5px}
+
+/* Путь к файлу: кликабельный, с подсказкой, что он копируется. */
+.copypath{display:block;width:100%;text-align:left;border:1px solid #e5ecef;background:#fbfcfd;
+          border-radius:7px;padding:7px 9px;font:500 11.5px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;
+          color:#0f1c26;cursor:pointer;word-break:break-all}
+.copypath:hover{border-color:#0f8a4f;background:#fff;color:#0a6b3d}
+.copypath.copied{background:#e8f5ee;border-color:#0f8a4f;color:#0a6b3d;font-weight:700;text-align:center}

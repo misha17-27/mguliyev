@@ -168,8 +168,8 @@ admin_head('media');
        лежат в папке разработчика <b class="mono">/images/works/</b> и правятся
        вместе с кодом — здесь их нет и удалить их отсюда нельзя.</p>
   <?php else: ?>
-    <p class="muted">Чтобы поставить снимок в карточку проекта, скопируйте путь
-       под картинкой и вставьте его в поле «Снимок» в разделе Портфолио.</p>
+    <p class="muted">Кликните по пути под картинкой, чтобы скопировать его,
+       и вставьте в поле «Снимок» в разделе Портфолио.</p>
     <div class="grid-media" style="margin-top:14px">
       <?php foreach ($files as $f):
         $path = $WEB . '/' . $f['name'];
@@ -178,7 +178,8 @@ admin_head('media');
         <div class="media-item">
           <img src="<?= $e($path) ?>" alt="" loading="lazy">
           <div class="m">
-            <b class="mono"><?= $e($path) ?></b><br>
+            <button type="button" class="copypath" data-copy="<?= $e($path) ?>"
+                    title="Кликните, чтобы скопировать путь"><?= $e($path) ?></button>
             <?= $e(round($f['size'] / 1024)) ?> КБ · <?= $e(date('d.m.Y', $f['time'])) ?>
             <?php if ($who): ?><br><span class="pill">стоит у <?= $e($who) ?></span><?php endif; ?>
           </div>

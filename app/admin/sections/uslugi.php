@@ -59,17 +59,27 @@ if (!isset($cat[$cur])):
   </div>
 
   <div class="panel">
-    <h3>Направления — <?= count($cat) ?></h3>
+    <?php admin_list_head(count($cat), 'Направлений'); ?>
     <div class="tablewrap">
       <table>
-        <tr><th>Направление</th><th>Адрес</th><th>Услуг</th><th class="right"></th></tr>
-        <?php foreach ($cat as $slug => $c): ?>
         <tr>
+          <th class="num">№</th><th>Направление</th><th class="addr">Адрес</th>
+          <th>Услуг</th><th>Перевод</th><th>SEO</th><th class="right"></th>
+        </tr>
+        <?php $seo = seo_canon(); $i = 0; foreach ($cat as $slug => $c):
+          $hasSeo = !empty($seo['uslugi/' . $slug][deflang()]['title']); ?>
+        <tr>
+          <td class="num"><?= admin_num($i++) ?></td>
           <td><b><?= $e(tr($c['title'], deflang())) ?></b><br>
-              <span class="muted"><?= $e(mb_strimwidth(tr($c['lead'], deflang()), 0, 80, '…', 'UTF-8')) ?></span></td>
-          <td class="mono">/uslugi/<?= $e($slug) ?>/</td>
+              <span class="muted"><?= $e(mb_strimwidth(tr($c['lead'], deflang()), 0, 72, '…', 'UTF-8')) ?></span></td>
+          <td class="addr mono">/uslugi/<?= $e($slug) ?>/</td>
           <td><b><?= count($c['items']) ?></b></td>
-          <td class="right"><a class="btn sm" href="<?= $e(admin_url('uslugi', ['c' => $slug])) ?>">Править</a></td>
+          <td class="dotcell"><?= admin_lang_dots($c['title'], 'название направления') ?></td>
+          <td><?= admin_dot($hasSeo, 'заголовок для поиска') ?></td>
+          <td class="right"><div class="acts">
+            <a class="btn sm" href="<?= $e(admin_url('uslugi', ['c' => $slug])) ?>">Изменить</a>
+            <a class="btn ghost sm" href="/uslugi/<?= $e($slug) ?>/" target="_blank" rel="noopener">Открыть</a>
+          </div></td>
         </tr>
         <?php endforeach; ?>
       </table>

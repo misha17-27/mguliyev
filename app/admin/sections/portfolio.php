@@ -130,30 +130,38 @@ if ($cur === null):
   </div>
 
   <div class="panel">
-    <h3>Отрасли — <?= count($groups) ?></h3>
+    <?php admin_list_head(count($groups), 'Отраслей', 'Добавить отрасль', '#dobavit'); ?>
     <div class="tablewrap">
       <table>
-        <tr><th>Отрасль</th><th>Ключ</th><th>Проектов</th><th>В архиве</th><th>Со снимком</th><th class="right"></th></tr>
-        <?php foreach ($groups as $g):
+        <tr>
+          <th class="num">№</th><th class="pic">Обложка</th><th>Отрасль</th>
+          <th>Ключ</th><th>Проектов</th><th>Со снимком</th><th>Перевод</th><th class="right"></th>
+        </tr>
+        <?php foreach ($groups as $i => $g):
           $n = count($g['projects']);
           $a = count(array_filter($g['projects'], static fn($w) => !empty($w['archived'])));
           $c = count(array_filter($g['projects'], static fn($w) => !empty($w['image'])));
         ?>
         <tr>
+          <td class="num"><?= admin_num($i) ?></td>
+          <td class="pic"><?= admin_thumb('/images/groups/' . $g['slug'] . '.svg', '') ?></td>
           <td><b><?= $e(tr($g['name'], deflang())) ?></b><br>
-              <span class="muted"><?= $e(mb_strimwidth(tr($g['desc'], deflang()), 0, 70, '…', 'UTF-8')) ?></span></td>
+              <span class="muted"><?= $e(mb_strimwidth(tr($g['desc'], deflang()), 0, 64, '…', 'UTF-8')) ?></span></td>
           <td class="mono"><?= $e($g['slug']) ?></td>
-          <td><b><?= $n ?></b></td>
-          <td><?= $a ?: '—' ?></td>
+          <td><b><?= $n ?></b><?= $a ? ' <span class="pill grey">' . $a . ' в архиве</span>' : '' ?></td>
           <td><?= $c ?>&nbsp;из&nbsp;<?= $n ?></td>
-          <td class="right"><a class="btn sm" href="<?= $e(admin_url('portfolio', ['g' => $g['slug']])) ?>">Править</a></td>
+          <td class="dotcell"><?= admin_lang_dots($g['name'], 'название отрасли') ?></td>
+          <td class="right"><div class="acts">
+            <a class="btn sm" href="<?= $e(admin_url('portfolio', ['g' => $g['slug']])) ?>">Изменить</a>
+            <a class="btn ghost sm" href="/portfolio/#<?= $e($g['slug']) ?>" target="_blank" rel="noopener">Открыть</a>
+          </div></td>
         </tr>
         <?php endforeach; ?>
       </table>
     </div>
   </div>
 
-  <div class="panel">
+  <div class="panel" id="dobavit">
     <h3>Добавить отрасль</h3>
     <form method="post" action="<?= $e(admin_url('portfolio')) ?>">
       <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">

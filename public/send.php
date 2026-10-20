@@ -14,6 +14,7 @@
 
 require __DIR__ . '/../app/bootstrap.php';
 require __DIR__ . '/../app/security.php';
+require __DIR__ . '/../app/mailer.php';
 
 $cfg  = I18n::$cfg;
 $ajax = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'fetch';
@@ -99,15 +100,33 @@ foreach ($fields as $k => $v) {
    иначе во всех заявках стоял бы один и тот же, и толку от него нет. */
 $body .= "\n" . date('d.m.Y H:i') . ' · ' . client_ip();
 
-$to      = $cfg['form']['to'];
-$subject = $cfg['form']['subject'] . ': ' . $fields['Имя'];
-$headers = implode("\r\n", [
-    'From: ' . $cfg['form']['from'],
-    'Content-Type: text/plain; charset=UTF-8',
-    'X-Mailer: mguliyev-site',
-]);
+/* Отправляем через app/mailer.php: он сам решит, идти через SMTP
+   (если ящик настроен в панели) или через встроенную mail(). Заголовки
+   и кодирование кириллицы собраны там же — в одном месте на весь сайт. */
+$mail = mail_cfg();
+$to   = $mail['to'] !== '' ? $mail['to'] : ($cfg['form']['to'] ?? '');
 
-$sent = @mail($to, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, $headers);
+$res = mail_send(
+    $to,
+    ($cfg['form']['subject'] ?? 'Заявка с сайта') . ': ' . $fields['Имя'],
+    $body
+    /* Обратного адреса нет: форма собирает имя и телефон, почту не
+       спрашивает. Появится поле почты — сюда добавится reply_to,
+       и «Ответить» в почтовой программе будет попадать заказчику. */
+);
+$sent = $res['ok'];
+
+if (!$sent) {
+    /* Заявка дороже тишины. Если письмо не ушло, человек всё равно
+       оставил свои данные, и потерять их бесследно нельзя: кладём
+       в хранилище и пишем причину в журнал ошибок сервера. */
+    error_log('Заявка не отправлена: ' . $res['error']);
+    Store::write('leads/' . date('Y-m-d-His') . '-' . bin2hex(random_bytes(3)) . '.json', [
+        'at'     => date('d.m.Y H:i'),
+        'fields' => $fields,
+        'error'  => $res['error'],
+    ]);
+}
 Store::write($lock, ['last' => $now]);
 if (random_int(1, 50) === 1) attempts_sweep('lead', 3600);
 

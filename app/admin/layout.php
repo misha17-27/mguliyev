@@ -9,12 +9,31 @@
    без скрипта. Это не экономия, а осознанный выбор: в панели правится
    текст, и чем меньше в ней исполняемого кода, тем лучше. */
 
+/** Общая шапка всех страниц панели: шрифт, стили, значок вкладки.
+
+    Значок у панели свой, в её цветах: вкладка панели и вкладка сайта
+    не должны выглядеть одинаково — иначе при десятке открытых вкладок
+    правка уходит не туда. Знак тот же — буква M из логотипа. */
+function admin_assets(): void
+{
+    ?>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/assets/admin.css?v=2">
+<link rel="icon" href="/admin/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/admin/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/admin/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0e2f47">
+    <?php
+}
+
 /** Разделы: ключ => [заголовок, значок, группа]. Порядок определяет меню. */
 function admin_sections(): array
 {
     return [
         'dashboard' => ['Сводка',              '▦', 'Сайт'],
         'settings'  => ['Контакты и цены',     '☎', 'Сайт'],
+        'mail'      => ['Почта',               '✉', 'Сайт'],
         'portfolio' => ['Портфолио',           '▣', 'Содержимое'],
         'uslugi'    => ['Услуги',              '☰', 'Содержимое'],
         'packs'     => ['Пакеты и цены',       '₼', 'Содержимое'],
@@ -55,9 +74,7 @@ function admin_head(string $section): void
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title><?= $e($title) ?> — панель MGuliyev Studio</title>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/admin/assets/admin.css?v=1">
+<?php admin_assets(); ?>
 </head>
 <body>
 <input type="checkbox" id="navtoggle" aria-hidden="true" tabindex="-1">
@@ -114,9 +131,14 @@ function admin_head(string $section): void
           <?php endforeach; ?>
         </div>
         <?php if ($user): ?>
+          <?php /* Открываем сайт на том языке, который сейчас правим:
+                   иначе редактор меняет азербайджанский текст, жмёт
+                   «Открыть сайт» и видит русскую страницу. */ ?>
+          <a class="btn ghost open-site" href="<?= $e(u('/', $lang)) ?>"
+             target="_blank" rel="noopener">Открыть сайт</a>
           <form method="post" action="<?= $e(admin_url('logout')) ?>" style="margin:0">
             <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
-            <button class="btn ghost sm" type="submit">Выйти</button>
+            <button class="btn" type="submit">Выйти</button>
           </form>
         <?php endif; ?>
       </div>
@@ -198,4 +220,60 @@ function admin_field_langs(string $name, array $vals, string $label, array $o = 
         echo '</div>';
     }
     echo '</div>';
+}
+
+/* ------------------------------------------------- части списков ----
+   Три раздела показывают список записей, и выглядеть они должны
+   одинаково. Поэтому номер, точка заполненности и шапка списка
+   собираются здесь, а не повторяются в каждом разделе своими руками. */
+
+/** Номер записи с ведущим нулём: 01, 02 … Глаз цепляется за колонку
+    одинаковой ширины, а не за прыгающие 9 и 10. */
+function admin_num(int $i): string
+{
+    return str_pad((string)($i + 1), 2, '0', STR_PAD_LEFT);
+}
+
+/** Точка заполненности. Подпись обязательна: цвет сам по себе ничего
+    не сообщает тому, кто его не различает, и читалке с экрана. */
+function admin_dot(bool $on, string $what): string
+{
+    $title = $what . ': ' . ($on ? 'заполнено' : 'пусто');
+    return '<span class="dot' . ($on ? ' on' : '') . '" title="'
+         . htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+         . '" role="img" aria-label="' . htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+         . '"></span>';
+}
+
+/** Точки по языкам: сразу видно, где перевода нет. */
+function admin_lang_dots(array $byLang, string $what): string
+{
+    $out = '';
+    foreach (langs() as $l) {
+        $v = $byLang[$l] ?? '';
+        $on = is_array($v) ? !empty($v) : (is_string($v) && $v !== '');
+        $out .= admin_dot($on, strtoupper($l) . ' — ' . $what);
+    }
+    return $out;
+}
+
+/** Шапка списка: сколько всего слева, кнопка добавления справа. */
+function admin_list_head(int $total, string $word, ?string $addLabel = null, ?string $addHref = null): void
+{
+    $e = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    echo '<div class="listhead"><div class="total">' . $e($word) . ': <b>' . $total . '</b></div>';
+    if ($addLabel !== null && $addHref !== null) {
+        echo '<a class="btn" href="' . $e($addHref) . '">+ ' . $e($addLabel) . '</a>';
+    }
+    echo '</div>';
+}
+
+/** Миниатюра для строки списка; нет картинки — видимая заглушка,
+    чтобы колонка не схлопывалась и было понятно, что снимка нет. */
+function admin_thumb(?string $src, string $alt = ''): string
+{
+    $e = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    return $src
+        ? '<img src="' . $e($src) . '" alt="' . $e($alt) . '" loading="lazy">'
+        : '<span class="nopic" title="снимка нет">нет</span>';
 }

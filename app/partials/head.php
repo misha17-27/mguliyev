@@ -38,6 +38,18 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= $esc($title) ?></title>
 <meta name="description" content="<?= $esc($description) ?>">
+
+<?php /* Значок вкладки. Знак — буква M из логотипа: надпись целиком
+         на 16 пикселях превращается в серую полосу.
+         Пути без языкового префикса: файлы одни на все языки.
+         .ico браузер просит сам, но объявляем его явно — иначе при
+         заданном svg часть браузеров за ним вообще не идёт. */ ?>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0A0A0A">
+
 <link rel="canonical" href="<?= $esc($canonical) ?>">
 <?php foreach ($langOnly as $l): ?>
 <link rel="alternate" hreflang="<?= $esc($l) ?>" href="<?= $esc($abs($l)) ?>">

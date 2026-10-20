@@ -84,4 +84,39 @@
       ev.returnValue = "";
     });
   });
+
+  /* ---- Путь к файлу копируется кликом. Выделять мышью строку вроде
+         /images/uploads/example.az.jpg и не захватить лишний пробел —
+         занятие на три попытки. ---- */
+  document.addEventListener("click", function (ev) {
+    var el = ev.target.closest ? ev.target.closest("[data-copy]") : null;
+    if (!el) return;
+    ev.preventDefault();
+    var text = el.getAttribute("data-copy");
+    var done = function () {
+      var was = el.textContent;
+      el.textContent = "скопировано";
+      el.classList.add("copied");
+      setTimeout(function () { el.textContent = was; el.classList.remove("copied"); }, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+    } else {
+      fallback(text, done);
+    }
+  });
+
+  /* Запасной путь: буфер обмена из скрипта доступен не везде —
+     нужен защищённый адрес (https или localhost). */
+  function fallback(text, done) {
+    var t = document.createElement("textarea");
+    t.value = text;
+    t.setAttribute("readonly", "");
+    t.style.position = "fixed";
+    t.style.opacity = "0";
+    document.body.appendChild(t);
+    t.select();
+    try { document.execCommand("copy"); done(); } catch (e) { window.prompt("Скопируйте путь:", text); }
+    document.body.removeChild(t);
+  }
 })();
