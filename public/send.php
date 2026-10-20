@@ -76,6 +76,17 @@ if ($prev && $now - (int)($prev['last'] ?? 0) < 60) {
     finish(false, 'form.often', $back, $ajax);
 }
 
+/* Метку ставим СРАЗУ, а не после отправки письма.
+
+   Раньше она писалась в самом конце, и десять одновременных запросов
+   успевали пройти проверку все до единого: каждый читал метку раньше,
+   чем её поставил предыдущий. Форма превращалась в рассыльщик и занимала
+   все рабочие процессы PHP отправкой писем.
+
+   Плата за это — отказ по частоте, даже если дальше заявка не прошла
+   проверку полей. Она того стоит: минута ожидания против рассылки. */
+Store::write($lock, ['last' => $now]);
+
 $name  = trim((string)($_POST['name'] ?? ''));
 $phone = trim((string)($_POST['phone'] ?? ''));
 if ($name === '' || $phone === '') {
@@ -187,7 +198,9 @@ if (!$sent) {
     error_log('Заявка не отправлена: ' . $res['error']);
 }
 
-Store::write($lock, ['last' => $now]);
-if (random_int(1, 50) === 1) attempts_sweep('lead', 3600);
+if (random_int(1, 50) === 1) {
+    attempts_sweep('lead', 3600);
+    attempts_sweep('cap', 3600);
+}
 
 finish((bool)$sent, $sent ? 'form.ok' : 'form.error', $back, $ajax);

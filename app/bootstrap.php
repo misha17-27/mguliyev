@@ -8,6 +8,19 @@
 
 $cfg = require __DIR__ . '/config.php';
 require_once __DIR__ . '/i18n.php';
+require_once __DIR__ . '/security.php';
 I18n::boot($cfg);
 require_once __DIR__ . '/content.php';
 require_once __DIR__ . '/turnstile.php';
+
+/* Политика безопасности содержимого — страховкой из PHP.
+
+   Основная стоит в public/.htaccess и перебивает эту: так устроен
+   mod_headers, и это правильно — ослабить политику из PHP нельзя.
+   Но если .htaccess не читается вовсе (сменили корень сайта, поставили
+   nginx), без этой строки у страниц не было бы политики ВООБЩЕ.
+   Значение одно и то же, из константы, поэтому две одинаковые политики
+   дают ту же самую. */
+if (!headers_sent()) {
+    header('Content-Security-Policy: ' . CSP_POLICY);
+}

@@ -88,8 +88,20 @@ final class Store
         }
 
         $tmp = $p . '.' . bin2hex(random_bytes(6)) . '.tmp';
-        if (@file_put_contents($tmp, $json, LOCK_EX) === false) {
-            error_log('Store: не пишется ' . $tmp);
+        $n = @file_put_contents($tmp, $json, LOCK_EX);
+
+        /* Сверяем число записанных байт, а не только отказ.
+
+           При переполнении диска file_put_contents возвращает НЕ false,
+           а количество байт, которое успело записаться. Проверка «=== false»
+           такую запись считает удачной, и обрезанный файл подменяет целый:
+           правки в нём теряются навсегда, причём молча — панель покажет
+           «Сохранено». Это худший из возможных исходов, поэтому оборванный
+           временный файл убираем и честно отвечаем отказом. */
+        if ($n === false || $n !== strlen($json)) {
+            @unlink($tmp);
+            error_log('Store: записано ' . var_export($n, true) . ' из '
+                    . strlen($json) . ' байт в ' . $tmp . ' — вероятно, кончилось место');
             return false;
         }
         @chmod($tmp, 0660);
@@ -98,12 +110,19 @@ final class Store
            при отказе убираем цель и повторяем. На боевом сервере (Linux)
            срабатывает первая попытка и подмена остаётся атомарной. */
         if (!@rename($tmp, $p)) {
-            @unlink($p);
+            /* Прежний файл сначала отодвигаем, а не удаляем: если вторая
+               попытка тоже не удастся, после удаления не осталось бы
+               ни новых данных, ни старых. */
+            $keep = is_file($p) ? $p . '.' . bin2hex(random_bytes(4)) . '.old' : null;
+            if ($keep !== null && !@rename($p, $keep)) $keep = null;
+
             if (!@rename($tmp, $p)) {
                 @unlink($tmp);
+                if ($keep !== null) @rename($keep, $p);   // возвращаем как было
                 error_log('Store: не подменяется ' . $p);
                 return false;
             }
+            if ($keep !== null) @unlink($keep);
         }
 
         unset(self::$cache[$rel]);

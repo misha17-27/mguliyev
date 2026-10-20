@@ -19,7 +19,7 @@ $lnk = 'color:var(--duo-b)';
 <section class="sec">
   <div class="wrap">
     <p class="lb"><a href="<?= u('/uslugi/') ?>"><?= t('web.t1') ?></a></p>
-    <h1 class="disp h2" style="margin-block:18px 20px"><?= $cat['h1'] ?></h1>
+    <h1 class="disp h2" style="margin-block:18px 20px"><?= e($cat['h1']) ?></h1>
     <p class="sub"><?= t('web.t2') ?></p>
     <p style="margin-top:clamp(24px,3vw,34px);display:flex;flex-wrap:wrap;gap:12px">
       <a class="btn" href="<?= u('/kontakty/') ?>"><?= t('web.t3') ?></a>
@@ -46,8 +46,8 @@ $lnk = 'color:var(--duo-b)';
     <div class="rows" style="margin-top:clamp(24px,3vw,38px)">
       <?php foreach ($cat['items'] as $i => $it): ?>
       <a class="row" href="<?= u('/kontakty/') ?>">
-        <span class="rname"><?= $it[0] ?></span>
-        <span class="rdesc"><?= $it[1] ?></span>
+        <span class="rname"><?= e($it[0]) ?></span>
+        <span class="rdesc"><?= e($it[1]) ?></span>
         <span class="rmeta"><?= str_pad($i + 1, 2, '0', STR_PAD_LEFT) ?></span>
       </a>
       <?php endforeach; ?>

@@ -25,7 +25,7 @@ $catalog = catalog();
     <div class="rows" style="margin-top:clamp(30px,4vw,48px)">
       <?php foreach ($catalog as $slug => $cat): ?>
       <a class="row" href="<?= u('/uslugi/' . $slug . '/') ?>">
-        <span class="rname"><?= $cat['title'] ?></span>
+        <span class="rname"><?= e($cat['title']) ?></span>
         <span class="rdesc"><?= implode(' · ', array_map(fn($i) => $i[0], $cat['items'])) ?></span>
         <span class="rmeta"><?= t('about.t9') ?></span>
       </a>

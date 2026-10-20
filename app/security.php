@@ -32,23 +32,78 @@ require_once __DIR__ . '/store.php';
    источник сам по себе ничего не открывает. */
 const CSP_POLICY = "default-src 'self'; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://challenges.cloudflare.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
 
+/* Сети Cloudflare. Взяты с https://www.cloudflare.com/ips-v4 и ips-v6
+   20.10.2026. Меняются редко, несколько раз в год; если Cloudflare добавит
+   сеть, а здесь её не будет, ограничение попыток начнёт считать всех
+   посетителей за одного — не дыра, но повод обновить список. */
+const CF_NETS_V4 = [
+    '173.245.48.0/20',  '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22',
+    '141.101.64.0/18',  '108.162.192.0/18', '190.93.240.0/20', '188.114.96.0/20',
+    '197.234.240.0/22', '198.41.128.0/17', '162.158.0.0/15',  '104.16.0.0/13',
+    '104.24.0.0/14',    '172.64.0.0/13',   '131.0.72.0/22',
+];
+const CF_NETS_V6 = [
+    '2400:cb00::/32', '2606:4700::/32', '2803:f800::/32', '2405:b500::/32',
+    '2405:8100::/32', '2a06:98c0::/29', '2c0f:f248::/32',
+];
+
+/** Входит ли адрес в сеть вида 10.0.0.0/8. Работает и для IPv6:
+    сравниваем двоичные представления по первым N битам. */
+function ip_in_net(string $ip, string $cidr): bool
+{
+    [$net, $bits] = array_pad(explode('/', $cidr, 2), 2, null);
+    $bits = (int)$bits;
+
+    $a = @inet_pton($ip);
+    $b = @inet_pton($net);
+    if ($a === false || $b === false || strlen($a) !== strlen($b)) return false;
+
+    $whole = intdiv($bits, 8);
+    $rest  = $bits % 8;
+
+    if ($whole > 0 && strncmp($a, $b, $whole) !== 0) return false;
+    if ($rest === 0) return true;
+    if (!isset($a[$whole], $b[$whole])) return false;
+
+    $mask = chr(0xFF << (8 - $rest) & 0xFF);
+    return (($a[$whole] & $mask) === ($b[$whole] & $mask));
+}
+
+/** Пришёл ли запрос от самого Cloudflare. */
+function from_cloudflare(): bool
+{
+    $ra = $_SERVER['REMOTE_ADDR'] ?? '';
+    if (!filter_var($ra, FILTER_VALIDATE_IP)) return false;
+
+    $nets = strpos($ra, ':') !== false ? CF_NETS_V6 : CF_NETS_V4;
+    foreach ($nets as $n) {
+        if (ip_in_net($ra, $n)) return true;
+    }
+    return false;
+}
+
 /** Адрес посетителя.
 
-    Сайт стоит за Cloudflare, поэтому REMOTE_ADDR — это всегда адрес
-    Cloudflare, один и тот же для всех. Ограничение числа попыток по нему
-    либо не работает вовсе, либо блокирует всех сразу. Настоящий адрес
+    Сайт стоит за Cloudflare, поэтому REMOTE_ADDR — это адрес Cloudflare,
+    один и тот же для всех. Ограничение числа попыток по нему либо
+    не работает вовсе, либо блокирует всех сразу. Настоящий адрес
     Cloudflare кладёт в CF-Connecting-IP.
 
-    ОГОВОРКА. Заголовок можно подделать, если обратиться к серверу напрямую,
-    минуя Cloudflare. Полностью это закрывается только на стороне сервера:
-    либо список адресов Cloudflare в правилах доступа, либо Authenticated
-    Origin Pulls. До этого худшее, что даёт подделка, — обход собственного
-    ограничения попыток; подняться в правах или подменить чужую сессию
-    через этот заголовок нельзя, он нигде больше не используется. */
+    НО ДОВЕРЯТЬ ЭТОМУ ЗАГОЛОВКУ МОЖНО НЕ ВСЕГДА. Обратившись к серверу
+    напрямую, минуя Cloudflare, его можно поставить любым — и присылать
+    в каждом запросе новый. Тогда счётчик попыток входа не сработает
+    никогда: каждая попытка выглядит как первая с нового адреса.
+    Раньше именно так и было.
+
+    Поэтому заголовок принимается, только если сам запрос пришёл из сети
+    Cloudflare. Пришёл откуда-то ещё — берём REMOTE_ADDR, который
+    подделать нельзя: это адрес на другом конце соединения. */
 function client_ip(): string
 {
     $cf = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? '';
-    if ($cf !== '' && filter_var($cf, FILTER_VALIDATE_IP)) return $cf;
+    if ($cf !== '' && filter_var($cf, FILTER_VALIDATE_IP) && from_cloudflare()) {
+        return $cf;
+    }
 
     $ra = $_SERVER['REMOTE_ADDR'] ?? '';
     return filter_var($ra, FILTER_VALIDATE_IP) ? $ra : '0.0.0.0';

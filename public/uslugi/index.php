@@ -17,8 +17,8 @@ include __DIR__ . '/../../app/partials/head.php';
     <div class="rows" style="margin-top:clamp(28px,4vw,52px)">
       <?php foreach ($catalog as $slug => $cat): ?>
       <a class="row" href="<?= u('/uslugi/' . $slug . '/') ?>">
-        <span class="rname"><?= $cat['title'] ?></span>
-        <span class="rdesc"><?= $cat['lead'] ?></span>
+        <span class="rname"><?= e($cat['title']) ?></span>
+        <span class="rdesc"><?= e($cat['lead']) ?></span>
         <span class="rmeta"><?= t('uslugi.t4') ?></span>
       </a>
       <?php endforeach; ?>

@@ -83,7 +83,7 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
   <span class="tl-rec" aria-hidden="true"><i></i>rec</span>
   <div class="tl-bar">
     <span class="tl-fill" id="tlFill"></span>
-    <nav class="tl-marks" id="tlMarks" aria-label="<?= $esc(t('nav.sections')) ?>"></nav>
+    <nav class="tl-marks" id="tlMarks" aria-label="<?= t('nav.sections') ?>"></nav>
     <span class="tl-head" id="tlHead"></span>
   </div>
   <span class="tl-time" id="tlTime" aria-hidden="true">00:00 / 00:00</span>
@@ -91,39 +91,39 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
 
 <header class="nav">
   <div class="wrap nav-in">
-    <a class="wm" href="<?= $esc(u('/')) ?>" aria-label="<?= $esc(t('nav.home')) ?>"><img src="/images/brand/guliyev-white-logo.svg" alt="MGuliyev Studio" width="838" height="346"></a>
+    <a class="wm" href="<?= $esc(u('/')) ?>" aria-label="<?= t('nav.home') ?>"><img src="/images/brand/guliyev-white-logo.svg" alt="MGuliyev Studio" width="838" height="346"></a>
     <nav class="menu">
-      <a href="<?= $esc(u('/uslugi/')) ?>"<?= $cur('services') ?>><?= $esc(t('nav.services')) ?></a>
-      <a href="<?= $esc(u('/portfolio/')) ?>"<?= $cur('portfolio') ?>><?= $esc(t('nav.portfolio')) ?></a>
-      <a href="<?= $esc(u('/o-studii/')) ?>"<?= $cur('about') ?>><?= $esc(t('nav.about')) ?></a>
-      <a href="<?= $esc(u('/tseny/')) ?>"<?= $cur('price') ?>><?= $esc(t('nav.price')) ?></a>
-      <a href="<?= $esc(u('/blog/')) ?>"<?= $cur('blog') ?>><?= $esc(t('nav.blog')) ?></a>
-      <a href="<?= $esc(u('/kontakty/')) ?>"<?= $cur('contact') ?>><?= $esc(t('nav.contacts')) ?></a>
+      <a href="<?= $esc(u('/uslugi/')) ?>"<?= $cur('services') ?>><?= t('nav.services') ?></a>
+      <a href="<?= $esc(u('/portfolio/')) ?>"<?= $cur('portfolio') ?>><?= t('nav.portfolio') ?></a>
+      <a href="<?= $esc(u('/o-studii/')) ?>"<?= $cur('about') ?>><?= t('nav.about') ?></a>
+      <a href="<?= $esc(u('/tseny/')) ?>"<?= $cur('price') ?>><?= t('nav.price') ?></a>
+      <a href="<?= $esc(u('/blog/')) ?>"<?= $cur('blog') ?>><?= t('nav.blog') ?></a>
+      <a href="<?= $esc(u('/kontakty/')) ?>"<?= $cur('contact') ?>><?= t('nav.contacts') ?></a>
     </nav>
     <div class="nav-right">
-      <nav class="lang" aria-label="<?= $esc(t('nav.language')) ?>">
+      <nav class="lang" aria-label="<?= t('nav.language') ?>">
         <?php foreach ($cfg['languages'] as $l): $on = $l === I18n::$lang; ?>
           <?php if ($on): ?><span aria-current="true"><?= $esc($cfg['lang_label'][$l]) ?></span>
           <?php else: ?><a href="<?= $esc(($cfg['prefix'][$l] ?? '') . $path) ?>" hreflang="<?= $esc($l) ?>"><?= $esc($cfg['lang_label'][$l]) ?></a><?php endif; ?>
         <?php endforeach; ?>
       </nav>
-      <a class="pill nav-cta" href="<?= $esc(u('/kontakty/')) ?>"><i></i><?= $esc(t('cta.discuss')) ?></a>
-      <button class="burger" id="burger" type="button" aria-label="<?= $esc(t('nav.open_menu')) ?>" data-open="<?= $esc(t('nav.open_menu')) ?>" data-close="<?= $esc(t('nav.close_menu')) ?>" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
+      <a class="pill nav-cta" href="<?= $esc(u('/kontakty/')) ?>"><i></i><?= t('cta.discuss') ?></a>
+      <button class="burger" id="burger" type="button" aria-label="<?= t('nav.open_menu') ?>" data-open="<?= t('nav.open_menu') ?>" data-close="<?= t('nav.close_menu') ?>" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
     </div>
   </div>
 </header>
 
 <div class="drawer" id="drawer">
   <nav>
-      <a href="<?= $esc(u('/uslugi/')) ?>"<?= $cur('services') ?>><?= $esc(t('nav.services')) ?></a>
-      <a href="<?= $esc(u('/portfolio/')) ?>"<?= $cur('portfolio') ?>><?= $esc(t('nav.portfolio')) ?></a>
-      <a href="<?= $esc(u('/o-studii/')) ?>"<?= $cur('about') ?>><?= $esc(t('nav.about')) ?></a>
-      <a href="<?= $esc(u('/tseny/')) ?>"<?= $cur('price') ?>><?= $esc(t('nav.price')) ?></a>
-      <a href="<?= $esc(u('/blog/')) ?>"<?= $cur('blog') ?>><?= $esc(t('nav.blog')) ?></a>
-      <a href="<?= $esc(u('/kontakty/')) ?>"<?= $cur('contact') ?>><?= $esc(t('nav.contacts')) ?></a>
+      <a href="<?= $esc(u('/uslugi/')) ?>"<?= $cur('services') ?>><?= t('nav.services') ?></a>
+      <a href="<?= $esc(u('/portfolio/')) ?>"<?= $cur('portfolio') ?>><?= t('nav.portfolio') ?></a>
+      <a href="<?= $esc(u('/o-studii/')) ?>"<?= $cur('about') ?>><?= t('nav.about') ?></a>
+      <a href="<?= $esc(u('/tseny/')) ?>"<?= $cur('price') ?>><?= t('nav.price') ?></a>
+      <a href="<?= $esc(u('/blog/')) ?>"<?= $cur('blog') ?>><?= t('nav.blog') ?></a>
+      <a href="<?= $esc(u('/kontakty/')) ?>"<?= $cur('contact') ?>><?= t('nav.contacts') ?></a>
   </nav>
   <div class="drawer-foot">
-    <nav class="lang" aria-label="<?= $esc(t('nav.language')) ?>">
+    <nav class="lang" aria-label="<?= t('nav.language') ?>">
       <?php foreach ($cfg['languages'] as $l): $on = $l === I18n::$lang; ?>
         <?php if ($on): ?><span aria-current="true"><?= $esc($cfg['lang_label'][$l]) ?></span>
         <?php else: ?><a href="<?= $esc(($cfg['prefix'][$l] ?? '') . $path) ?>" hreflang="<?= $esc($l) ?>"><?= $esc($cfg['lang_label'][$l]) ?></a><?php endif; ?>

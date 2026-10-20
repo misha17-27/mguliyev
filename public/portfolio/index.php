@@ -40,7 +40,7 @@ $unit = static fn(int $n): string => plural($n, 'units.project');
     <nav class="wnav" aria-label="<?= t('portfolio.t12') ?>">
       <button type="button" class="wf is-on" data-f="all" aria-pressed="true"><?= t('portfolio.t3') ?> <i><?= $shown ?></i></button>
       <?php foreach ($groups as $i => $g): ?>
-        <button type="button" class="wf" data-f="g<?= $i ?>" aria-pressed="false"><?= $g[0] ?> <i><?= count($g[3]) ?></i></button>
+        <button type="button" class="wf" data-f="g<?= $i ?>" aria-pressed="false"><?= e($g[0]) ?> <i><?= count($g[3]) ?></i></button>
       <?php endforeach; ?>
     </nav>
 
@@ -59,11 +59,14 @@ $unit = static fn(int $n): string => plural($n, 'units.project');
       ?>
       <<?= $tag ?> class="work<?= $isDead ? ' work-dead' : '' ?>" data-g="g<?= $gi ?>"<?= $isDead ? '' : ' href="https://' . $w[0] . '" target="_blank" rel="noopener"' ?>>
         <div class="cover">
-          <img class="media" src="<?= $img ?>" alt="<?= strip_tags($w[1]) ?> — <?= $w[0] ?>" loading="lazy" width="1200" height="750">
+          <?php /* e(), а не strip_tags: тот убирает теги, но оставляет кавычки,
+                   а значение стоит внутри атрибута alt — кавычка его закрывает,
+                   и дальше в разметку пишется что угодно. */ ?>
+          <img class="media" src="<?= e($img) ?>" alt="<?= e(strip_tags($w[1])) ?> — <?= e($w[0]) ?>" loading="lazy" width="1200" height="750">
           <?php if ($isDead): ?><span class="work-badge"><?= t('portfolio.t4') ?></span><?php endif; ?>
         </div>
-        <h3><?= $w[1] ?></h3>
-        <div class="wmeta"><span><?= $g[0] ?></span><b><?= $w[0] ?></b></div>
+        <h3><?= e($w[1]) ?></h3>
+        <div class="wmeta"><span><?= e($g[0]) ?></span><b><?= e($w[0]) ?></b></div>
       </<?= $tag ?>>
       <?php endforeach; ?>
     </div>

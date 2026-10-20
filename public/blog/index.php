@@ -14,7 +14,7 @@ $arts = articles();
     </div>
     <p class="sub"><?= t('blog.t2') ?></p>
     <?php if (lang() !== 'ru'): ?>
-      <p class="note" style="margin-top:14px"><?= htmlspecialchars(t('blog.ru_only')) ?></p>
+      <p class="note" style="margin-top:14px"><?= t('blog.ru_only') ?></p>
     <?php endif; ?>
     <div class="posts" style="margin-top:clamp(28px,4vw,52px)">
       <?php foreach ($arts as $a): ?>

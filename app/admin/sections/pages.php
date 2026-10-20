@@ -111,7 +111,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         if (isset($store[$key][$l]) && !$store[$key][$l]) unset($store[$key][$l]);
     }
     if (isset($store[$key]) && !$store[$key]) unset($store[$key]);
-    Store::write('seo.json', $store);
+    $okSeo = Store::write('seo.json', $store);
     Store::forget('seo.json');
 
     /* --- строки страницы --- */
@@ -142,7 +142,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         }
         if (isset($tstore[$k]) && !$tstore[$k]) unset($tstore[$k]);
     }
-    Store::write('texts.json', $tstore);
+    $okTexts = Store::write('texts.json', $tstore);
     Store::forget('texts.json');
 
     admin_note_edit('page:' . $key);
@@ -150,7 +150,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     /* Проверяем до сообщения об успехе: «сохранено» при обрезанной форме —
        худшее, что панель может сказать. */
     $cut = admin_form_truncated(admin_count_fields($_POST['t'] ?? []));
-    if ($cut !== null) {
+
+    /* Отказ записи важнее всего остального: «Сохранено» при несохранённом —
+       это когда редактор узнаёт о потере через неделю и уже ничего
+       не помнит. */
+    if (!$okSeo || !$okTexts) {
+        admin_flash('НЕ СОХРАНЕНО: ' . (!$okSeo && !$okTexts ? 'ни заголовки, ни текст'
+            : (!$okSeo ? 'заголовки для поиска' : 'текст страницы'))
+            . ' записать не удалось. Проверьте место на диске и права на папку '
+            . Store::dir() . '. Правки НЕ приняты — не закрывайте страницу, скопируйте их.', 'err');
+    } elseif ($cut !== null) {
         admin_flash($cut, 'err');
     } else {
         admin_flash($changed ? 'Сохранено. Изменено значений: ' . $changed . '.' : 'Изменений не было.');
