@@ -6,6 +6,15 @@
 AddType video/mp4 .mp4
 AddType video/webm .webm
 
+# Всё, что отдаётся не с боевого домена — тестовый поддомен, временный адрес
+# хостинга — закрыто от индексации. Иначе у сайта появляется копия, и две
+# версии начинают конкурировать в выдаче за одни и те же запросы.
+# На самом mguliyev.com правило не срабатывает: заголовок не выставляется.
+<IfModule mod_headers.c>
+  SetEnvIfNoCase Host ^(www\.)?mguliyev\.com$ LIVE_HOST=1
+  Header set X-Robots-Tag "noindex, nofollow" env=!LIVE_HOST
+</IfModule>
+
 RewriteEngine On
 
 # Всё, что ниже, написано правилами mod_rewrite, в том числе редиректы.
