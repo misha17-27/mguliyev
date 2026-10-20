@@ -76,22 +76,40 @@ if ($prev && $now - (int)($prev['last'] ?? 0) < 60) {
     finish(false, 'form.often', $back, $ajax);
 }
 
-/* Капча. Стоит после ограничения частоты: перебор по кругу упрётся
-   в него раньше, и мы не будем дёргать Cloudflare на каждого бота.
-
-   Недоступность Cloudflare не отбивает заявку: цена отказа — потерянный
-   заказчик, который не вернётся, а ловушка, метка времени и ограничение
-   частоты остаются на месте. Решённый отказ (success:false) пропускается
-   никогда — это уже не сбой, а ответ. */
-$cap = ts_verify($_POST['cf-turnstile-response'] ?? null, 'lead');
-if (!$cap['ok']) {
-    finish(false, ts_message($cap), $back, $ajax);
-}
-
 $name  = trim((string)($_POST['name'] ?? ''));
 $phone = trim((string)($_POST['phone'] ?? ''));
 if ($name === '' || $phone === '') {
     finish(false, 'form.required', $back, $ajax);
+}
+
+/* Капча — ПОСЛЕ проверки имени и телефона.
+
+   Токен одноразовый: проверив его раньше, мы сожгли бы его и на отказе
+   «заполните имя и телефон». Человек дописывает телефон, жмёт отправить
+   второй раз — и получает уже отказ капчи, с тем же результатом по кругу.
+
+   Ограничение на обращения к Cloudflare отдельное от ограничения заявок:
+   заявка пишется только при успехе, а проверка капчи — это исходящий
+   запрос, который бот может вызывать бесконечно. Без счётчика /send.php
+   становится усилителем: один запрос к нам — один запрос к Cloudflare.
+
+   Недоступность Cloudflare заявку не отбивает: цена отказа — потерянный
+   заказчик, а ловушка, метка времени и ограничение частоты остаются
+   на месте. Решённый отказ (success:false) не пропускается никогда. */
+if (ts_on()) {
+    $capKey  = ip_key('cap');
+    $capLock = attempts_get('cap', $capKey);
+    if ($capLock['until'] > time()) {
+        finish(false, 'form.often', $back, $ajax);
+    }
+    attempts_fail('cap', $capKey, 20, 600, 600);
+
+    $cap = ts_verify($_POST['cf-turnstile-response'] ?? null, 'lead');
+    if (!$cap['ok']) {
+        finish(false, ts_message($cap), $back, $ajax);
+    }
+} else {
+    $cap = ['ok' => true, 'skipped' => false, 'note' => ''];
 }
 
 $clean = static fn(string $s, int $max): string =>

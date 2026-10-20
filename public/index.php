@@ -290,7 +290,7 @@ include __DIR__ . '/../app/partials/head.php';
       <div class="cg"><em><?= t('home.t133') ?></em><span><?= t('home.t134') ?></span></div>
       <div class="cg"><em><?= t('home.t135') ?></em><span><?= t('home.t136') ?></span></div>
     </div>
-    <form class="rv" id="lead" method="post" action="/send.php">
+    <form class="rv" id="lead" method="post" action="/send.php" data-retry="<?= e(t('form.retry')) ?>">
       <?php /* Ловушка для ботов: человек этого поля не видит и не заполнит.
              Рядом отметка времени — мгновенная отправка выдаёт автомат. */ ?>
       <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"
@@ -310,7 +310,7 @@ include __DIR__ . '/../app/partials/head.php';
                поле с токеном, поэтому и отправка через fetch, и обычная
                отправка формы работают без правок в скрипте. */ ?>
       <?php if (ts_on()): ?>
-        <div class="full"><?= ts_widget('lead') ?></div>
+        <div class="full"><?= ts_widget('lead', 'dark') ?></div>
         <noscript><p class="status" style="color:var(--duo-b)"><?= e(t('form.captcha_nojs')) ?></p></noscript>
       <?php endif; ?>
       <div class="full" style="display:flex;align-items:center;gap:22px;flex-wrap:wrap"><button class="btn" type="submit"><?= t('home.t149') ?></button><p class="status" id="lead-status" role="status"><?= isset($_GET['sent']) ? htmlspecialchars(t('form.ok')) : (isset($_GET['error']) ? htmlspecialchars(t('form.error')) : '') ?></p></div>

@@ -408,6 +408,20 @@ if (vfList && vfNow) {
 
 var leadForm = document.getElementById("lead");
 if (leadForm) {
+  /* Проверка «человек ли это» одноразовая: после отправки её токен сгорает,
+     и в скрытом поле остаётся негодное значение. Если виджет не обновить,
+     вторая отправка с той же страницы обречена — сервер ответит «проверка
+     не пройдена», и так до перезагрузки. Поэтому после КАЖДОГО ответа,
+     удачного или нет, просим виджет выдать новый токен. */
+  var hasCaptcha = !!leadForm.querySelector(".cf-turnstile");
+
+  function resetCaptcha() {
+    if (!hasCaptcha) return;
+    if (window.turnstile && typeof window.turnstile.reset === "function") {
+      try { window.turnstile.reset(); } catch (e) { /* виджет ещё не готов */ }
+    }
+  }
+
   leadForm.addEventListener("submit", function (e) {
     /* Без скрипта форма уходит обычным POST на /send.php и возвращается
        с ?sent=1 — перехват только ради того, чтобы не перезагружать страницу. */
@@ -425,11 +439,24 @@ if (leadForm) {
       .then(function (d) {
         st.textContent = d.message || "";
         if (d.ok) leadForm.reset();
+        resetCaptcha();
       })
       .catch(function () {
-        /* Сеть не ответила — отправляем обычным способом, чтобы заявка
-           не потерялась из-за одной неудачной попытки. */
-        leadForm.submit();
+        /* Сеть не ответила. Без капчи отправляем обычным способом, чтобы
+           заявка не потерялась из-за одной неудачной попытки.
+
+           А с капчей так нельзя: токен уже ушёл в неудавшемся запросе и
+           мог сгореть на сервере, поэтому повторная отправка тем же полем
+           гарантированно получит отказ. Вместо этого обновляем виджет и
+           просим человека нажать ещё раз — его текст в полях при этом
+           остаётся на месте. */
+        if (hasCaptcha) {
+          st.textContent = leadForm.getAttribute("data-retry") ||
+            "Не получилось отправить. Нажмите ещё раз.";
+          resetCaptcha();
+        } else {
+          leadForm.submit();
+        }
       })
       .then(function () { if (btn) btn.disabled = false; });
   });

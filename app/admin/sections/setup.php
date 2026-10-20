@@ -80,7 +80,6 @@ header('Content-Type: text/html; charset=utf-8');
 <meta name="robots" content="noindex,nofollow">
 <title>Первый вход — панель MGuliyev Studio</title>
 <?php admin_assets(); ?>
-<?= ts_script() ?>
 </head>
 <body>
 <div class="login">

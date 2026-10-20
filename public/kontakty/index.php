@@ -78,7 +78,8 @@ include __DIR__ . '/../../app/partials/head.php';
 
     <div id="zayavka" style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
       <h2 class="disp h2"><?= t('contacts.t30') ?></h2>
-      <form id="lead" method="post" action="/send.php" style="margin-top:clamp(24px,3vw,38px)">
+      <form id="lead" method="post" action="/send.php" style="margin-top:clamp(24px,3vw,38px)"
+            data-retry="<?= e(t('form.retry')) ?>">
       <?php /* Ловушка для ботов: человек этого поля не видит и не заполнит.
              Рядом отметка времени — мгновенная отправка выдаёт автомат. */ ?>
       <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"
@@ -99,7 +100,7 @@ include __DIR__ . '/../../app/partials/head.php';
                  отправка формы работают без правок в скрипте. Нет ключей
                  в панели — нет и виджета, форма работает как прежде. */ ?>
         <?php if (ts_on()): ?>
-          <div class="full"><?= ts_widget('lead') ?></div>
+          <div class="full"><?= ts_widget('lead', 'dark') ?></div>
           <noscript><p class="status" style="color:var(--duo-b)"><?= e(t('form.captcha_nojs')) ?></p></noscript>
         <?php endif; ?>
         <div class="full" style="display:flex;align-items:center;gap:22px;flex-wrap:wrap"><button class="btn" type="submit"><?= t('contacts.t43') ?></button><p class="status" id="lead-status" role="status"><?= isset($_GET['sent']) ? htmlspecialchars(t('form.ok')) : (isset($_GET['error']) ? htmlspecialchars(t('form.error')) : '') ?></p></div>
