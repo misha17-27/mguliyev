@@ -6,6 +6,37 @@
 AddType video/mp4 .mp4
 AddType video/webm .webm
 
+# ---------------------------------------------------------------------------
+# БЕЗОПАСНОСТЬ
+
+# Листинг каталогов. На боевом домене он был включён: пустой public_html
+# отдавал «Index of /». Любая папка без index.php показывала бы содержимое.
+Options -Indexes
+
+# Точечные файлы: .htaccess, .git, .gitignore, .env и прочее. Правило
+# на файлы, а не на папки, поэтому .well-known/acme-challenge/<токен>
+# для выпуска сертификатов остаётся доступным — имя токена с точки не начинается.
+<IfModule mod_authz_core.c>
+  <FilesMatch "^\.">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Браузер не должен угадывать тип файла: загруженная картинка, которую
+  # он решит считать скриптом, — это выполнение чужого кода на нашем домене.
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+
+  # Политика содержимого. script-src без 'unsafe-inline' — на сайте
+  # ноль инлайновых скриптов и ноль обработчиков в атрибутах, проверено.
+  # Для стилей послабление нужно: в разметке 110 атрибутов style.
+  # frame-ancestors 'none' заменяет X-Frame-Options.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+</IfModule>
+# ---------------------------------------------------------------------------
+
 # Всё, что отдаётся не с боевого домена — тестовый поддомен, временный адрес
 # хостинга — закрыто от индексации. Иначе у сайта появляется копия, и две
 # версии начинают конкурировать в выдаче за одни и те же запросы.
