@@ -462,67 +462,7 @@ if (leadForm) {
   });
 }
 
-/* ---- Фильтр портфолио. Сетка приходит с сервера целиком: при заходе видны
-       все проекты, и без JS страница остаётся полной, а не пустой. Кнопки
-       отраслей только прячут лишнее. ---- */
-(function () {
-  var grid = document.getElementById("wgrid");
-  if (!grid) return;
-  var chips = [].slice.call(document.querySelectorAll(".wnav .wf"));
-  var cards = [].slice.call(grid.querySelectorAll(".work"));
-  var live = document.querySelector(".wf-live");
-  var none = document.querySelector(".wf-none");
-  if (!chips.length || !cards.length) return;
-
-  /* Строки и правило склонения приходят с сервера в data-атрибутах:
-     язык знает только PHP, а дублировать здесь три словаря незачем. */
-  var L = live ? live.getAttribute("data-lang") : "ru";
-  var UNITS = (live && live.getAttribute("data-units") || "").split("|");
-  var T_ALL = live && live.getAttribute("data-all") || "";
-  var T_GRP = live && live.getAttribute("data-group") || "";
-
-  function unit(n) {
-    if (!UNITS.length) return "";
-    if (L === "az") return UNITS[0];
-    if (L !== "ru") return UNITS[n === 1 ? 0 : Math.min(1, UNITS.length - 1)];
-    var h = Math.abs(n) % 100, d = h % 10;
-    var i = (h > 10 && h < 20) ? 2 : (d > 1 && d < 5) ? 1 : (d === 1) ? 0 : 2;
-    return UNITS[Math.min(i, UNITS.length - 1)];
-  }
-
-  function fill(tpl, vars) {
-    return Object.keys(vars).reduce(function (s, k) {
-      return s.split("{" + k + "}").join(vars[k]);
-    }, tpl);
-  }
-
-  function apply(f, label) {
-    var n = 0;
-    cards.forEach(function (c) {
-      var on = f === "all" || c.getAttribute("data-g") === f;
-      c.hidden = !on;
-      if (on) n++;
-    });
-    chips.forEach(function (b) {
-      var on = b.getAttribute("data-f") === f;
-      b.classList.toggle("is-on", on);
-      b.setAttribute("aria-pressed", on ? "true" : "false");
-    });
-    if (none) none.hidden = n > 0;
-    if (live) {
-      live.textContent = f === "all"
-        ? fill(T_ALL, { n: n, u: unit(n) })
-        : fill(T_GRP, { g: label, n: n, u: unit(n) });
-    }
-    /* Перезапуск анимации: класс снимаем и ставим заново в следующем кадре,
-       иначе браузер считает её той же самой и ничего не проигрывает. */
-    grid.classList.remove("wf-anim");
-    requestAnimationFrame(function () { grid.classList.add("wf-anim"); });
-  }
-
-  chips.forEach(function (b) {
-    b.addEventListener("click", function () {
-      apply(b.getAttribute("data-f"), b.textContent.replace(/\s*\d+\s*$/, "").trim());
-    });
-  });
-})();
+/* ---- Фильтра портфолио на скрипте больше нет: у каждой отрасли своя
+       страница со своим адресом и заголовком (/portfolio/logistika/),
+       и кнопки отраслей — обычные ссылки. Отфильтрованный скриптом вид
+       поисковику не существовал: адрес оставался прежним. ---- */

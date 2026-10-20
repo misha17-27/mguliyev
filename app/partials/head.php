@@ -38,6 +38,11 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= $esc($title) ?></title>
 <meta name="description" content="<?= $esc($description) ?>">
+<?php /* Закрыть страницу от индексации — например, «не найдено»:
+         ответ 404 поисковик и так не возьмёт, но метатег страхует
+         на случай, когда страницу отдадут с кодом 200 по ошибке. */ ?>
+<?php if (!empty($robots)): ?><meta name="robots" content="<?= $esc($robots) ?>">
+<?php endif; ?>
 
 <?php /* Значок вкладки. Знак — буква M из логотипа: надпись целиком
          на 16 пикселях превращается в серую полосу.
@@ -64,9 +69,16 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
 <meta property="og:url" content="<?= $esc($canonical) ?>">
 <meta property="og:title" content="<?= $esc($title) ?>">
 <meta property="og:description" content="<?= $esc($description) ?>">
-<meta property="og:image" content="<?= $esc($cfg['site_url'] . $cfg['og_image']) ?>">
+<?php /* Картинку для соцсетей страница может задать сама: у проекта
+         портфолио это снимок его сайта, а не общая обложка студии —
+         ссылка на проект в мессенджере должна показывать проект. */
+$og = !empty($ogImage) ? $ogImage : $cfg['og_image'];
+$ogAbs = preg_match('~^https?://~', $og) ? $og : $cfg['site_url'] . $og; ?>
+<meta property="og:image" content="<?= $esc($ogAbs) ?>">
+<?php if (empty($ogImage)): ?>
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<?php endif; ?>
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

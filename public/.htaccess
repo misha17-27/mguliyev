@@ -131,6 +131,26 @@ RewriteRule ^(az/|en/)?zhurnal/(.+)$  /$1blog/$2        [R=301,L]
 # заготовка под выуживание пароля на похожем адресе.
 RewriteRule ^(az|en)/admin(/|$) - [R=404,L]
 
+# Портфолио: у отрасли и у проекта свой адрес.
+#   /portfolio/logistika/           -> portfolio/index.php
+#   /portfolio/logistika/itas-az/   -> portfolio/project.php
+# Правила стоят ДО языковых: иначе /az/portfolio/logistika/ языковое
+# правило превратило бы в несуществующий portfolio/logistika/index.php.
+# Шаблон сам разбирает путь, параметров в адрес не передаём — так одну
+# страницу нельзя открыть под чужим адресом хвостом ?c=….
+# Без завершающей косой — постоянный редирект на адрес с ней: две записи
+# одного адреса поисковик считает двумя страницами.
+RewriteRule ^((?:az|en)/)?portfolio/([a-z0-9-]+)$                /$1portfolio/$2/     [R=301,L]
+RewriteRule ^((?:az|en)/)?portfolio/([a-z0-9-]+)/([a-z0-9-]+)$   /$1portfolio/$2/$3/  [R=301,L]
+RewriteRule ^(az|en)/portfolio/[a-z0-9-]+/[a-z0-9-]+/$  portfolio/project.php  [E=SITE_LANG:$1,L]
+RewriteRule ^portfolio/[a-z0-9-]+/[a-z0-9-]+/$          portfolio/project.php  [L]
+RewriteRule ^(az|en)/portfolio/[a-z0-9-]+/$             portfolio/index.php    [E=SITE_LANG:$1,L]
+RewriteRule ^portfolio/[a-z0-9-]+/$                     portfolio/index.php    [L]
+
+# Карта сайта собирается из данных: проектов и отраслей больше полутора
+# сотен адресов на трёх языках, и вручную она отставала бы от сайта.
+RewriteRule ^sitemap\.xml$  sitemap.php  [L]
+
 RewriteRule ^(az|en)$        /$1/            [R=301,L]
 RewriteRule ^(az|en)/?$      index.php       [E=SITE_LANG:$1,L]
 RewriteRule ^(az|en)/(.*/)?$ $2index.php     [E=SITE_LANG:$1,L]

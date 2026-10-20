@@ -14,6 +14,24 @@ if (preg_match('#^/(az|en)/admin(/|$)#', $path)) {
     return true;
 }
 
+/* Портфолио и карта сайта — как в public/.htaccess. */
+if (preg_match('#^(/(?:az|en))?/portfolio/([a-z0-9-]+)(?:/([a-z0-9-]+))?$#', $path, $pm)) {
+    header('Location: ' . $path . '/', true, 301);    // без косой — на адрес с ней
+    return true;
+}
+if ($path === '/sitemap.xml') {
+    require __DIR__ . '/public/sitemap.php';
+    return true;
+}
+if (preg_match('#^(?:/(az|en))?/portfolio/[a-z0-9-]+/([a-z0-9-]+/)?$#', $path, $pm)) {
+    if (($pm[1] ?? '') !== '') {
+        $_SERVER['SITE_LANG'] = $pm[1];
+        putenv('SITE_LANG=' . $pm[1]);
+    }
+    require __DIR__ . '/public/portfolio/' . (($pm[2] ?? '') !== '' ? 'project.php' : 'index.php');
+    return true;
+}
+
 if (preg_match('#^/(az|en)(/.*)?$#', $path, $m)) {
     $_SERVER['SITE_LANG'] = $m[1];
     putenv('SITE_LANG=' . $m[1]);

@@ -415,3 +415,107 @@ function wa_href(): string
     $v = preg_replace('/[^0-9]/', '', s('whatsapp')) ?? '';
     return $v === '' ? '' : 'https://wa.me/' . $v;
 }
+
+/* ====================================================================
+   ПОРТФОЛИО КАК СТРАНИЦЫ: у отрасли и у проекта свой адрес.
+
+     /portfolio/                     все работы
+     /portfolio/logistika/           отрасль
+     /portfolio/logistika/itas-az/   проект
+
+   Адрес проекта собирается из домена: он и так уникален, и по нему
+   проект находят переводы. Отдельное поле «адрес» значило бы ещё одну
+   вещь, которую можно испортить, — а сменить домен приходится редко.
+
+   Адрес разбирается из пути запроса, а не из параметров: так его нельзя
+   подменить хвостом ?c=… и получить одну страницу под чужим адресом.
+   ==================================================================== */
+
+/** Адрес проекта из домена: itas.az -> itas-az. */
+function project_slug(string $domain): string
+{
+    $s = strtolower(trim($domain));
+    $s = preg_replace('~[^a-z0-9]+~', '-', $s) ?? '';
+    return trim($s, '-');
+}
+
+/** Адрес страницы портфолио на нужном языке. */
+function portfolio_url(?string $cat = null, ?string $proj = null, ?string $lang = null): string
+{
+    $p = '/portfolio/' . ($cat !== null && $cat !== '' ? $cat . '/' : '')
+       . ($proj !== null && $proj !== '' ? $proj . '/' : '');
+    return u($p, $lang);
+}
+
+/** Что открыто: [отрасль, проект] из пути текущей страницы. */
+function portfolio_route(): array
+{
+    $p = I18n::path();                               // уже без языкового префикса
+    if (!preg_match('~^/portfolio/(?:([a-z0-9-]+)/)?(?:([a-z0-9-]+)/)?$~', $p, $m)) {
+        return [null, null];
+    }
+    return [($m[1] ?? '') !== '' ? $m[1] : null, ($m[2] ?? '') !== '' ? $m[2] : null];
+}
+
+/** Найти отрасль и проект в каноническом виде.
+
+    Проект ищется по всем отраслям, а не только по той, что в адресе:
+    если его перенесли в другую отрасль, старая ссылка должна вести
+    на новый адрес, а не в никуда. Где он оказался — в 'cat'. */
+function portfolio_find(?string $cat, ?string $proj = null): array
+{
+    $out = ['group' => null, 'project' => null, 'cat' => null];
+    foreach (works_canon() as $g) {
+        if ($proj !== null) {
+            foreach ($g['projects'] as $w) {
+                if (project_slug($w['domain']) === $proj) {
+                    return ['group' => $g, 'project' => $w, 'cat' => $g['slug']];
+                }
+            }
+        } elseif ($g['slug'] === $cat) {
+            return ['group' => $g, 'project' => null, 'cat' => $g['slug']];
+        }
+    }
+    return $out;
+}
+
+/** Обложка проекта: снимок сайта или отраслевая подложка. */
+function project_cover(array $w, array $g): string
+{
+    return !empty($w['image']) ? $w['image'] : '/images/groups/' . $g['slug'] . '.svg';
+}
+
+/** Заголовок и описание для поиска — свои, если заданы в панели,
+    иначе собранные из того, что о странице известно. Собираются из
+    строк словаря, поэтому на каждом языке — своя фраза, а не перевод
+    русской подстановкой. */
+function portfolio_seo(array $g, ?array $w = null): array
+{
+    $lang = I18n::$lang;
+    $own  = $w !== null ? ($w['seo'][$lang] ?? []) : ($g['seo'][$lang] ?? []);
+    $name = tr($w !== null ? $w['desc'] : $g['name']);
+
+    if ($w !== null) {
+        $vars = ['name' => $name, 'domain' => $w['domain'], 'cat' => tr($g['name'])];
+        $tt = 'portfolio.p_title';
+        $td = 'portfolio.p_desc';
+    } else {
+        $n = count($g['projects']);
+        $vars = ['name' => $name, 'desc' => tr($g['desc']), 'n' => $n,
+                 'u' => plural($n, 'units.project')];
+        $tt = 'portfolio.c_title';
+        $td = 'portfolio.c_desc';
+    }
+
+    $fill = static function (string $key) use ($vars): string {
+        $s = I18n::raw($key);
+        foreach ($vars as $k => $v) $s = str_replace('{' . $k . '}', (string)$v, $s);
+        return trim(preg_replace('~\s+~u', ' ', $s) ?? $s);
+    };
+
+    return [
+        'title'       => ($own['title'] ?? '') !== '' ? $own['title'] : $fill($tt),
+        'description' => ($own['description'] ?? '') !== '' ? $own['description'] : $fill($td),
+        'own'         => ($own['title'] ?? '') !== '' || ($own['description'] ?? '') !== '',
+    ];
+}

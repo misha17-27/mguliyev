@@ -1,28 +1,72 @@
 <?php
+/* Портфолио: все работы (/portfolio/) и отдельная отрасль (/portfolio/logistika/).
+
+   Один шаблон на оба адреса: страница отрасли — это то же портфолио,
+   только с одной отраслью в сетке, своим заголовком и своим описанием
+   для поиска. Отрасль определяется по пути запроса, а не по параметру:
+   так одну страницу нельзя открыть под чужим адресом хвостом ?c=….
+
+   Отрасли раньше работали фильтром на скрипте: кнопка прятала лишние
+   карточки, а адрес оставался прежним. У отфильтрованного вида не было
+   ни своего адреса, ни своего заголовка — поисковику он не существовал.
+   Теперь у каждой отрасли своя страница. */
 require __DIR__ . '/../../app/bootstrap.php';
-$page = 'portfolio';
 $current = 'portfolio';
+
+[$catSlug] = portfolio_route();
+$groups = works_canon();
+$cat = null;
+
+if ($catSlug !== null) {
+    $cat = portfolio_find($catSlug)['group'];
+    if ($cat === null) {
+        /* Нет такой отрасли — честный 404, а не пустая сетка с кодом 200:
+           иначе поисковик сочтёт любой выдуманный адрес настоящей страницей. */
+        http_response_code(404);
+        $title = I18n::raw('portfolio.nf_h') . ' — MGuliyev Studio';
+        $description = I18n::raw('portfolio.nf_p');
+        $robots = 'noindex, follow';
+        include __DIR__ . '/../../app/partials/head.php';
+        ?>
+<main id="top">
+<section class="sec">
+  <div class="wrap">
+    <p class="lb"><a href="<?= e(portfolio_url()) ?>"><?= t('portfolio.crumb') ?></a></p>
+    <h1 class="disp h2" style="margin-top:14px"><?= t('portfolio.nf_h') ?></h1>
+    <p class="sub" style="margin-top:16px"><?= t('portfolio.nf_p') ?></p>
+    <p style="margin-top:24px"><a class="btn" href="<?= e(portfolio_url()) ?>"><?= t('portfolio.all_works') ?></a></p>
+  </div>
+</section>
+</main>
+<?php
+        include __DIR__ . '/../../app/partials/foot.php';
+        exit;
+    }
+    $seo = portfolio_seo($cat);
+    $title = $seo['title'];
+    $description = $seo['description'];
+} else {
+    $page = 'portfolio';
+}
+
 include __DIR__ . '/../../app/partials/head.php';
-$groups = works();
+
+/* Проекты в сетке: все или одной отрасли. */
+$items = [];
+foreach ($groups as $g) {
+    if ($cat !== null && $g['slug'] !== $cat['slug']) continue;
+    foreach ($g['projects'] as $w) $items[] = [$g, $w];
+}
 
 $shown = 0; $dead = 0; $covers = 0;
 foreach ($groups as $g) {
-    $shown += count($g[3]);
-    foreach ($g[3] as $w) {
-        if (!empty($w[3])) $dead++;
-        if (!empty($w[2])) $covers++;
+    foreach ($g['projects'] as $w) {
+        $shown++;
+        if (!empty($w['archived'])) $dead++;
+        if (!empty($w['image'])) $covers++;
     }
 }
-/* Число берётся из данных, а не вписывается руками: раньше оно разъезжалось
-   со страницей при каждом изменении списка. Показываем всё, что знаем. */
 $total = $shown;
-
-/* Сетка одна на все проекты, а отрасли работают фильтром поверх неё:
-   при заходе заказчик должен увидеть объём целиком, и только потом сужать. */
-$items = [];
-foreach ($groups as $i => $g) {
-    foreach ($g[3] as $w) { $items[] = [$i, $g, $w]; }
-}
 
 /* Склонение живёт в app/i18n.php: правила у трёх языков разные,
    и формы хранятся в словаре, а не в шаблоне. */
@@ -31,48 +75,59 @@ $unit = static fn(int $n): string => plural($n, 'units.project');
 <main id="top">
 <section class="sec">
   <div class="wrap">
+    <?php if ($cat !== null): ?>
+      <p class="lb"><a href="<?= e(portfolio_url()) ?>"><?= t('portfolio.crumb') ?></a></p>
+    <?php endif; ?>
     <div class="shead">
-      <h1 class="disp h2"><?= t('portfolio.t1') ?></h1>
-      <p class="lb"><?= tn('portfolio.since', ['n' => $total, 'u' => $unit($total)]) ?></p>
+      <h1 class="disp h2"><?= $cat !== null ? e(tr($cat['name'])) : t('portfolio.t1') ?></h1>
+      <p class="lb"><?= $cat !== null
+        ? tn('portfolio.in_cat', ['n' => count($items), 'u' => $unit(count($items))])
+        : tn('portfolio.since', ['n' => $total, 'u' => $unit($total)]) ?></p>
     </div>
-    <p class="sub"><?= t('portfolio.t2') ?></p>
 
+    <?php if ($cat !== null): ?>
+      <p class="sub"><?= e(tr($cat['desc'])) ?></p>
+      <?php
+      /* Текст отрасли из панели — абзацами. Пусто — ничего не выводим:
+         выдумывать вступление за заказчика не будем. */
+      $intro = tr($cat['intro'] ?? []);
+      if ($intro !== ''):
+        foreach (preg_split('/\n\s*\n/u', $intro) as $para): ?>
+          <p class="sub" style="margin-top:14px"><?= nl2br(e(trim($para))) ?></p>
+      <?php endforeach; endif; ?>
+    <?php else: ?>
+      <p class="sub"><?= t('portfolio.t2') ?></p>
+    <?php endif; ?>
+
+    <?php /* Отрасли — ссылками на свои страницы. Текущая отмечена
+             aria-current: читалка с экрана объявит, где человек находится. */ ?>
     <nav class="wnav" aria-label="<?= t('portfolio.t12') ?>">
-      <button type="button" class="wf is-on" data-f="all" aria-pressed="true"><?= t('portfolio.t3') ?> <i><?= $shown ?></i></button>
-      <?php foreach ($groups as $i => $g): ?>
-        <button type="button" class="wf" data-f="g<?= $i ?>" aria-pressed="false"><?= e($g[0]) ?> <i><?= count($g[3]) ?></i></button>
+      <a class="wf<?= $cat === null ? ' is-on' : '' ?>" href="<?= e(portfolio_url()) ?>"<?= $cat === null ? ' aria-current="page"' : '' ?>>
+        <?= t('portfolio.t3') ?> <i><?= $total ?></i></a>
+      <?php foreach ($groups as $g): $on = $cat !== null && $g['slug'] === $cat['slug']; ?>
+        <a class="wf<?= $on ? ' is-on' : '' ?>" href="<?= e(portfolio_url($g['slug'])) ?>"<?= $on ? ' aria-current="page"' : '' ?>>
+          <?= e(tr($g['name'])) ?> <i><?= count($g['projects']) ?></i></a>
       <?php endforeach; ?>
     </nav>
 
-    <p class="wf-live lb" role="status" aria-live="polite"
-       data-lang="<?= e(lang()) ?>"
-       data-units="<?= e(I18n::raw('units.project')) ?>"
-       data-all="<?= e(I18n::raw('portfolio.all')) ?>"
-       data-group="<?= e(I18n::raw('portfolio.group')) ?>"><?= tn('portfolio.all', ['n' => $shown, 'u' => $unit($shown)]) ?></p>
-
-    <div class="works" id="wgrid">
-      <?php foreach ($items as $it):
-        list($gi, $g, $w) = $it;
-        $isDead = !empty($w[3]);
-        $img = $w[2] ?: '/images/groups/' . $g[2] . '.svg';
-        $tag = $isDead ? 'div' : 'a';
+    <div class="works" id="wgrid" style="margin-top:clamp(24px,3vw,38px)">
+      <?php foreach ($items as [$g, $w]):
+        $isDead = !empty($w['archived']);
+        $name   = tr($w['desc']);
       ?>
-      <<?= $tag ?> class="work<?= $isDead ? ' work-dead' : '' ?>" data-g="g<?= $gi ?>"<?= $isDead ? '' : ' href="https://' . $w[0] . '" target="_blank" rel="noopener"' ?>>
+      <a class="work<?= $isDead ? ' work-dead' : '' ?>" href="<?= e(portfolio_url($g['slug'], project_slug($w['domain']))) ?>">
         <div class="cover">
-          <?php /* e(), а не strip_tags: тот убирает теги, но оставляет кавычки,
-                   а значение стоит внутри атрибута alt — кавычка его закрывает,
-                   и дальше в разметку пишется что угодно. */ ?>
-          <img class="media" src="<?= e($img) ?>" alt="<?= e(strip_tags($w[1])) ?> — <?= e($w[0]) ?>" loading="lazy" width="1200" height="750">
+          <img class="media" src="<?= e(project_cover($w, $g)) ?>" alt="<?= e($name) ?> — <?= e($w['domain']) ?>"
+               loading="lazy" width="1200" height="750">
           <?php if ($isDead): ?><span class="work-badge"><?= t('portfolio.t4') ?></span><?php endif; ?>
         </div>
-        <h3><?= e($w[1]) ?></h3>
-        <div class="wmeta"><span><?= e($g[0]) ?></span><b><?= e($w[0]) ?></b></div>
-      </<?= $tag ?>>
+        <h3><?= e($name) ?></h3>
+        <div class="wmeta"><span><?= e(tr($g['name'])) ?></span><b><?= e($w['domain']) ?></b></div>
+      </a>
       <?php endforeach; ?>
     </div>
 
-    <p class="wf-none sub" hidden><?= t('portfolio.t5') ?></p>
-
+    <?php if ($cat === null): ?>
     <div style="margin-top:clamp(48px,6vw,84px);display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(20px,3vw,40px)">
       <div>
         <h2 class="disp" style="font-size:clamp(1.3rem,2.4vw,1.7rem);margin-bottom:12px"><?= t('portfolio.t6') ?></h2>
@@ -87,6 +142,7 @@ $unit = static fn(int $n): string => plural($n, 'units.project');
         <p class="sub" style="font-size:.9rem"><?= tp($covers, 'portfolio.covers_p', ['m' => $shown - $covers]) ?></p>
       </div>
     </div>
+    <?php endif; ?>
 
     <div style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
       <h2 class="disp h2"><?= t('portfolio.t9') ?></h2>
