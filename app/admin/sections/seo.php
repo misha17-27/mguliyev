@@ -1,0 +1,128 @@
+<?php
+/* Заголовки и описания страниц для поиска.
+
+   Это то, что человек видит в выдаче Google раньше самой страницы, поэтому
+   поля показываются сразу на трёх языках: заголовок на русском и его перевод
+   должны решать одну задачу, а не быть дословным переводом друг друга.
+
+   Счётчик знаков рядом с полем не случайный. Google обрезает заголовок
+   примерно на 580 пикселях — это около 60 знаков, — а описание около 158.
+   Длиннее не ошибка, но хвост в выдаче не покажут, поэтому главное
+   должно стоять в начале. */
+
+$e    = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$base = require __DIR__ . '/../../data/seo.php';
+$seo  = seo_canon();
+
+/* Понятные названия страниц: ключ 'uslugi/veb-sayty' ничего не говорит
+   тому, кто правит тексты, а «Услуги → Веб-сайты» говорит. */
+function seo_page_title(string $page): string
+{
+    static $map = null;
+    if ($map === null) {
+        $map = [
+            'home'      => 'Главная',
+            'uslugi'    => 'Услуги — список',
+            'portfolio' => 'Портфолио',
+            'tseny'     => 'Цены',
+            'o-studii'  => 'О студии',
+            'kontakty'  => 'Контакты',
+            'blog'      => 'Блог — список',
+        ];
+        foreach (catalog_canon() as $slug => $c) {
+            $map['uslugi/' . $slug] = 'Услуги → ' . tr($c['title'], deflang());
+        }
+        foreach (articles_canon() as $a) {
+            $map['blog/' . $a['slug']] = 'Блог → ' . tr($a['title'], deflang());
+        }
+    }
+    return $map[$page] ?? $page;
+}
+
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    $in  = (array)($_POST['seo'] ?? []);
+    $out = [];
+
+    foreach ($seo as $page => $byLang) {
+        $got = is_array($in[$page] ?? null) ? $in[$page] : [];
+        foreach (langs() as $l) {
+            foreach (['title', 'description'] as $f) {
+                $v = post_one($got[$f][$l] ?? '');
+                /* Пишем только то, что отличается от файла разработчика.
+                   Иначе хранилище замораживает нынешние тексты, и правка
+                   в репозитории до сайта уже не доходит. */
+                $orig = $base[$page][$l][$f] ?? '';
+                if ($v !== '' && $v !== $orig) $out[$page][$l][$f] = $v;
+            }
+        }
+    }
+
+    if (Store::write('seo.json', $out)) {
+        $n = 0;
+        foreach ($out as $p) foreach ($p as $l) $n += count($l);
+        admin_flash($n
+            ? 'Сохранено. Своих значений: ' . $n . '. Остальное берётся из файлов разработчика.'
+            : 'Сохранено. Своих значений нет — всё совпадает с файлами разработчика.');
+    } else {
+        admin_flash('Не удалось сохранить.', 'err');
+    }
+    admin_go(admin_url('seo'));
+}
+
+$LIMIT = ['title' => 60, 'description' => 158];
+$store = Store::read('seo.json') ?? [];
+
+admin_head('seo');
+?>
+
+<div class="note">
+  Показаны все три языка сразу: заголовок и его перевод должны решать одну
+  задачу, а не быть дословным переводом. Пусто — страница возьмёт русский вариант.
+  Числа под полями — сколько знаков поместится в выдаче: длиннее не ошибка,
+  но хвост не покажут, поэтому главное ставьте в начало.
+</div>
+
+<form method="post" action="<?= $e(admin_url('seo')) ?>" data-guard="1">
+  <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+
+  <?php foreach ($seo as $page => $byLang):
+      $own = !empty($store[$page]);
+  ?>
+    <div class="panel">
+      <h3><?= $e(seo_page_title($page)) ?>
+        <?php if ($own): ?><span class="pill">правлено в панели</span><?php endif; ?>
+      </h3>
+      <p class="muted mono">/<?= $e($page === 'home' ? '' : $page . '/') ?></p>
+
+      <?php foreach (['title' => 'Заголовок в выдаче', 'description' => 'Описание под заголовком'] as $f => $label): ?>
+        <label><?= $e($label) ?>
+          <span class="hint">до <?= $LIMIT[$f] ?> знаков</span>
+        </label>
+        <div class="row3">
+          <?php foreach (langs() as $l): ?>
+            <div>
+              <div class="muted" style="margin-bottom:4px"><b><?= $e(strtoupper($l)) ?></b></div>
+              <?php if ($f === 'title'): ?>
+                <input type="text" data-max="<?= $LIMIT[$f] ?>"
+                       name="seo[<?= $e($page) ?>][<?= $e($f) ?>][<?= $e($l) ?>]"
+                       value="<?= $e($byLang[$l][$f] ?? '') ?>"
+                       placeholder="<?= $l === deflang() ? '' : 'пусто — возьмётся русский' ?>">
+              <?php else: ?>
+                <textarea rows="3" data-max="<?= $LIMIT[$f] ?>"
+                          name="seo[<?= $e($page) ?>][<?= $e($f) ?>][<?= $e($l) ?>]"
+                          placeholder="<?= $l === deflang() ? '' : 'пусто — возьмётся русский' ?>"><?= $e($byLang[$l][$f] ?? '') ?></textarea>
+              <?php endif; ?>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  <?php endforeach; ?>
+
+  <div class="btnrow">
+    <button class="btn" type="submit">Сохранить</button>
+    <a class="btn ghost" href="<?= $e(admin_url('dashboard')) ?>">Отменить</a>
+  </div>
+</form>
+
+<?php admin_foot(); ?>

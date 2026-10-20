@@ -18,3 +18,14 @@ Options -Indexes
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
 </IfModule>
+
+# SVG при открытии по прямой ссылке — это документ, а не картинка: скрипт
+# внутри него выполнится в домене сайта. В <img> он безопасен, поэтому файл
+# не запрещаем, а обезвреживаем политикой: ни скриптов, ни запросов наружу.
+# Панель SVG не принимает вовсе; это рубеж для файлов, попавших иначе.
+<FilesMatch "\.svgz?$">
+  <IfModule mod_headers.c>
+    Header always set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+    Header always set X-Content-Type-Options "nosniff"
+  </IfModule>
+</FilesMatch>

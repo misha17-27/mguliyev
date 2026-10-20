@@ -240,3 +240,55 @@ function admin_store_problem(): ?string
     if (!Store::writable()) return 'Папка ' . Store::dir() . ' недоступна на запись. Правки сохраняться не будут.';
     return null;
 }
+
+/* ------------------------------------------------- разбор форм разделов */
+
+/** Набор значений по языкам из поля формы вида name[ru], name[az], name[en].
+    Всё, что пришло, чистится одинаково: панель — это ввод от человека,
+    и доверять ему нельзя ни в одном поле. */
+function post_langs($src, bool $multiline = false): array
+{
+    $src = is_array($src) ? $src : [];
+    $out = [];
+    foreach (langs() as $l) {
+        $out[$l] = clean_text(is_string($src[$l] ?? null) ? $src[$l] : '', $multiline);
+    }
+    return $out;
+}
+
+/** Одиночное поле. */
+function post_one($v, bool $multiline = false): string
+{
+    return clean_text(is_string($v) ? $v : '', $multiline);
+}
+
+/** Адрес картинки: только путь внутри сайта и только из разрешённых папок.
+    Иначе в карточку проекта можно вписать картинку с чужого сервера —
+    это и утечка адресов посетителей, и чужой контроль над тем, что видно. */
+function post_image($v): ?string
+{
+    $v = post_one($v);
+    if ($v === '') return null;
+    $v = '/' . ltrim(str_replace("\\", '/', $v), '/');
+    if (strpos($v, '..') !== false) return null;
+    return preg_match('~^/images/[A-Za-z0-9._/-]+\.(jpe?g|png|webp|svg|avif)$~i', $v) ? $v : null;
+}
+
+/** Ключ записи: латиница, цифры, дефис. Используется в адресах и в JSON,
+    поэтому всё остальное отбрасываем, а не пытаемся угадать. */
+function post_slug($v, string $fallback = ''): string
+{
+    $v = mb_strtolower(post_one($v));
+    $v = preg_replace('~[^a-z0-9-]+~u', '-', $v) ?? '';
+    $v = trim(preg_replace('~-{2,}~', '-', $v) ?? '', '-');
+    return $v !== '' ? $v : $fallback;
+}
+
+/** Домен проекта: без схемы, без слэша, строчными. */
+function post_domain($v): string
+{
+    $v = mb_strtolower(post_one($v));
+    $v = preg_replace('~^https?://~', '', $v) ?? $v;
+    $v = rtrim(explode('/', $v)[0], '.');
+    return preg_match('~^[a-z0-9.-]{3,80}$~', $v) ? $v : '';
+}

@@ -16,6 +16,12 @@ admin_boot();
 $section = (string)($_GET['section'] ?? 'dashboard');
 
 if ($section === 'logout') {
+    /* Именно POST, а не «проверить ключ, если он есть». admin_check_post()
+       на GET не проверяет ничего, и без этой строки чужая страница с
+       <img src="…?section=logout"> выкидывала бы редактора из панели. */
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+        admin_go(admin_url(admin_user() ? 'dashboard' : 'login'));
+    }
     admin_check_post();
     admin_logout();
     admin_flash('Вы вышли из панели.');

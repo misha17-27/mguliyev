@@ -13,6 +13,7 @@
    Это не останавливает целевой спам, но отсекает основную массу переборщиков. */
 
 require __DIR__ . '/../app/bootstrap.php';
+require __DIR__ . '/../app/security.php';
 
 $cfg  = I18n::$cfg;
 $ajax = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'fetch';
@@ -47,15 +48,27 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
 if (trim((string)($_POST['website'] ?? '')) !== '') {
     finish(true, 'form.ok', $back, $ajax);          // боту отвечаем «принято» и молчим
 }
-$ts = (int)($_POST['ts'] ?? 0);
-if ($ts > 0 && time() - $ts < 3) {
+/* Метка времени обязательна. Раньше её отсутствие проверку просто
+   отключало: достаточно было не прислать поле. Теперь нет метки —
+   нет и заявки; настоящая форма присылает её всегда.
+   Верхняя граница нужна против заранее заготовленных меток. */
+$ts  = (int)($_POST['ts'] ?? 0);
+$now = time();
+if ($ts <= 0 || $now - $ts < 3 || $now - $ts > 86400) {
     finish(false, 'form.spam', $back, $ajax);
 }
 
-/* Частота по адресу */
-$ip   = $_SERVER['REMOTE_ADDR'] ?? '0';
-$lock = sys_get_temp_dir() . '/mg-lead-' . md5($ip);
-if (is_file($lock) && time() - (int)filemtime($lock) < 60) {
+/* Частота по адресу.
+
+   Адрес берём через client_ip(): сайт стоит за Cloudflare, и REMOTE_ADDR
+   здесь — это всегда адрес Cloudflare, один на всех. Ограничение по нему
+   либо не работает вовсе, либо запирает сразу всех посетителей.
+
+   Метка лежит в хранилище, а не в общей временной папке сервера: на
+   виртуальном хостинге её содержимое видят соседние аккаунты. */
+$lock = 'locks/lead-' . ip_key('lead') . '.json';
+$prev = Store::read($lock);
+if ($prev && $now - (int)($prev['last'] ?? 0) < 60) {
     finish(false, 'form.often', $back, $ajax);
 }
 
@@ -82,7 +95,9 @@ $body = '';
 foreach ($fields as $k => $v) {
     if ($v !== '') $body .= $k . ': ' . $v . "\n";
 }
-$body .= "\n" . date('d.m.Y H:i') . ' · ' . $ip;
+/* Адрес в письме — настоящий адрес посетителя, а не адрес Cloudflare:
+   иначе во всех заявках стоял бы один и тот же, и толку от него нет. */
+$body .= "\n" . date('d.m.Y H:i') . ' · ' . client_ip();
 
 $to      = $cfg['form']['to'];
 $subject = $cfg['form']['subject'] . ': ' . $fields['Имя'];
@@ -93,6 +108,7 @@ $headers = implode("\r\n", [
 ]);
 
 $sent = @mail($to, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, $headers);
-@touch($lock);
+Store::write($lock, ['last' => $now]);
+if (random_int(1, 50) === 1) attempts_sweep('lead', 3600);
 
 finish((bool)$sent, $sent ? 'form.ok' : 'form.error', $back, $ajax);
