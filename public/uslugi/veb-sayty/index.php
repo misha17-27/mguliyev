@@ -18,34 +18,30 @@ $lnk = 'color:var(--duo-b)';
 <main id="top">
 <section class="sec">
   <div class="wrap">
-    <p class="lb"><a href="<?= u('/uslugi/') ?>">Услуги</a></p>
+    <p class="lb"><a href="<?= u('/uslugi/') ?>"><?= t('web.t1') ?></a></p>
     <h1 class="disp h2" style="margin-block:18px 20px"><?= $cat['h1'] ?></h1>
-    <p class="sub">Делаем сайты в Баку с 2017 года — от сайта на пять страниц до магазина
-      с онлайн-оплатой и обменом данными со складом. Создание сайта занимает от 10 до 25 дней,
-      стартовая сумма — ₼700, а админку собираем так, чтобы ваш менеджер справлялся с ней без нас.</p>
+    <p class="sub"><?= t('web.t2') ?></p>
     <p style="margin-top:clamp(24px,3vw,34px);display:flex;flex-wrap:wrap;gap:12px">
-      <a class="btn" href="<?= u('/kontakty/') ?>">Обсудить проект</a>
-      <a class="btn btn-o" href="<?= u('/portfolio/') ?>">Смотреть портфолио</a>
+      <a class="btn" href="<?= u('/kontakty/') ?>"><?= t('web.t3') ?></a>
+      <a class="btn btn-o" href="<?= u('/portfolio/') ?>"><?= t('web.t4') ?></a>
     </p>
   </div>
 </section>
 
 <section class="band">
-  <div class="bcell"><b data-count="6">6</b><span>типов сайтов в разделе</span></div>
-  <div class="bcell"><b>10–25</b><span>дней на сайт</span></div>
-  <div class="bcell"><b>₼700</b><span>стартовая сумма</span></div>
+  <div class="bcell"><b data-count="6">6</b><span><?= t('web.t5') ?></span></div>
+  <div class="bcell"><b>10–25</b><span><?= t('web.t6') ?></span></div>
+  <div class="bcell"><b>₼700</b><span><?= t('web.t7') ?></span></div>
 </section>
 
 <section class="sec">
   <div class="wrap">
 
     <div class="shead">
-      <h2 class="disp" style="<?= $h2 ?>">Шесть типов сайтов</h2>
-      <p class="lb">выберите свой случай</p>
+      <h2 class="disp" style="<?= $h2 ?>"><?= t('web.t8') ?></h2>
+      <p class="lb"><?= t('web.t9') ?></p>
     </div>
-    <p class="sub">Тип сайта — это не про внешний вид, а про механику: что человек делает
-      на странице и что при этом должно работать в админке. Выбирать на глаз не нужно —
-      опишите задачу, и на брифе станет понятно, какой тип ваш.</p>
+    <p class="sub"><?= t('web.t10') ?></p>
 
     <div class="rows" style="margin-top:clamp(24px,3vw,38px)">
       <?php foreach ($cat['items'] as $i => $it): ?>
@@ -57,92 +53,67 @@ $lnk = 'color:var(--duo-b)';
       <?php endforeach; ?>
     </div>
 
-    <p class="sub" style="margin-top:clamp(20px,2.6vw,30px);font-size:.9rem">Корпоративный сайт
-      и сайт услуг часто путают. Первый рассказывает о компании целиком: услуги, проекты,
-      команда, контакты. Второй — отдельная страница под каждую услугу, с формой заявки
-      на ней же: человек из поиска попадает сразу на нужную, а не на общий список.
-      Если услуг много и они разные, обычно выбирают второй вариант.</p>
+    <p class="sub" style="margin-top:clamp(20px,2.6vw,30px);font-size:.9rem"><?= t('web.t11') ?></p>
 
     <div style="<?= $gap ?>">
-      <h2 class="disp" style="<?= $h2 ?>">Что вы получаете</h2>
-      <p class="sub">Это минимум — он есть даже в самом простом пакете.</p>
+      <h2 class="disp" style="<?= $h2 ?>"><?= t('web.t12') ?></h2>
+      <p class="sub"><?= t('web.t13') ?></p>
       <div class="stack">
-        <i>Адаптив под телефон и планшет</i><i>Админка</i><i>Базовое SEO</i>
-        <i>Домен на год</i><i>3 месяца хостинга</i>
+        <i><?= t('web.t14') ?></i><i><?= t('web.t15') ?></i><i><?= t('web.t16') ?></i>
+        <i><?= t('web.t17') ?></i><i><?= t('web.t18') ?></i>
       </div>
-      <p class="sub" style="margin-top:clamp(22px,2.8vw,30px)">Админка — то, с чем вы останетесь
-        жить после сдачи. Собираем её так, чтобы менеджер сам менял тексты, цены и фотографии
-        и добавлял товары, не возвращаясь к нам из-за каждой правки.</p>
+      <p class="sub" style="margin-top:clamp(22px,2.8vw,30px)"><?= t('web.t19') ?></p>
       <ul class="plain" style="margin-top:clamp(20px,2.4vw,26px)">
-        <li>Корпоративная почта на вашем домене: ящик подключаем бесплатно, настройка занимает один день.</li>
-        <li>Аналитика и Search Console подключаются на запуске, а не «когда-нибудь потом».</li>
-        <li>Первый месяц технической поддержки — бесплатно.</li>
-        <li>Скорость и безопасность настраиваются на этапе разработки, до запуска.</li>
+        <li><?= t('web.t20') ?></li>
+        <li><?= t('web.t21') ?></li>
+        <li><?= t('web.t22') ?></li>
+        <li><?= t('web.t23') ?></li>
       </ul>
-      <p class="sub" style="margin-top:clamp(18px,2.2vw,24px);font-size:.9rem">Что оплачивается
-        отдельно — продление домена и хостинга, поддержка со второго месяца, продвижение —
-        перечислено на <a href="<?= u('/tseny/') ?>" style="<?= $lnk ?>">странице цен</a>.</p>
+      <p class="sub" style="margin-top:clamp(18px,2.2vw,24px);font-size:.9rem"><?= t('web.t24') ?> <a href="<?= u('/tseny/') ?>" style="<?= $lnk ?>"><?= t('web.t25') ?></a>.</p>
     </div>
 
     <div style="<?= $gap ?>">
-      <h2 class="disp" style="<?= $h2 ?>">Посмотрите, что уже сделано</h2>
-      <p class="sub">Разработка сайтов — то, чем студия занимается с 2017 года. В портфолио
-        55 проекта, и показаны все. У 34 карточек стоят снимки самих сайтов,
-        у остальных — отраслевая подложка. Сверху фильтр по шести отраслям: логистика,
-        торговля, авто, стройка, промышленность и услуги. Проверить, делали ли мы что-то
-        для похожего бизнеса, — минута.</p>
+      <h2 class="disp" style="<?= $h2 ?>"><?= t('web.t26') ?></h2>
+      <p class="sub"><?= t('web.t27') ?></p>
       <p style="margin-top:clamp(20px,2.4vw,28px)">
-        <a class="btn btn-o" href="<?= u('/portfolio/') ?>">Смотреть портфолио</a></p>
+        <a class="btn btn-o" href="<?= u('/portfolio/') ?>"><?= t('web.t28') ?></a></p>
     </div>
 
     <div style="<?= $gap ?>">
-      <h2 class="disp" style="<?= $h2 ?>">Сколько стоит</h2>
-      <p class="sub">Три пакета. «От» — это нижняя граница: к сумме добавляют страницы,
-        языки и интеграции.</p>
+      <h2 class="disp" style="<?= $h2 ?>"><?= t('web.t29') ?></h2>
+      <p class="sub"><?= t('web.t30') ?></p>
       <ul class="plain" style="margin-top:clamp(20px,2.4vw,26px);max-width:64ch">
-        <li><b>Старт, от ₼700.</b> 1–5 страниц, адаптив, базовое SEO, домен на год, три месяца хостинга.</li>
-        <li><b>Бизнес, от ₼1 190.</b> 10–20 страниц, три языка, блог, расширенное SEO, Cloudflare.</li>
-        <li><b>Премиум, от ₼1 800.</b> WooCommerce, онлайн-оплата, интеграция со складом, скорость 90+.</li>
+        <li><b><?= t('web.t31') ?></b> <?= t('web.t32') ?></li>
+        <li><b><?= t('web.t33') ?></b> <?= t('web.t34') ?></li>
+        <li><b><?= t('web.t35') ?></b> <?= t('web.t36') ?></li>
       </ul>
-      <p class="sub" style="margin-top:clamp(18px,2.2vw,24px)">Точную сумму по вашему проекту
-        называем после брифа — сайт на пять страниц и сайт на пятьдесят это разная работа.</p>
+      <p class="sub" style="margin-top:clamp(18px,2.2vw,24px)"><?= t('web.t37') ?></p>
       <p style="margin-top:clamp(20px,2.4vw,28px)">
-        <a class="btn btn-o" href="<?= u('/tseny/') ?>">Все пакеты и что считается отдельно</a></p>
+        <a class="btn btn-o" href="<?= u('/tseny/') ?>"><?= t('web.t38') ?></a></p>
     </div>
 
     <div style="<?= $gap ?>">
-      <h2 class="disp" style="<?= $h2 ?>">Частые вопросы</h2>
+      <h2 class="disp" style="<?= $h2 ?>"><?= t('web.t39') ?></h2>
       <div class="faq">
-        <details><summary>Сколько времени занимает создание сайта?</summary>
-          <p>От 10 до 25 дней. Ближе к десяти — когда страниц немного, тексты и фотографии
-            уже есть и согласование не стоит на месте. Отдельно учтите: сайт и позиции
-            в поиске появляются не одновременно — устойчивый результат по конкурентным
-            запросам это 3–6 месяцев работы над продвижением.</p></details>
-        <details><summary>Что нужно от вас?</summary>
-          <p>Разговор о бизнесе и клиентах на брифе. Материалы — тексты и фотографии,
-            если они у вас есть; если нет, копирайтинг и съёмка есть в разделе
-            <a href="<?= u('/uslugi/marketing/') ?>" style="<?= $lnk ?>">маркетинга</a>. И человек
-            с вашей стороны, который отвечает на вопросы и утверждает этапы.</p></details>
-        <details><summary>Чьи будут домен, хостинг и админка?</summary>
-          <p>Ваши. Оформляются на вашу компанию с первого дня. Решите продолжать с другими —
-            забираете доступы и уходите, выпрашивать ничего не придётся.</p></details>
-        <details><summary>Сайт уже есть — можно перенести, а не делать заново?</summary>
-          <p>Можно. Переносим сайт целиком: файлы, базу, почтовые ящики и DNS-записи.
-            Момент переключения согласуем заранее — обычно ночью, чтобы не останавливать
-            работу. Иногда дешевле доработать существующий сайт, чем собирать новый;
-            что выгоднее в вашем случае, скажем после того, как посмотрим, что внутри.</p></details>
-        <details><summary>Как платить?</summary>
-          <p>Пополам: 50% в начале работ и 50% при сдаче. Абонентские услуги — хостинг,
-            поддержка, продвижение — помесячно или сразу за год.</p></details>
+        <details><summary><?= t('web.t40') ?></summary>
+          <p><?= t('web.t41') ?></p></details>
+        <details><summary><?= t('web.t42') ?></summary>
+          <p><?= t('web.t43') ?>
+            <a href="<?= u('/uslugi/marketing/') ?>" style="<?= $lnk ?>"><?= t('web.t44') ?></a><?= t('web.t45') ?></p></details>
+        <details><summary><?= t('web.t46') ?></summary>
+          <p><?= t('web.t47') ?></p></details>
+        <details><summary><?= t('web.t48') ?></summary>
+          <p><?= t('web.t49') ?></p></details>
+        <details><summary><?= t('web.t50') ?></summary>
+          <p><?= t('web.t51') ?></p></details>
       </div>
     </div>
 
     <div style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
-      <h2 class="disp h2">Расскажите, что нужно</h2>
-      <p class="sub" style="margin-top:16px">Ответим в течение 24 часов. После брифа пришлём
-        предложение: состав работ, этапы и сумму.</p>
+      <h2 class="disp h2"><?= t('web.t52') ?></h2>
+      <p class="sub" style="margin-top:16px"><?= t('web.t53') ?></p>
       <p style="margin-top:22px;display:flex;flex-wrap:wrap;gap:12px">
-        <a class="btn" href="<?= u('/kontakty/') ?>">Обсудить проект</a>
+        <a class="btn" href="<?= u('/kontakty/') ?>"><?= t('web.t54') ?></a>
         <a class="btn btn-o" href="tel:+994552155363">+994 55 215 53 63</a></p>
     </div>
 

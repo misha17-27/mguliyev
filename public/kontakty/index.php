@@ -8,67 +8,63 @@ include __DIR__ . '/../../app/partials/head.php';
 <section class="sec">
   <div class="wrap">
     <div class="shead">
-      <h1 class="disp h2">Контакты</h1>
-      <p class="lb">Баку · GMT+4</p>
+      <h1 class="disp h2"><?= t('contacts.t1') ?></h1>
+      <p class="lb"><?= t('contacts.t2') ?></p>
     </div>
 
     <div class="cgrid" style="margin-top:0;border-top:0;padding-top:0">
-      <div class="cg"><em>Почта</em><a href="mailto:info@mguliyev.com">info@mguliyev.com</a></div>
-      <div class="cg"><em>Телефон</em><a href="tel:+994552155363">+994 55 215 53 63</a></div>
-      <div class="cg"><em>Часы работы</em><span>пн–пт · 10:00–19:00</span></div>
-      <div class="cg"><em>Где</em><span>Баку, Азербайджан</span></div>
+      <div class="cg"><em><?= t('contacts.t3') ?></em><a href="mailto:info@mguliyev.com">info@mguliyev.com</a></div>
+      <div class="cg"><em><?= t('contacts.t4') ?></em><a href="tel:+994552155363">+994 55 215 53 63</a></div>
+      <div class="cg"><em><?= t('contacts.t5') ?></em><span><?= t('contacts.t6') ?></span></div>
+      <div class="cg"><em><?= t('contacts.t7') ?></em><span><?= t('contacts.t8') ?></span></div>
     </div>
     <p class="note">[УТОЧНИТЬ: WhatsApp на этом же номере? Тогда добавим кнопку со ссылкой wa.me] · [УТОЧНИТЬ: адрес офиса, если к вам можно приехать]</p>
 
     <div style="margin-top:clamp(40px,5vw,68px)">
-      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:18px">Куда писать по какому поводу</h2>
+      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:18px"><?= t('contacts.t9') ?></h2>
       <div class="steps" style="margin-top:0">
         <div class="st">
-          <h4>Новый проект</h4>
-          <p>На почту или через форму ниже. Чем конкретнее задача, тем точнее первое предложение.</p>
+          <h4><?= t('contacts.t10') ?></h4>
+          <p><?= t('contacts.t11') ?></p>
         </div>
         <div class="st">
-          <h4>Текущий сайт</h4>
-          <p>Поломка, правки, вопрос по хостингу или почте — на тот же адрес, указав в теме домен.
-            Так письмо не потеряется среди новых заявок.</p>
+          <h4><?= t('contacts.t12') ?></h4>
+          <p><?= t('contacts.t13') ?></p>
         </div>
         <div class="st">
-          <h4>Сотрудничество</h4>
-          <p>Подряд, партнёрство, резюме — туда же, с пометкой в теме.</p>
+          <h4><?= t('contacts.t14') ?></h4>
+          <p><?= t('contacts.t15') ?></p>
         </div>
       </div>
     </div>
 
     <div class="about" style="margin-top:clamp(40px,5vw,68px)">
       <div>
-        <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px">Что приложить к первому письму</h2>
-        <p class="sub" style="font-size:.9rem;margin-bottom:14px">Чтобы ответить по делу с первого раза, хватит пяти строк.</p>
+        <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px"><?= t('contacts.t16') ?></h2>
+        <p class="sub" style="font-size:.9rem;margin-bottom:14px"><?= t('contacts.t17') ?></p>
         <ul class="plain">
-          <li>Чем занимается компания и кто ваш клиент.</li>
-          <li>Ссылка на текущий сайт и соцсети, если они есть.</li>
-          <li>Что не устраивает сейчас — или что нужно сделать с нуля.</li>
-          <li>Два-три сайта, которые вам нравятся, и чем именно.</li>
-          <li>Срок и примерный диапазон бюджета.</li>
+          <li><?= t('contacts.t18') ?></li>
+          <li><?= t('contacts.t19') ?></li>
+          <li><?= t('contacts.t20') ?></li>
+          <li><?= t('contacts.t21') ?></li>
+          <li><?= t('contacts.t22') ?></li>
         </ul>
-        <p class="sub" style="font-size:.88rem;margin-top:14px">Бюджет спрашиваем не чтобы подогнать
-          под него цену, а чтобы не предлагать лишнего.</p>
+        <p class="sub" style="font-size:.88rem;margin-top:14px"><?= t('contacts.t23') ?></p>
       </div>
       <div>
-        <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px">Что происходит после заявки</h2>
+        <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px"><?= t('contacts.t24') ?></h2>
         <ul class="plain">
-          <li>Читаем и задаём уточняющие вопросы — письмом или звонком, как вам удобнее.</li>
-          <li>Присылаем предложение: состав работ, этапы и сумма. В течение суток после брифа.</li>
-          <li>Если всё устраивает — 50% в начале работ и 50% при сдаче. Абонентские услуги помесячно или за год.</li>
+          <li><?= t('contacts.t25') ?></li>
+          <li><?= t('contacts.t26') ?></li>
+          <li><?= t('contacts.t27') ?></li>
         </ul>
-        <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin:26px 0 16px">Языки и география</h2>
-        <p class="sub" style="font-size:.9rem">Сайт пока на русском, азербайджанская и английская
-          версии в работе. Среди проектов есть сайты для клиентов в Венгрии, Австрии, Канаде,
-          на Кипре и в Украине.</p>
+        <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin:26px 0 16px"><?= t('contacts.t28') ?></h2>
+        <p class="sub" style="font-size:.9rem"><?= t('contacts.t29') ?></p>
       </div>
     </div>
 
     <div id="zayavka" style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
-      <h2 class="disp h2">Оставить заявку</h2>
+      <h2 class="disp h2"><?= t('contacts.t30') ?></h2>
       <form id="lead" method="post" action="/send.php" style="margin-top:clamp(24px,3vw,38px)">
       <?php /* Ловушка для ботов: человек этого поля не видит и не заполнит.
              Рядом отметка времени — мгновенная отправка выдаёт автомат. */ ?>
@@ -76,16 +72,16 @@ include __DIR__ . '/../../app/partials/head.php';
              style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
       <input type="hidden" name="ts" value="<?= time() ?>">
       <input type="hidden" name="back" value="<?= htmlspecialchars(I18n::u(I18n::path()), ENT_QUOTES) ?>">
-        <div><label for="fn">Имя</label><input id="fn" name="name" autocomplete="name" required></div>
-        <div><label for="fp">Телефон / WhatsApp</label><input id="fp" name="phone" type="tel" autocomplete="tel" placeholder="+994 __ ___ __ __" required></div>
-        <div><label for="fs">Направление</label>
-          <select id="fs" name="service"><option>Веб-сайты</option><option>Дизайн</option><option>Цифровой маркетинг</option><option>Техническая поддержка</option><option>Не определился</option></select>
+        <div><label for="fn"><?= t('contacts.t31') ?></label><input id="fn" name="name" autocomplete="name" required></div>
+        <div><label for="fp"><?= t('contacts.t32') ?></label><input id="fp" name="phone" type="tel" autocomplete="tel" placeholder="+994 __ ___ __ __" required></div>
+        <div><label for="fs"><?= t('contacts.t33') ?></label>
+          <select id="fs" name="service"><option><?= t('contacts.t34') ?></option><option><?= t('contacts.t35') ?></option><option><?= t('contacts.t36') ?></option><option><?= t('contacts.t37') ?></option><option><?= t('contacts.t38') ?></option></select>
         </div>
-        <div><label for="fb">Примерный бюджет</label>
-          <select id="fb" name="budget"><option>до ₼700</option><option>₼700 – ₼1 500</option><option>₼1 500 – ₼3 000</option><option>от ₼3 000</option></select>
+        <div><label for="fb"><?= t('contacts.t39') ?></label>
+          <select id="fb" name="budget"><option><?= t('contacts.t40') ?></option><option>₼700 – ₼1 500</option><option>₼1 500 – ₼3 000</option><option><?= t('contacts.t41') ?></option></select>
         </div>
-        <div class="full"><label for="fm">Коротко о задаче</label><textarea id="fm" name="message" placeholder="Сфера бизнеса, ссылка на текущий сайт, что хотите получить…"></textarea></div>
-        <div class="full" style="display:flex;align-items:center;gap:22px;flex-wrap:wrap"><button class="btn" type="submit">Отправить</button><p class="status" id="lead-status" role="status"><?= isset($_GET['sent']) ? htmlspecialchars(t('form.ok')) : (isset($_GET['error']) ? htmlspecialchars(t('form.error')) : '') ?></p></div>
+        <div class="full"><label for="fm"><?= t('contacts.t42') ?></label><textarea id="fm" name="message" placeholder="<?= t('contacts.t44') ?>"></textarea></div>
+        <div class="full" style="display:flex;align-items:center;gap:22px;flex-wrap:wrap"><button class="btn" type="submit"><?= t('contacts.t43') ?></button><p class="status" id="lead-status" role="status"><?= isset($_GET['sent']) ? htmlspecialchars(t('form.ok')) : (isset($_GET['error']) ? htmlspecialchars(t('form.error')) : '') ?></p></div>
       </form>
     </div>
   </div>

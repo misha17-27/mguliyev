@@ -9,25 +9,17 @@ $catalog = catalog();
 <section class="sec">
   <div class="wrap">
     <div class="shead">
-      <h1 class="disp h2">О студии</h1>
-      <p class="lb">Баку · с 2017 года</p>
+      <h1 class="disp h2"><?= t('about.t1') ?></h1>
+      <p class="lb"><?= t('about.t2') ?></p>
     </div>
-    <p class="about-lead" style="margin-top:8px">MGuliyev Studio работает в Баку с 2017 года —
-      и остаётся с проектами после запуска, потому что именно тогда начинается самое важное.</p>
-    <p class="sub" style="margin-top:22px">Делаем сайты, рисуем айдентику, продвигаем в поиске и соцсетях,
-      держим домены, хостинг и корпоративную почту. В портфолио 55 проекта — от нефтегазовой
-      инфраструктуры до магазина тортов.</p>
-    <p class="sub">Работаем без прослойки из менеджеров: вы говорите напрямую с теми, кто делает.
-      Проектов в работе намеренно немного — каждый ведётся годами, а не сдаётся и забывается.</p>
+    <p class="about-lead" style="margin-top:8px"><?= t('about.t3') ?></p>
+    <p class="sub" style="margin-top:22px"><?= t('about.t4') ?></p>
+    <p class="sub"><?= t('about.t5') ?></p>
 
     <div style="margin-top:clamp(40px,5vw,68px)">
-      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px">Откуда четыре направления</h2>
-      <p class="sub">Студия начала в 2017 году с разработки на WordPress. Остальное добавлялось
-        по одному направлению — не ради строчки в прайсе, а потому что сайт без хостинга, почты,
-        поиска и контента остаётся файлом на сервере.</p>
-      <p class="sub">Сегодня это четыре группы и двадцать четыре услуги в них. Любую можно взять
-        отдельно. Но когда домен, сайт, поиск и соцсети ведёт один подрядчик, не нужно сводить
-        между собой разных исполнителей и выяснять, на чьей стороне поломка.</p>
+      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px"><?= t('about.t6') ?></h2>
+      <p class="sub"><?= t('about.t7') ?></p>
+      <p class="sub"><?= t('about.t8') ?></p>
     </div>
 
     <div class="rows" style="margin-top:clamp(30px,4vw,48px)">
@@ -35,59 +27,54 @@ $catalog = catalog();
       <a class="row" href="<?= u('/uslugi/' . $slug . '/') ?>">
         <span class="rname"><?= $cat['title'] ?></span>
         <span class="rdesc"><?= implode(' · ', array_map(fn($i) => $i[0], $cat['items'])) ?></span>
-        <span class="rmeta">6 услуг</span>
+        <span class="rmeta"><?= t('about.t9') ?></span>
       </a>
       <?php endforeach; ?>
     </div>
 
     <div class="band" style="margin-top:clamp(40px,5vw,68px)">
-      <div class="bcell"><b>2017</b><span>год основания студии</span></div>
-      <div class="bcell"><b>49</b><span>проектов в портфолио</span></div>
-      <div class="bcell"><b>24</b><span>услуги в четырёх направлениях</span></div>
+      <div class="bcell"><b>2017</b><span><?= t('about.t10') ?></span></div>
+      <div class="bcell"><b>49</b><span><?= t('about.t11') ?></span></div>
+      <div class="bcell"><b>24</b><span><?= t('about.t12') ?></span></div>
     </div>
 
     <div style="margin-top:clamp(40px,5vw,68px)">
-      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:20px">Как устроена работа</h2>
+      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:20px"><?= t('about.t13') ?></h2>
       <div class="princ" style="margin-top:0">
         <div>
-          <h4>Доступы оформляются на вас</h4>
-          <p>Домен, панель хостинга и права администратора на сайте принадлежат вам или вашей
-            компании с первого дня, а не студии. Решите работать с другими — забираете всё и уходите.</p>
+          <h4><?= t('about.t14') ?></h4>
+          <p><?= t('about.t15') ?></p>
         </div>
         <div>
-          <h4>Проект, а не человек</h4>
-          <p>Структура, доступы и решения по проекту записаны. Исполнитель внутри студии может
-            смениться — для вас ничего не меняется.</p>
+          <h4><?= t('about.t16') ?></h4>
+          <p><?= t('about.t17') ?></p>
         </div>
         <div>
-          <h4>Отчёт по графику</h4>
-          <p>Трафик, позиции, охваты и состояние сервера — раз в месяц, а не по вашему напоминанию.</p>
+          <h4><?= t('about.t18') ?></h4>
+          <p><?= t('about.t19') ?></p>
         </div>
       </div>
     </div>
 
     <div style="margin-top:clamp(40px,5vw,68px)">
-      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px">Инструменты</h2>
-      <p class="sub" style="font-size:.9rem">Мы не подбираем новый инструмент под каждый заказ.
-        Стек выбран так, чтобы сайт можно было передать другой команде и она разобралась в нём без нас.</p>
+      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px"><?= t('about.t20') ?></h2>
+      <p class="sub" style="font-size:.9rem"><?= t('about.t21') ?></p>
       <div class="stack" style="margin-top:18px">
         <i>WordPress</i><i>WooCommerce</i><i>Elementor</i><i>ACF</i><i>WPML</i><i>Yoast SEO</i><i>Figma</i><i>Photoshop</i><i>Illustrator</i><i>Google Analytics</i><i>Search Console</i><i>Cloudflare</i><i>Premiere Pro</i><i>After Effects</i><i>Meta Business Suite</i>
       </div>
     </div>
 
     <div style="margin-top:clamp(40px,5vw,68px)">
-      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px">Как ведём проект</h2>
-      <p class="sub">Путь от брифа до поддержки — шесть шагов, и он одинаковый для сайта на пять
-        страниц и для магазина с интеграцией склада. Разобрали его на главной:
-        <a href="<?= u('/') ?>#process" style="color:var(--duo-b)">как работаем</a>.</p>
+      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px"><?= t('about.t22') ?></h2>
+      <p class="sub"><?= t('about.t23') ?>
+        <a href="<?= u('/') ?>#process" style="color:var(--duo-b)"><?= t('about.t24') ?></a>.</p>
     </div>
 
     <div style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
-      <h2 class="disp h2">Расскажите о проекте</h2>
-      <p class="sub" style="margin-top:16px">Чем занимается бизнес и что не устраивает сейчас.
-        Этого достаточно, чтобы начать.</p>
-      <p style="margin-top:22px"><a class="btn" href="<?= u('/kontakty/') ?>">Связаться</a>
-        <a class="btn btn-o" href="<?= u('/portfolio/') ?>" style="margin-left:10px">Смотреть портфолио</a></p>
+      <h2 class="disp h2"><?= t('about.t25') ?></h2>
+      <p class="sub" style="margin-top:16px"><?= t('about.t26') ?></p>
+      <p style="margin-top:22px"><a class="btn" href="<?= u('/kontakty/') ?>"><?= t('about.t27') ?></a>
+        <a class="btn btn-o" href="<?= u('/portfolio/') ?>" style="margin-left:10px"><?= t('about.t28') ?></a></p>
     </div>
   </div>
 </section>

@@ -27,13 +27,10 @@ $packs = [
 <section class="sec">
   <div class="wrap">
     <div class="shead">
-      <h1 class="disp h2">Цены</h1>
-      <p class="lb">стартовые суммы</p>
+      <h1 class="disp h2"><?= t('price.t1') ?></h1>
+      <p class="lb"><?= t('price.t2') ?></p>
     </div>
-    <p class="sub">«От» значит, что дешевле не бывает, а дороже бывает: если страниц больше,
-      языков больше или нужна интеграция. Точную цифру называем после брифа —
-      сайт на пять страниц и сайт на пятьдесят это разная работа, и честнее назвать сумму,
-      когда понятно, какая из них ваша.</p>
+    <p class="sub"><?= t('price.t3') ?></p>
 
     <div class="plist" style="margin-top:clamp(30px,4vw,54px)">
       <?php foreach ($packs as $p): ?>
@@ -57,56 +54,47 @@ $packs = [
 
     <div class="about" style="margin-top:clamp(44px,5vw,72px)">
       <div>
-        <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px">Входит в любой пакет</h2>
+        <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px"><?= t('price.t4') ?></h2>
         <ul class="plain">
-          <li>Первый месяц технической поддержки — бесплатно.</li>
-          <li>Подключение корпоративной почты на вашем домене — бесплатно.</li>
-          <li>Домен, хостинг и админка оформляются на вас или вашу компанию, а не на студию.</li>
-          <li>Все доступы передаются при сдаче: сразу и полностью.</li>
+          <li><?= t('price.t5') ?></li>
+          <li><?= t('price.t6') ?></li>
+          <li><?= t('price.t7') ?></li>
+          <li><?= t('price.t8') ?></li>
         </ul>
       </div>
       <div>
-        <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px">Оплачивается отдельно</h2>
+        <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px"><?= t('price.t9') ?></h2>
         <ul class="plain">
-          <li>Продление домена и хостинга после первого года и первых оплаченных месяцев. <span class="note">[УТОЧНИТЬ: цена продления]</span></li>
-          <li>Техническая поддержка со второго месяца. <span class="note">[УТОЧНИТЬ: цена в месяц]</span></li>
-          <li>Продвижение: SEO, Google Ads, SMM — отдельные абонентские услуги. <span class="note">[УТОЧНИТЬ: цены]</span></li>
-          <li>Рекламный бюджет. Деньги за показы уходят напрямую в Google или Meta, наша работа считается отдельно.</li>
-          <li>Дизайн вне пакета: логотип, брендбук, каталог. <span class="note">[УТОЧНИТЬ: цены]</span></li>
+          <li><?= t('price.t10') ?> <span class="note">[УТОЧНИТЬ: цена продления]</span></li>
+          <li><?= t('price.t11') ?> <span class="note">[УТОЧНИТЬ: цена в месяц]</span></li>
+          <li><?= t('price.t12') ?> <span class="note">[УТОЧНИТЬ: цены]</span></li>
+          <li><?= t('price.t13') ?></li>
+          <li><?= t('price.t14') ?> <span class="note">[УТОЧНИТЬ: цены]</span></li>
         </ul>
       </div>
     </div>
 
     <div style="margin-top:clamp(40px,5vw,68px)">
-      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px">Как платить</h2>
-      <p class="sub">Разовые работы — 50% в начале и 50% при сдаче. Абонентские услуги —
-        Reels-подписка, поддержка, SEO, SMM — помесячно или сразу за год.</p>
+      <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px"><?= t('price.t15') ?></h2>
+      <p class="sub"><?= t('price.t16') ?></p>
       <p class="note" style="margin-top:14px">[УТОЧНИТЬ: способы оплаты — перевод, карта, наличные]</p>
     </div>
 
     <div class="faq" style="margin-top:clamp(40px,5vw,68px)">
-      <details open><summary>Почему цена «от», а не точная?</summary>
-        <p>Потому что сумма зависит от объёма. Пять страниц или пятьдесят, один язык или три,
-          есть ли у вас тексты и фото, нужна ли оплата на сайте — каждое из этих «да» стоит денег.
-          После брифа вы получаете предложение с составом работ и конкретной суммой.</p></details>
-      <details><summary>Можно взять одну услугу, без пакета?</summary>
-        <p>Да. Логотип, SEO для готового сайта, только почта, только съёмка — это нормальная задача,
-          и мы не продаём к ней остальное в нагрузку.</p></details>
-      <details><summary>Что если сайт уже есть, но его делал кто-то другой?</summary>
-        <p>Работаем и с такими. Сначала смотрим, что внутри: движок, скорость, структура, доступы.
-          Иногда дешевле доработать, иногда — собрать заново. Скажем прямо, какой из случаев ваш.</p></details>
-      <details><summary>Сколько времени занимает сайт?</summary>
-        <p>От 10 до 25 дней в зависимости от объёма. Корпоративная почта настраивается за день.
-          Устойчивый результат в поиске — 3–6 месяцев: это не срок работы, а срок, за который
-          поисковик пересматривает позиции.</p></details>
+      <details open><summary><?= t('price.t17') ?></summary>
+        <p><?= t('price.t18') ?></p></details>
+      <details><summary><?= t('price.t19') ?></summary>
+        <p><?= t('price.t20') ?></p></details>
+      <details><summary><?= t('price.t21') ?></summary>
+        <p><?= t('price.t22') ?></p></details>
+      <details><summary><?= t('price.t23') ?></summary>
+        <p><?= t('price.t24') ?></p></details>
     </div>
 
     <div style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
-      <h2 class="disp h2">Назовите задачу — назовём сумму</h2>
-      <p class="sub" style="margin-top:16px">Хватит одного разговора: чем занимается бизнес,
-        сколько примерно страниц и языков, есть ли каталог и оплата, что уже сделано и что не устраивает.
-        Предложение присылаем в течение суток после брифа.</p>
-      <p style="margin-top:22px"><a class="btn" href="<?= u('/kontakty/') ?>">Оставить заявку</a></p>
+      <h2 class="disp h2"><?= t('price.t25') ?></h2>
+      <p class="sub" style="margin-top:16px"><?= t('price.t26') ?></p>
+      <p style="margin-top:22px"><a class="btn" href="<?= u('/kontakty/') ?>"><?= t('price.t27') ?></a></p>
     </div>
   </div>
 </section>

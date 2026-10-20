@@ -9,10 +9,10 @@ $arts = articles();
 <section class="sec">
   <div class="wrap">
     <div class="shead">
-      <h1 class="disp h2">Блог</h1>
+      <h1 class="disp h2"><?= t('blog.t1') ?></h1>
       <p class="lb"><?= count($arts) ?> статьи</p>
     </div>
-    <p class="sub">Разбираем то, о чём чаще всего спрашивают на брифах. Без кейсов и обещаний — только техника, которую можно проверить самому.</p>
+    <p class="sub"><?= t('blog.t2') ?></p>
     <?php if (lang() !== 'ru'): ?>
       <p class="note" style="margin-top:14px"><?= htmlspecialchars(t('blog.ru_only')) ?></p>
     <?php endif; ?>
