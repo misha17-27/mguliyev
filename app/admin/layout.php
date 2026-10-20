@@ -34,6 +34,8 @@ function admin_sections(): array
         'dashboard' => ['Сводка',              '▦', 'Сайт'],
         'settings'  => ['Контакты и цены',     '☎', 'Сайт'],
         'mail'      => ['Почта',               '✉', 'Сайт'],
+        'leads'     => ['Заявки с сайта',      '✇', 'Сайт'],
+        'pages'     => ['Страницы',            '▤', 'Содержимое'],
         'portfolio' => ['Портфолио',           '▣', 'Содержимое'],
         'uslugi'    => ['Услуги',              '☰', 'Содержимое'],
         'packs'     => ['Пакеты и цены',       '₼', 'Содержимое'],
@@ -60,6 +62,9 @@ function admin_head(string $section): void
         'uslugi'    => count(catalog_canon()),
         'packs'     => count(packs_canon()),
         'blog'      => count(articles_canon()),
+        /* В меню показываем НЕПРОСМОТРЕННЫЕ, а не все: счётчик нужен,
+           чтобы заметить новую заявку, а не чтобы знать их общее число. */
+        'leads'     => admin_new_leads(),
     ];
 
     /* Насколько заполнен каждый язык: редактор должен видеть, где дыры,
@@ -281,4 +286,18 @@ function admin_thumb(?string $src, string $alt = ''): string
     return $src
         ? '<img src="' . $e($src) . '" alt="' . $e($alt) . '" loading="lazy">'
         : '<span class="nopic" title="снимка нет">нет</span>';
+}
+
+/** Сколько заявок ещё не просмотрено. Считаем по файлам, не разбирая их:
+    список заявок открывается редко, а меню рисуется на каждой странице. */
+function admin_new_leads(): int
+{
+    $dir = Store::dir() . '/leads';
+    if (!is_dir($dir)) return 0;
+    $n = 0;
+    foreach (glob($dir . '/*.json') ?: [] as $p) {
+        $raw = (string)@file_get_contents($p, false, null, 0, 4096);
+        if (strpos($raw, '"new": true') !== false) $n++;
+    }
+    return $n;
 }

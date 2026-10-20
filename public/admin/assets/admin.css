@@ -211,3 +211,9 @@ td.addr a:hover{text-decoration:underline}
           color:#0f1c26;cursor:pointer;word-break:break-all}
 .copypath:hover{border-color:#0f8a4f;background:#fff;color:#0a6b3d}
 .copypath.copied{background:#e8f5ee;border-color:#0f8a4f;color:#0a6b3d;font-weight:700;text-align:center}
+
+/* Ссылки на другие языки страницы: не кнопки, а ссылки — иначе строка
+   действий ломается на три ряда и таблицу невозможно читать. */
+.langlinks{display:inline-flex;gap:9px;align-items:center;padding-left:4px}
+.langlinks a{font-size:12px;font-weight:700;color:#5b6f7d;white-space:nowrap}
+.langlinks a:hover{color:#0f8a4f;text-decoration:underline}
