@@ -45,22 +45,21 @@
 
 ## 2. Развёртывание
 
-cPanel → Git Version Control → репозиторий `mguliyev` → **Deploy HEAD Commit**.
+cPanel → Git Version Control → репозиторий → **Deploy HEAD Commit**.
 
-По `.cpanel.yml` файлы лягут в `/home/mguliyev/mguliyev-new/`:
+По `.cpanel.yml` файлы лягут так:
 
 ```
-mguliyev-new/public    корень сайта
-mguliyev-new/app       шаблоны и данные — вне корня
+~/public_html/   корень сайта
+~/app/           шаблоны и данные, вне зоны доступа из сети
 ```
+
+Основной домен в cPanel жёстко привязан к `public_html`, и сменить ему
+document root из панели нельзя — поэтому корень кладётся прямо туда.
+Страницы подключают шаблоны по пути `../app/`, и с такой раскладкой он
+указывает ровно в `~/app`.
 
 Ничего не удаляется: команды только копируют.
-
-Альтернатива без копирования — указать домену корень прямо в клоне,
-`/home/mguliyev/repositories/mguliyev/public`. Тогда «деплой» это `git pull`,
-а `.cpanel.yml` не нужен вовсе.
-
----
 
 ### Если cPanel пишет «The system cannot deploy»
 
