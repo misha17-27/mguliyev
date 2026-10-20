@@ -90,7 +90,7 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
         <?php endforeach; ?>
       </nav>
       <a class="pill nav-cta" href="<?= $esc(u('/kontakty/')) ?>"><i></i><?= $esc(t('cta.discuss')) ?></a>
-      <button class="burger" id="burger" type="button" aria-label="<?= $esc(t('nav.open_menu')) ?>" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
+      <button class="burger" id="burger" type="button" aria-label="<?= $esc(t('nav.open_menu')) ?>" data-open="<?= $esc(t('nav.open_menu')) ?>" data-close="<?= $esc(t('nav.close_menu')) ?>" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
     </div>
   </div>
 </header>
@@ -105,7 +105,7 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
       <a href="<?= $esc(u('/kontakty/')) ?>"<?= $cur('contact') ?>><?= $esc(t('nav.contacts')) ?></a>
   </nav>
   <div class="drawer-foot">
-    <nav class="lang" aria-label="<?= $esc(t('nav.language')) ?>" style="margin-bottom:6px">
+    <nav class="lang" aria-label="<?= $esc(t('nav.language')) ?>">
       <?php foreach ($cfg['languages'] as $l): $on = $l === I18n::$lang; ?>
         <?php if ($on): ?><span aria-current="true"><?= $esc($cfg['lang_label'][$l]) ?></span>
         <?php else: ?><a href="<?= $esc(($cfg['prefix'][$l] ?? '') . $path) ?>" hreflang="<?= $esc($l) ?>"><?= $esc($cfg['lang_label'][$l]) ?></a><?php endif; ?>

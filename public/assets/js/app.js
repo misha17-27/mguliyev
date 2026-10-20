@@ -105,12 +105,31 @@ var drawer = document.getElementById("drawer");
 var behind = [".wm", ".nav .menu", ".nav .lang", ".pill.nav-cta", "main", "footer.site"]
   .map(function (s) { return document.querySelector(s); }).filter(Boolean);
 var lastFocus = null;
+var menuScrollY = 0;
 function setMenu(open) {
   drawer.classList.toggle("open", open);
   document.body.classList.toggle("menu-open", open);
   burger.setAttribute("aria-expanded", open ? "true" : "false");
-  burger.setAttribute("aria-label", open ? "Закрыть меню" : "Открыть меню");
-  document.body.style.overflow = open ? "hidden" : "";
+  /* Подписи берём из разметки: раньше они были зашиты по-русски и на /az/
+     и /en/ кнопка после первого нажатия начинала говорить по-русски. */
+  burger.setAttribute("aria-label", open ? (burger.dataset.close || "Закрыть меню") : (burger.dataset.open || "Открыть меню"));
+  /* Прокрутку страницы под шторкой глушим не через overflow:hidden — на iOS
+     Safari он не держит, страница всё равно едет. Фиксируем body и компенсируем
+     сдвиг отрицательным top, а при закрытии возвращаем позицию: иначе человек
+     закроет меню и окажется в начале страницы. */
+  if (open) {
+    menuScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+    document.body.style.position = "fixed";
+    document.body.style.top = -menuScrollY + "px";
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+  } else if (document.body.style.position === "fixed") {
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    window.scrollTo(0, menuScrollY);
+  }
   behind.forEach(function (el) { if (open) { el.setAttribute("inert", ""); } else { el.removeAttribute("inert"); } });
   if (open) {
     lastFocus = document.activeElement;

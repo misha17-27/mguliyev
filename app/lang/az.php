@@ -12,6 +12,7 @@ return [
     'nav.sections'           => 'Səhifənin bölmələri',
     'nav.language'           => 'Saytın dili',
     'nav.open_menu'          => 'Menyunu aç',
+    'nav.close_menu'         => 'Menyunu bağla',
     'cat.veb-sayty'          => 'Veb-saytlar',
     'cat.dizayn'             => 'Dizayn',
     'cat.marketing'          => 'Rəqəmsal marketinq',

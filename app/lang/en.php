@@ -12,6 +12,7 @@ return [
     'nav.sections'           => 'Page sections',
     'nav.language'           => 'Site language',
     'nav.open_menu'          => 'Open menu',
+    'nav.close_menu'         => 'Close menu',
     'cat.veb-sayty'          => 'Websites',
     'cat.dizayn'             => 'Design',
     'cat.marketing'          => 'Digital marketing',

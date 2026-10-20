@@ -136,13 +136,13 @@ body.menu-open .tl{opacity:0;transform:translateY(100%);pointer-events:none}
 .burger[aria-expanded="true"] span:last-child{transform:translateY(-3.25px) rotate(-45deg)}
 @media(max-width:1080px){.menu{display:none}.burger{display:flex}.pill.nav-cta{display:none}}
 
-.drawer{position:fixed;inset:0;z-index:45;background:var(--black);padding:calc(var(--nav-h) + 17px) clamp(18px,5vw,44px) 40px;display:flex;flex-direction:column;justify-content:space-between;gap:30px;opacity:0;visibility:hidden;transform:translateY(-12px);transition:opacity .35s,transform .35s,visibility 0s .35s;overflow-y:auto}
+.drawer{position:fixed;inset:0;z-index:45;height:100dvh;background:var(--black);padding:calc(var(--nav-h) + 17px) clamp(18px,5vw,44px) max(28px,env(safe-area-inset-bottom));display:flex;flex-direction:column;justify-content:space-between;gap:clamp(14px,2.5vh,28px);opacity:0;visibility:hidden;transform:translateY(-12px);transition:opacity .35s,transform .35s,visibility 0s .35s;overflow:hidden;overscroll-behavior:contain}
 /* visibility переключается мгновенно при открытии и с задержкой при закрытии:
    если анимировать её, в нулевой момент элемент ещё скрыт и не принимает фокус. */
 .drawer.open{opacity:1;visibility:visible;transform:none;transition:opacity .35s,transform .35s,visibility 0s 0s}
-.drawer nav{display:flex;flex-direction:column}
-.drawer nav a{font-family:var(--f-disp);font-weight:800;font-size:clamp(1.9rem,8.4vw,3.2rem);text-transform:uppercase;line-height:1.12;padding-block:clamp(7px,1.5vw,12px);border-bottom:1px solid var(--line)}
-.drawer nav a:hover{color:var(--duo-b)}
+.drawer > nav{display:flex;flex-direction:column}
+.drawer > nav a{font-family:var(--f-disp);font-weight:800;font-size:min(8.4vw,6.2vh);text-transform:uppercase;line-height:1.12;padding-block:clamp(5px,1.1vh,12px);border-bottom:1px solid var(--line)}
+.drawer > nav a:hover{color:var(--duo-b)}
 .drawer-foot{display:flex;flex-direction:column;gap:12px;font-size:.9rem;color:var(--grey)}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:var(--f-body);font-weight:500;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:16px 28px;border-radius:999px;background:var(--bone);color:var(--black);border:1px solid var(--bone);cursor:pointer;transition:background .3s,color .3s,border-color .3s}
@@ -425,7 +425,16 @@ footer.site{border-top:1px solid var(--line);padding-block:clamp(34px,4vw,56px) 
   .phone{width:clamp(150px,15vw,200px)}
   .hero-foot{margin-top:18px;padding-top:16px}
   .drawer{padding-top:76px;gap:18px}
-  .drawer nav a{font-size:clamp(1.2rem,4.2vw,1.9rem);padding-block:4px}
+  .drawer > nav a{font-size:min(4.2vw,5.4vh);padding-block:4px}
+}
+
+/* Низкий экран: шести пунктам меню места хватает, а подвалу уже нет — он
+   уезжал за край, и внутри шторки снова появлялась прокрутка. Разворачиваем
+   подвал в строку и поджимаем. */
+@media(max-height:620px){
+  .drawer{padding-bottom:16px}
+  .drawer-foot{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px 18px;font-size:.78rem}
+  .drawer-foot .lang a,.drawer-foot .lang span{padding:3px 6px}
 }
 /* Совсем низкий экран (в том числе зум 400%): шапка и нижняя панель забирали
    43% высоты. Шапку отпускаем, панель убираем — навигация остаётся в шторке. */
