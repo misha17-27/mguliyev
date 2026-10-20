@@ -40,6 +40,16 @@ function seo_page_title(string $page): string
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    /* Форма собирает файл целиком, поэтому вкладка, открытая час
+       назад, вернула бы всё к состоянию часовой давности — и панель
+       сказала бы «Сохранено». Метка версии это ловит. */
+    if (admin_stale('seo.json')) {
+        admin_flash('«Заголовки для поиска» правили из другого места, пока эта страница была '
+            . 'открыта. Чтобы не затереть ту правку, сохранение отменено: '
+            . 'обновите страницу и внесите изменения заново.', 'err');
+        admin_go(admin_url('seo'));
+    }
+
     $in  = (array)($_POST['seo'] ?? []);
     $out = [];
 
@@ -84,6 +94,7 @@ admin_head('seo');
 
 <form method="post" action="<?= $e(admin_url('seo')) ?>" data-guard="1">
   <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+    <?= admin_ver_field('seo.json') ?>
 
   <?php foreach ($seo as $page => $byLang):
       $own = !empty($store[$page]);

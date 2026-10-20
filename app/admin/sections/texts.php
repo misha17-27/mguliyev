@@ -51,9 +51,18 @@ foreach (langs() as $l) {
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-    $in    = (array)($_POST['t'] ?? []);
-    $store = Store::read('texts.json') ?? [];
+    if (admin_stale('texts.json')) {
+        admin_flash('Строки правили из другого места, пока эта страница была открыта. '
+            . 'Чтобы не затереть ту правку, сохранение отменено: обновите страницу '
+            . 'и внесите изменения заново.', 'err');
+        admin_go(admin_url('texts', ['g' => (string)($_POST['g'] ?? 'nav')]));
+    }
+
+    $in = (array)($_POST['t'] ?? []);
     $changed = 0;
+
+    /* Читаем и пишем под блокировкой: тот же файл правит раздел «Страницы». */
+    $ok = Store::update('texts.json', static function (array $store) use ($in, $all, $repo, &$changed) {
 
     foreach ($in as $k => $byLang) {
         /* Правим только существующие ключи: новый ключ в словаре — это
@@ -74,12 +83,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         }
         if (isset($store[$k]) && !$store[$k]) unset($store[$k]);
     }
+    return $store;
+    });
 
     /* Проверяем до сообщения об успехе: «сохранено» при обрезанной форме —
        худшее, что панель может сказать. */
     $cut = admin_form_truncated(admin_count_fields($in));
 
-    if (Store::write('texts.json', $store)) {
+    if ($ok) {
         if ($cut !== null) {
             admin_flash($cut, 'err');
         } else {
@@ -133,6 +144,7 @@ admin_head('texts');
 
 <form method="post" action="<?= $e(admin_url('texts')) ?>" data-guard="1">
   <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+  <?= admin_ver_field('texts.json') ?>
   <input type="hidden" name="g" value="<?= $e($g) ?>">
   <?php /* Сколько полей отправляем. Поле стоит ПЕРВЫМ: PHP отбрасывает
            последние, значит это объявление доедет в любом случае. */ ?>

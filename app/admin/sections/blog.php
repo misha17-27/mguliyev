@@ -17,6 +17,16 @@ $cur  = post_slug($_GET['a'] ?? '');
 $lang = admin_lang();
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    /* Форма собирает файл целиком, поэтому вкладка, открытая час
+       назад, вернула бы всё к состоянию часовой давности — и панель
+       сказала бы «Сохранено». Метка версии это ловит. */
+    if (admin_stale('articles.json')) {
+        admin_flash('«Статьи» правили из другого места, пока эта страница была '
+            . 'открыта. Чтобы не затереть ту правку, сохранение отменено: '
+            . 'обновите страницу и внесите изменения заново.', 'err');
+        admin_go(admin_url('blog'));
+    }
+
     $slug = post_slug($_POST['slug'] ?? '');
     $i = null;
     foreach ($arts as $n => $a) if ($a['slug'] === $slug) { $i = $n; break; }
@@ -136,6 +146,7 @@ if ($art === null):
 
   <form method="post" action="<?= $e(admin_url('blog')) ?>" data-guard="1">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+    <?= admin_ver_field('articles.json') ?>
     <input type="hidden" name="slug" value="<?= $e($art['slug']) ?>">
     <input type="hidden" name="lang" value="<?= $e($lang) ?>">
 

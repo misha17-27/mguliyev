@@ -9,6 +9,16 @@ $e     = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITU
 $packs = packs_canon();
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    /* Форма собирает файл целиком, поэтому вкладка, открытая час
+       назад, вернула бы всё к состоянию часовой давности — и панель
+       сказала бы «Сохранено». Метка версии это ловит. */
+    if (admin_stale('packs.json')) {
+        admin_flash('«Пакеты» правили из другого места, пока эта страница была '
+            . 'открыта. Чтобы не затереть ту правку, сохранение отменено: '
+            . 'обновите страницу и внесите изменения заново.', 'err');
+        admin_go(admin_url('packs'));
+    }
+
     $in   = (array)($_POST['p'] ?? []);
     $del  = (array)($_POST['del'] ?? []);
     $out  = [];
@@ -76,6 +86,7 @@ admin_head('packs');
 <form method="post" action="<?= $e(admin_url('packs')) ?>" data-guard="1"
       data-confirm="Сохранить изменения в пакетах? Отмеченные на удаление исчезнут со страницы цен.">
   <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+    <?= admin_ver_field('packs.json') ?>
 
   <?php foreach ($packs as $p): $k = $p['key']; ?>
     <div class="panel">

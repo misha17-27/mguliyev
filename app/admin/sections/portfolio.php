@@ -15,6 +15,16 @@ $slug   = post_slug($_GET['g'] ?? '');
 
 /* ------------------------------------------------------------- сохранение */
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    /* Форма собирает файл целиком, поэтому вкладка, открытая час
+       назад, вернула бы всё к состоянию часовой давности — и панель
+       сказала бы «Сохранено». Метка версии это ловит. */
+    if (admin_stale('works.json')) {
+        admin_flash('«Портфолио» правили из другого места, пока эта страница была '
+            . 'открыта. Чтобы не затереть ту правку, сохранение отменено: '
+            . 'обновите страницу и внесите изменения заново.', 'err');
+        admin_go(admin_url('portfolio'));
+    }
+
     $what = post_one($_POST['do'] ?? '');
 
     /* --- новая отрасль --- */
@@ -165,6 +175,7 @@ if ($cur === null):
     <h3>Добавить отрасль</h3>
     <form method="post" action="<?= $e(admin_url('portfolio')) ?>">
       <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+    <?= admin_ver_field('works.json') ?>
       <input type="hidden" name="do" value="add-group">
       <label>Ключ <span class="hint">латиницей: по нему отрасль находят переводы и фильтр</span></label>
       <input type="text" name="slug" class="mono" placeholder="obrazovanie" required>
@@ -185,6 +196,7 @@ if ($cur === null):
 
   <form method="post" action="<?= $e(admin_url('portfolio')) ?>" data-guard="1">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+    <?= admin_ver_field('works.json') ?>
     <input type="hidden" name="slug" value="<?= $e($cur['slug']) ?>">
 
     <div class="panel">
@@ -275,6 +287,7 @@ if ($cur === null):
   <form method="post" action="<?= $e(admin_url('portfolio')) ?>" style="margin-top:26px"
         data-confirm="Удалить отрасль «<?= $e(tr($cur['name'], deflang())) ?>» вместе с <?= $n ?> проектами? Отменить это будет нечем.">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+    <?= admin_ver_field('works.json') ?>
     <input type="hidden" name="do" value="del-group">
     <input type="hidden" name="slug" value="<?= $e($cur['slug']) ?>">
     <button class="btn red sm" type="submit">Удалить отрасль вместе с проектами</button>

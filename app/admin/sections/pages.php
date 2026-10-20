@@ -80,6 +80,16 @@ function admin_page_keys(?string $prefix): array
 
 /* ------------------------------------------------------------ сохранение */
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    /* Форма собирает файл целиком, поэтому вкладка, открытая час
+       назад, вернула бы всё к состоянию часовой давности — и панель
+       сказала бы «Сохранено». Метка версии это ловит. */
+    if (admin_stale('texts.json')) {
+        admin_flash('«Тексты страниц» правили из другого места, пока эта страница была '
+            . 'открыта. Чтобы не затереть ту правку, сохранение отменено: '
+            . 'обновите страницу и внесите изменения заново.', 'err');
+        admin_go(admin_url('pages'));
+    }
+
     $key  = post_one($_POST['page'] ?? '');
     $page = null;
     foreach (admin_pages() as $p) if ($p['key'] === $key) { $page = $p; break; }
@@ -255,6 +265,7 @@ if ($cur === null):
 
   <form method="post" action="<?= $e(admin_url('pages')) ?>" data-guard="1">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+    <?= admin_ver_field('texts.json') ?>
     <input type="hidden" name="page" value="<?= $e($cur['key']) ?>">
     <?php /* Сколько полей словаря отправляем. Поле стоит ПЕРВЫМ: PHP
              отбрасывает последние, значит объявление доедет в любом случае. */ ?>

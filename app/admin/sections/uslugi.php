@@ -12,6 +12,16 @@ $cat = catalog_canon();
 $cur = post_slug($_GET['c'] ?? '');
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    /* Форма собирает файл целиком, поэтому вкладка, открытая час
+       назад, вернула бы всё к состоянию часовой давности — и панель
+       сказала бы «Сохранено». Метка версии это ловит. */
+    if (admin_stale('catalog.json')) {
+        admin_flash('«Услуги» правили из другого места, пока эта страница была '
+            . 'открыта. Чтобы не затереть ту правку, сохранение отменено: '
+            . 'обновите страницу и внесите изменения заново.', 'err');
+        admin_go(admin_url('uslugi'));
+    }
+
     $slug = post_slug($_POST['slug'] ?? '');
     if (!isset($cat[$slug])) {
         admin_flash('Направление не найдено.', 'err');
@@ -91,6 +101,7 @@ if (!isset($cat[$cur])):
 
   <form method="post" action="<?= $e(admin_url('uslugi')) ?>" data-guard="1">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+    <?= admin_ver_field('catalog.json') ?>
     <input type="hidden" name="slug" value="<?= $e($cur) ?>">
 
     <div class="panel">

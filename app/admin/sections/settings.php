@@ -12,6 +12,16 @@ $e    = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUT
 $meta = settings_meta();
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    /* Форма собирает файл целиком, поэтому вкладка, открытая час
+       назад, вернула бы всё к состоянию часовой давности — и панель
+       сказала бы «Сохранено». Метка версии это ловит. */
+    if (admin_stale('settings.json')) {
+        admin_flash('«Контакты и цены» правили из другого места, пока эта страница была '
+            . 'открыта. Чтобы не затереть ту правку, сохранение отменено: '
+            . 'обновите страницу и внесите изменения заново.', 'err');
+        admin_go(admin_url('settings'));
+    }
+
     $in  = (array)($_POST['f'] ?? []);
     $out = [];
     $bad = [];
@@ -79,6 +89,7 @@ admin_head('settings');
 
 <form method="post" action="<?= $e(admin_url('settings')) ?>" data-guard="1">
   <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+    <?= admin_ver_field('settings.json') ?>
 
   <?php foreach ($groups as $gname => $fields): ?>
     <div class="panel">
