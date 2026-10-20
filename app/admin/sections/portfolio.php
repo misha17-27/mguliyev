@@ -78,6 +78,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $out  = [];
     $seen = [];
     $bad  = [];
+    $at   = [];    // номер строки в форме -> место в итоговом списке
 
     foreach ($rows as $idx => $row) {
         if (!is_array($row) || !empty($del[$idx])) continue;
@@ -99,6 +100,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             continue;
         }
         $seen[$dom] = true;
+        $at[(int)$idx] = count($out);          // где строка формы оказалась в списке
         $out[] = [
             'domain'   => $dom,
             'desc'     => post_langs($row['desc'] ?? []),
@@ -122,10 +124,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     /* --- перестановка: кнопка приходит как mv=up:3 --- */
     $mv = post_one($_POST['mv'] ?? '');
     if (preg_match('~^(up|down):(\d+)$~', $mv, $m)) {
-        $pos = (int)$m[2];
-        $to  = $m[1] === 'up' ? $pos - 1 : $pos + 1;
-        if (isset($out[$pos], $out[$to])) {
-            [$out[$pos], $out[$to]] = [$out[$to], $out[$pos]];
+        /* Номер в кнопке — это номер строки в ФОРМЕ, а не в итоговом
+           списке. Если в том же сохранении выше удалили проект, список
+           сдвинулся, и прежний код переставлял соседа того проекта,
+           на чью стрелку нажали. Переводим номер через $at. */
+        $pos = $at[(int)$m[2]] ?? null;
+        if ($pos !== null) {
+            $to = $m[1] === 'up' ? $pos - 1 : $pos + 1;
+            if (isset($out[$pos], $out[$to])) {
+                [$out[$pos], $out[$to]] = [$out[$to], $out[$pos]];
+            }
         }
     }
 
