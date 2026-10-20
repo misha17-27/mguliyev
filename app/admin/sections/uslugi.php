@@ -90,24 +90,29 @@ if (!isset($cat[$cur])):
   <div class="panel">
     <?php admin_list_head(count($cat), 'Направлений'); ?>
     <div class="tablewrap">
-      <table>
+      <table class="list">
         <tr>
-          <th class="num">№</th><th>Направление</th><th class="addr">Адрес</th>
+          <th class="num">№</th><th>Направление</th><th>Адрес</th>
           <th>Услуг</th><th>Перевод</th><th>SEO</th><th class="right"></th>
         </tr>
         <?php $seo = seo_canon(); $i = 0; foreach ($cat as $slug => $c):
-          $hasSeo = !empty($seo['uslugi/' . $slug][deflang()]['title']); ?>
+          /* Ключ в seo.php плоский — «veb-sayty», а не «uslugi/veb-sayty»:
+             тот же, что $page в файле страницы. С путём точка врала,
+             показывая «не заполнено» у заполненных. */
+          $hasSeo = !empty($seo[$slug][deflang()]['title']);
+          $fill = [];
+          foreach (langs() as $l) $fill[$l] = ($c['title'][$l] ?? '') !== '' ? 1 : 0; ?>
         <tr>
           <td class="num"><?= admin_num($i++) ?></td>
           <td><b><?= $e(tr($c['title'], deflang())) ?></b><br>
               <span class="muted"><?= $e(mb_strimwidth(tr($c['lead'], deflang()), 0, 72, '…', 'UTF-8')) ?></span></td>
-          <td class="addr mono">/uslugi/<?= $e($slug) ?>/</td>
+          <td><span class="path">/uslugi/<?= $e($slug) ?>/</span></td>
           <td><b><?= count($c['items']) ?></b></td>
-          <td class="dotcell"><?= admin_lang_dots($c['title'], 'название направления') ?></td>
+          <td><?= admin_lang_badges($fill, '/uslugi/' . $slug . '/') ?></td>
           <td><?= admin_dot($hasSeo, 'заголовок для поиска') ?></td>
           <td class="right"><div class="acts">
             <a class="btn sm" href="<?= $e(admin_url('uslugi', ['c' => $slug])) ?>">Изменить</a>
-            <a class="btn ghost sm" href="/uslugi/<?= $e($slug) ?>/" target="_blank" rel="noopener">Открыть</a>
+            <a class="btn sm" href="/uslugi/<?= $e($slug) ?>/" target="_blank" rel="noopener">Открыть</a>
           </div></td>
         </tr>
         <?php endforeach; ?>
@@ -116,7 +121,7 @@ if (!isset($cat[$cur])):
   </div>
 
 <?php else: $c = $cat[$cur]; ?>
-  <p style="margin:0 0 16px"><a class="btn ghost sm" href="<?= $e(admin_url('uslugi')) ?>">← Все направления</a></p>
+  <p style="margin:0 0 16px"><a class="btn sm" href="<?= $e(admin_url('uslugi')) ?>">← Все направления</a></p>
 
   <form method="post" action="<?= $e(admin_url('uslugi')) ?>" data-guard="1">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
@@ -150,7 +155,7 @@ if (!isset($cat[$cur])):
         </div>
       <?php endforeach; ?>
 
-      <div class="item" style="background:#f3f8f5;border-color:#cfe3d7">
+      <div class="item" style="background:var(--ok-bg-2);border-color:var(--ok-line)">
         <h4>Добавить услугу</h4>
         <?php
         $blank = array_fill_keys(langs(), '');

@@ -28,6 +28,11 @@ $e = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 
 function admin_pages(): array
 {
     $list = [
+        /* Не страница, а то, что есть на всех: меню, подвал, формы, кнопки.
+           Раньше эти строки правились только в отдельном разделе «Строки
+           страниц», который дублировал этот. */
+        ['key' => 'common',    'name' => 'Общее: меню, подвал, формы', 'url' => '/',
+         'prefix' => ['nav.', 'footer.', 'cta.', 'form.', 'cat.', 'units.', 'seo.'], 'section' => null],
         ['key' => 'home',      'name' => 'Главная',        'url' => '/',           'prefix' => 'home.',      'section' => null],
         ['key' => 'uslugi',    'name' => 'Услуги — список', 'url' => '/uslugi/',    'prefix' => 'uslugi.',    'section' => 'uslugi'],
     ];
@@ -67,15 +72,27 @@ function admin_pages(): array
     return $list;
 }
 
-/** Строки словаря, принадлежащие странице. */
-function admin_page_keys(?string $prefix): array
+/** Строки словаря, принадлежащие странице. Приставок может быть
+    несколько: у «Общих элементов» это меню, подвал, формы и кнопки. */
+function admin_page_keys($prefix): array
 {
     if ($prefix === null) return [];
     $out = [];
     foreach (texts_canon() as $k => $v) {
-        if (strpos($k, $prefix) === 0) $out[$k] = $v;
+        foreach ((array)$prefix as $pf) {
+            if (strpos($k, $pf) === 0) { $out[$k] = $v; break; }
+        }
     }
     return $out;
+}
+
+/** Принадлежит ли ключ странице — с учётом нескольких приставок. */
+function admin_key_of_page(string $k, $prefix): bool
+{
+    foreach ((array)$prefix as $pf) {
+        if ($pf !== null && strpos($k, $pf) === 0) return true;
+    }
+    return false;
 }
 
 /* ------------------------------------------------------------ сохранение */
@@ -106,7 +123,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $in    = (array)($_POST['seo'] ?? []);
     foreach (langs() as $l) {
         foreach (['title', 'description'] as $f) {
-            $v    = post_one($in[$f][$l] ?? '');
+            /* Языка нет в форме — его не трогаем. Форма показывает один
+               язык, и «нет значит пусто» стёрло бы два других. */
+            if (!isset($in[$f]) || !is_array($in[$f]) || !array_key_exists($l, $in[$f])) continue;
+            $v    = post_one($in[$f][$l]);
             $orig = $base[$key][$l][$f] ?? '';
             /* В хранилище пишем только отличия от файлов разработчика:
                иначе оно заморозит нынешний текст, и правка в репозитории
@@ -137,7 +157,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         /* Правим только существующие ключи и только те, что принадлежат
            этой странице: новая строка должна появляться из кода. */
         if (!isset($all[$k]) || !is_array($byLang)) continue;
-        if ($page['prefix'] === null || strpos($k, $page['prefix']) !== 0) continue;
+        if (!admin_key_of_page($k, $page['prefix'])) continue;
 
         foreach (langs() as $l) {
             if (!array_key_exists($l, $byLang)) continue;
@@ -199,10 +219,11 @@ if ($cur === null):
   <div class="panel">
     <?php admin_list_head(count(admin_pages()), 'Страниц'); ?>
     <div class="tablewrap">
-      <table>
+      <table class="list">
         <tr>
-          <th class="num">№</th><th>Страница</th><th class="addr">Адрес</th>
-          <th>Правилось</th><th>Текст</th><th>SEO</th><th>Языки</th><th class="right"></th>
+          <th class="num">№</th><th>Страница</th><th>Адрес</th>
+          <th>Изменено</th><th>Текст</th><th>SEO</th><th>Языки</th>
+          <th class="right"></th>
         </tr>
         <?php foreach (admin_pages() as $i => $p):
           $keys    = admin_page_keys($p['prefix']);
@@ -210,45 +231,42 @@ if ($cur === null):
           $hasSeo  = !empty($seo[$p['key']][deflang()]['title']);
           $ed      = $edits['page:' . $p['key']] ?? null;
 
-          /* Переведена ли страница: доля заполненных строк по языку.
-             Жёлтая точка — переведено не всё, и это видно до того,
-             как человек откроет страницу и начнёт искать дыры глазами. */
-          $dots = '';
+          /* Доля переведённого по каждому языку: у страницы без своих
+             строк (статьи, направления) текст живёт в другом разделе,
+             там и считается — здесь показываем её как заполненную. */
+          $fill = [];
           foreach (langs() as $l) {
-              if ($keys === []) { $dots .= admin_dot(true, strtoupper($l)); continue; }
-              $filled = 0;
-              foreach ($keys as $v) if (($v[$l] ?? '') !== '') $filled++;
-              $cls = $filled === count($keys) ? 'dot on' : ($filled ? 'dot half' : 'dot');
-              $title = strtoupper($l) . ': ' . $filled . ' из ' . count($keys);
-              $dots .= '<span class="' . $cls . '" title="' . $e($title) . '" role="img" aria-label="' . $e($title) . '"></span>';
+              if ($keys === []) { $fill[$l] = 1; continue; }
+              $n = 0;
+              foreach ($keys as $v) if (($v[$l] ?? '') !== '') $n++;
+              $fill[$l] = $n / count($keys);
           }
         ?>
         <tr>
           <td class="num"><?= admin_num($i) ?></td>
-          <td><b><?= $e($p['name']) ?></b></td>
-          <td class="addr mono"><?= $e($p['url']) ?></td>
-          <td class="muted">
+          <td><b class="clamp" title="<?= $e($p['name']) ?>"><?= $e($p['name']) ?></b></td>
+          <td><span class="path" title="<?= $e($p['url']) ?>"><?= $e($p['url']) ?></span></td>
+          <?php /* Колонки «Добавил» нет намеренно: все страницы заведены
+                   в репозитории, и во всех строках стояло бы одно и то же —
+                   «разработчик». Ширина нужнее тем колонкам, где есть что читать. */ ?>
+          <td class="who-when">
             <?php if ($ed): ?>
-              <?= $e(date('d.m.Y, H:i', (int)$ed['at'])) ?><br>
-              <span style="font-size:12px"><?= $e($ed['by'] ?? '') ?></span>
+              <b><?= $e(date('d.m.Y, H:i', (int)$ed['at'])) ?></b>
+              <span><?= $e($ed['by'] ?? '') ?></span>
             <?php else: ?>
-              —<br><span style="font-size:12px">из репозитория</span>
+              <b style="color:var(--muted)">—</b><span>не правилась</span>
             <?php endif; ?>
           </td>
           <td><?= admin_dot($hasText, 'текст страницы') ?></td>
-          <td><?= admin_dot($hasSeo, 'заголовок для поиска') ?></td>
-          <td class="dotcell"><?= $dots ?></td>
+          <td><?= $p['key'] === 'common'
+                ? '<span class="muted" title="У общих элементов нет своего заголовка в выдаче">—</span>'
+                : admin_dot($hasSeo, 'заголовок для поиска') ?></td>
+          <td><?= admin_lang_badges($fill, $p['url']) ?></td>
           <td class="right"><div class="acts">
-            <?php if ($p['prefix'] !== null): ?>
-              <a class="btn sm" href="<?= $e(admin_url('pages', ['p' => $p['key']])) ?>">Изменить</a>
-            <?php else: ?>
-              <a class="btn sm" href="<?= $e(admin_url($p['section'] ?? 'texts')) ?>">Изменить</a>
-            <?php endif; ?>
-            <a class="btn ghost sm" href="<?= $e($p['url']) ?>" target="_blank" rel="noopener">Открыть</a>
-            <span class="langlinks"><?php foreach (langs() as $l): if ($l === deflang()) continue; ?>
-              <a href="<?= $e('/' . $l . $p['url']) ?>" target="_blank" rel="noopener"
-                 title="<?= $e('Открыть на ' . strtoupper($l)) ?>"><?= $e(strtoupper($l)) ?>&nbsp;↗</a>
-            <?php endforeach; ?></span>
+            <a class="btn sm" href="<?= $e($p['prefix'] !== null
+                ? admin_url('pages', ['p' => $p['key']])
+                : admin_url($p['section'] ?? 'texts')) ?>">Изменить</a>
+            <a class="btn sm" href="<?= $e($p['url']) ?>" target="_blank" rel="noopener">Открыть ↗</a>
           </div></td>
         </tr>
         <?php endforeach; ?>
@@ -268,77 +286,85 @@ if ($cur === null):
     <?= admin_ver_field('texts.json') ?>
     <input type="hidden" name="page" value="<?= $e($cur['key']) ?>">
     <?php /* Сколько полей словаря отправляем. Поле стоит ПЕРВЫМ: PHP
-             отбрасывает последние, значит объявление доедет в любом случае. */ ?>
-    <input type="hidden" name="_fields" value="<?= count($keys) * count(langs()) ?>">
+             отбрасывает последние, значит объявление доедет в любом случае.
+             Язык теперь один — тот, что выбран вверху. */ ?>
+    <input type="hidden" name="_fields" value="<?= count($keys) ?>">
+
+    <?php
+    $L   = admin_lang();
+    $DEF = deflang();
+    $isT = $L !== $DEF;                       // правим перевод, а не оригинал
+    $ph  = $isT ? ' placeholder="пусто — на сайте будет русский текст"' : '';
+    /* Высота поля по объёму русского текста: короткая строка не сидит
+       в огромном поле, длинная не прокручивается в крошечном. */
+    $rowsFor = static fn(string $t): int => max(2, min(12, (int)ceil(mb_strlen($t) / 120) + 1));
+    ?>
 
     <div class="panel">
-      <h3><?= $e($cur['name']) ?> <span class="pill grey mono"><?= $e($cur['url']) ?></span></h3>
-      <p class="muted">Адрес страницы отсюда не правится: он задан именем папки
-         в репозитории, и переименование оставило бы ссылку в никуда.</p>
+      <h3><?= $e($cur['name']) ?>
+        <span class="lg full" style="vertical-align:3px;margin-left:6px"><?= $e(strtoupper($L)) ?></span>
+      </h3>
+      <p class="muted" style="margin-top:6px">Адрес: <span class="path"><?= $e(($isT ? '/' . $L : '') . $cur['url']) ?></span>
+        · язык переключается вверху, справа</p>
       <?php if ($cur['section']): ?>
-        <p class="muted">Содержимое этой страницы — списки и карточки — правится
-          в разделе <a href="<?= $e(admin_url($cur['section'])) ?>"><b><?= $e(admin_sections()[$cur['section']][0] ?? $cur['section']) ?></b></a>.
-          Здесь только её собственный текст и заголовок для поиска.</p>
+        <p class="muted">Списки и карточки на этой странице правятся в разделе
+          <a href="<?= $e(admin_url($cur['section'])) ?>"><b><?= $e(admin_sections()[$cur['section']][0] ?? $cur['section']) ?></b></a>.
+          Здесь — её собственный текст и заголовок для поиска.</p>
       <?php endif; ?>
     </div>
 
+    <?php if ($cur['key'] !== 'common'): ?>
     <div class="panel">
-      <h3>Заголовок в выдаче Google</h3>
-      <p class="muted">Это человек видит раньше самой страницы. Числа под полями —
-         сколько знаков поместится: длиннее не ошибка, но хвост не покажут.</p>
-      <?php foreach (['title' => 'Заголовок', 'description' => 'Описание'] as $f => $label): ?>
-        <label><?= $e($label) ?> <span class="hint">до <?= $LIM[$f] ?> знаков</span></label>
-        <div class="row3">
-          <?php foreach (langs() as $l): ?>
-            <div>
-              <div class="muted" style="margin-bottom:4px"><b><?= $e(strtoupper($l)) ?></b></div>
-              <?php if ($f === 'title'): ?>
-                <input type="text" data-max="<?= $LIM[$f] ?>" name="seo[<?= $e($f) ?>][<?= $e($l) ?>]"
-                       value="<?= $e($m[$l][$f] ?? '') ?>"
-                       placeholder="<?= $l === deflang() ? '' : 'пусто — возьмётся русский' ?>">
-              <?php else: ?>
-                <textarea rows="3" data-max="<?= $LIM[$f] ?>" name="seo[<?= $e($f) ?>][<?= $e($l) ?>]"
-                          placeholder="<?= $l === deflang() ? '' : 'пусто — возьмётся русский' ?>"><?= $e($m[$l][$f] ?? '') ?></textarea>
-              <?php endif; ?>
-            </div>
-          <?php endforeach; ?>
-        </div>
-      <?php endforeach; ?>
+      <h3>SEO</h3>
+      <p class="muted">Это человек видит в выдаче Google раньше самой страницы.
+         Число под полем — сколько знаков поместится: длиннее не ошибка, но хвост не покажут.</p>
+
+      <label>Заголовок в выдаче и на вкладке <span class="hint">до <?= $LIM['title'] ?> знаков</span></label>
+      <input type="text" data-max="<?= $LIM['title'] ?>" name="seo[title][<?= $e($L) ?>]"
+             value="<?= $e($m[$L]['title'] ?? '') ?>"<?= $ph ?>>
+      <?php if ($isT && !empty($m[$DEF]['title'])): ?>
+        <div class="src"><b><?= $e(strtoupper($DEF)) ?>:</b> <?= $e($m[$DEF]['title']) ?></div>
+      <?php endif; ?>
+
+      <label>Описание под заголовком <span class="hint">до <?= $LIM['description'] ?> знаков</span></label>
+      <textarea rows="3" data-max="<?= $LIM['description'] ?>" name="seo[description][<?= $e($L) ?>]"<?= $ph ?>><?= $e($m[$L]['description'] ?? '') ?></textarea>
+      <?php if ($isT && !empty($m[$DEF]['description'])): ?>
+        <div class="src"><b><?= $e(strtoupper($DEF)) ?>:</b> <?= $e($m[$DEF]['description']) ?></div>
+      <?php endif; ?>
     </div>
+    <?php endif; ?>
 
     <div class="panel">
-      <h3>Текст страницы — <?= count($keys) ?> строк</h3>
+      <h3>Содержание страницы — <?= count($keys) ?> строк</h3>
       <?php if (!$keys): ?>
         <p class="muted">У этой страницы нет собственных строк в словаре.</p>
       <?php else: ?>
-        <label for="texts-filter">Поиск по строкам этой страницы</label>
+        <p class="muted">Строки идут в том порядке, в котором стоят на странице.
+          <?php if ($isT): ?>Под каждым полем — русский оригинал, с которого переводите.<?php endif; ?></p>
+        <label for="texts-filter">Найти строку</label>
         <input type="text" id="texts-filter" placeholder="например: заявка">
         <div class="muted" id="texts-count" style="margin-top:6px"></div>
+
+        <?php foreach ($keys as $k => $byLang):
+          $hay = mb_strtolower($k . ' ' . implode(' ', $byLang));
+          $src = (string)($byLang[$DEF] ?? '');
+          $val = (string)($byLang[$L] ?? '');
+          $long = mb_strlen($src) > 90 || mb_strlen($val) > 90;
+        ?>
+          <div class="field" data-text-row="<?= $e($hay) ?>">
+            <div class="fkey"><?= $e($k) ?></div>
+            <?php if ($long): ?>
+              <textarea rows="<?= $rowsFor($src !== '' ? $src : $val) ?>" name="t[<?= $e($k) ?>][<?= $e($L) ?>]"<?= $ph ?>><?= $e($val) ?></textarea>
+            <?php else: ?>
+              <input type="text" name="t[<?= $e($k) ?>][<?= $e($L) ?>]" value="<?= $e($val) ?>"<?= $ph ?>>
+            <?php endif; ?>
+            <?php if ($isT && $src !== ''): ?>
+              <div class="src"><b><?= $e(strtoupper($DEF)) ?>:</b> <?= $e($src) ?></div>
+            <?php endif; ?>
+          </div>
+        <?php endforeach; ?>
       <?php endif; ?>
     </div>
-
-    <?php foreach ($keys as $k => $byLang):
-      $hay  = mb_strtolower($k . ' ' . implode(' ', $byLang));
-      $long = mb_strlen($byLang[deflang()] ?? '') > 90;
-    ?>
-      <div class="item" data-text-row="<?= $e($hay) ?>">
-        <b class="mono" style="display:block;margin-bottom:6px"><?= $e($k) ?></b>
-        <div class="row3">
-          <?php foreach (langs() as $l): ?>
-            <div>
-              <div class="muted" style="margin-bottom:4px"><b><?= $e(strtoupper($l)) ?></b></div>
-              <?php if ($long): ?>
-                <textarea rows="4" name="t[<?= $e($k) ?>][<?= $e($l) ?>]"
-                          placeholder="<?= $l === deflang() ? '' : 'пусто — возьмётся русский' ?>"><?= $e($byLang[$l] ?? '') ?></textarea>
-              <?php else: ?>
-                <input type="text" name="t[<?= $e($k) ?>][<?= $e($l) ?>]" value="<?= $e($byLang[$l] ?? '') ?>"
-                       placeholder="<?= $l === deflang() ? '' : 'пусто — возьмётся русский' ?>">
-              <?php endif; ?>
-            </div>
-          <?php endforeach; ?>
-        </div>
-      </div>
-    <?php endforeach; ?>
 
     <div class="btnrow">
       <button class="btn" type="submit">Сохранить страницу</button>

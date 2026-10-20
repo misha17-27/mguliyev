@@ -18,33 +18,44 @@ function admin_assets(): void
 {
     ?>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/admin/assets/admin.css?v=2">
+<link href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@600;700&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/assets/admin.css?v=3">
 <link rel="icon" href="/admin/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/admin/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/admin/assets/apple-touch-icon.png">
-<meta name="theme-color" content="#0e2f47">
+<meta name="theme-color" content="#0A0A0A">
     <?php
 }
 
 /** Разделы: ключ => [заголовок, значок, группа]. Порядок определяет меню. */
 function admin_sections(): array
 {
+    /* Три группы вместо шести. Было 14 пунктов, и два из них —
+       «Заголовки для поиска» и «Строки страниц» — дублировали «Страницы»:
+       у каждой страницы там правятся и текст, и заголовок в выдаче.
+       Общие строки (меню, подвал, формы) теперь тоже в «Страницах»,
+       отдельной строкой.
+
+       Группа null — раздел работает по адресу, но в меню не показан:
+       на него ведут ссылки со сводки, и ломать их незачем. */
     return [
         'dashboard' => ['Сводка',              '▦', 'Сайт'],
-        'settings'  => ['Контакты и цены',     '☎', 'Сайт'],
-        'mail'      => ['Почта',               '✉', 'Сайт'],
-        'leads'     => ['Заявки с сайта',      '✇', 'Сайт'],
+        'leads'     => ['Заявки с сайта',      '✉', 'Сайт'],
+
         'pages'     => ['Страницы',            '▤', 'Содержимое'],
         'portfolio' => ['Портфолио',           '▣', 'Содержимое'],
         'uslugi'    => ['Услуги',              '☰', 'Содержимое'],
         'packs'     => ['Пакеты и цены',       '₼', 'Содержимое'],
         'blog'      => ['Блог',                '✎', 'Содержимое'],
-        'seo'       => ['Заголовки для поиска', '⌕', 'Поиск'],
-        'texts'     => ['Строки страниц',      'Aa', 'Поиск'],
-        'media'     => ['Изображения',         '▤', 'Файлы'],
-        'security'  => ['Безопасность',        '⛨', 'Доступ'],
-        'account'   => ['Учётная запись',      '◉', 'Доступ'],
+        'media'     => ['Изображения',         '▧', 'Содержимое'],
+
+        'settings'  => ['Контакты',            '☎', 'Настройки'],
+        'mail'      => ['Почта',               '@', 'Настройки'],
+        'security'  => ['Безопасность',        '⛨', 'Настройки'],
+        'account'   => ['Учётная запись',      '◉', 'Настройки'],
+
+        'seo'       => ['Заголовки для поиска', '⌕', null],
+        'texts'     => ['Строки страниц',      'Aa', null],
     ];
 }
 
@@ -100,6 +111,7 @@ function admin_head(string $section): void
       <?php
       $group = null;
       foreach ($secs as $key => [$name, $icon, $g]):
+          if ($g === null) continue;          // раздел без пункта в меню
           if ($g !== $group) { $group = $g; echo '<div class="navgroup">' . $e($g) . '</div>'; }
       ?>
         <a href="<?= $e(admin_url($key)) ?>"<?= $key === $section ? ' class="on" aria-current="page"' : '' ?>>
@@ -107,8 +119,7 @@ function admin_head(string $section): void
           <?php if (!empty($counts[$key])): ?><span class="badge"><?= (int)$counts[$key] ?></span><?php endif; ?>
         </a>
       <?php endforeach; ?>
-      <div class="navgroup">Сайт</div>
-      <a href="/" target="_blank" rel="noopener"><i aria-hidden="true">↗</i>Открыть сайт</a>
+      <a class="only-phone" href="/" target="_blank" rel="noopener"><i aria-hidden="true">↗</i>Открыть сайт</a>
     </nav>
     <?php if ($user): ?>
     <div class="who">
@@ -118,7 +129,7 @@ function admin_head(string $section): void
                узкая, и кнопка оттуда убрана, иначе она уезжает за край. */ ?>
       <form method="post" action="<?= $e(admin_url('logout')) ?>" style="margin-top:12px">
         <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
-        <button class="btn ghost sm" type="submit" style="color:#b7cddc;border-color:#17415f">Выйти</button>
+        <button class="btn ghost sm" type="submit" style="color:var(--side-text);border-color:var(--side-line)">Выйти</button>
       </form>
     </div>
     <?php endif; ?>
@@ -210,40 +221,53 @@ function admin_lang_fill(): array
     return $out;
 }
 
-/** Поле с тремя языками сразу: редактор видит русский рядом с переводом
-    и не держит его в голове, переключаясь между страницами. */
+/** Поле на языке, выбранном в верхней строке, — на всю ширину.
+
+    Остальные языки уходят скрытыми полями с прежними значениями. Это не
+    украшение: разделы портфолио, услуг и пакетов собирают файл целиком
+    из формы, и язык, которого в форме нет, превратился бы в пустую строку —
+    правка азербайджанского текста стёрла бы русский и английский.
+
+    Под полем перевода виден русский оригинал: переводят с него, и держать
+    его в голове, переключаясь туда-обратно, незачем. */
 function admin_field_langs(string $name, array $vals, string $label, array $o = []): void
 {
     $e    = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     $area = !empty($o['area']);
-    $rows = $o['rows'] ?? null;
+    $rows = (int)($o['rows'] ?? 0);
     $hint = $o['hint'] ?? '';
-    $max  = $o['max'] ?? 0;
+    $max  = (int)($o['max'] ?? 0);
+    $cur  = admin_lang();
+    $def  = deflang();
 
-    echo '<label>' . $e($label);
+    echo '<label>' . $e($label)
+       . ' <span class="pill grey" style="vertical-align:1px">' . $e(strtoupper($cur)) . '</span>';
     if ($hint !== '') echo ' <span class="hint">' . $e($hint) . '</span>';
     echo '</label>';
-    echo '<div class="row3">';
-    foreach (langs() as $l) {
-        $v  = $vals[$l] ?? '';
-        $id = $name . '_' . $l;
-        $ph = $l === deflang() ? '' : 'пусто — возьмётся русский';
-        echo '<div>';
-        echo '<div class="muted" style="margin-bottom:4px"><b>' . $e(strtoupper($l)) . '</b></div>';
-        if ($area) {
-            echo '<textarea id="' . $e($id) . '" name="' . $e($name) . '[' . $e($l) . ']"'
-               . ($rows ? ' rows="' . (int)$rows . '"' : '')
-               . ($max ? ' data-max="' . (int)$max . '"' : '')
-               . ' placeholder="' . $e($ph) . '">' . $e($v) . '</textarea>';
-        } else {
-            echo '<input type="text" id="' . $e($id) . '" name="' . $e($name) . '[' . $e($l) . ']"'
-               . ' value="' . $e($v) . '"'
-               . ($max ? ' data-max="' . (int)$max . '"' : '')
-               . ' placeholder="' . $e($ph) . '">';
-        }
-        echo '</div>';
+
+    $v  = $vals[$cur] ?? '';
+    $nm = $e($name) . '[' . $e($cur) . ']';
+    $ph = $cur === $def ? '' : ' placeholder="пусто — на сайте будет русский текст"';
+    if ($area) {
+        /* Высота по объёму текста: короткая строка не должна сидеть
+           в огромном поле, длинная — прокручиваться в крошечном. */
+        $len = mb_strlen((string)($vals[$def] ?? $v));
+        $r   = $rows ?: max(2, min(10, (int)ceil($len / 110) + 1));
+        echo '<textarea name="' . $nm . '" rows="' . $r . '"'
+           . ($max ? ' data-max="' . $max . '"' : '') . $ph . '>' . $e($v) . '</textarea>';
+    } else {
+        echo '<input type="text" name="' . $nm . '" value="' . $e($v) . '"'
+           . ($max ? ' data-max="' . $max . '"' : '') . $ph . '>';
     }
-    echo '</div>';
+
+    if ($cur !== $def && ($vals[$def] ?? '') !== '') {
+        echo '<div class="src"><b>' . $e(strtoupper($def)) . ':</b> ' . $e($vals[$def]) . '</div>';
+    }
+
+    foreach (langs() as $l) {
+        if ($l === $cur) continue;
+        echo '<input type="hidden" name="' . $e($name) . '[' . $e($l) . ']" value="' . $e($vals[$l] ?? '') . '">';
+    }
 }
 
 /* ------------------------------------------------- части списков ----
@@ -322,4 +346,30 @@ function admin_new_leads(): int
         if (is_array($d) && !empty($d['new'])) $n++;
     }
     return $n;
+}
+
+/** Языки плашками: RU AZ EN. $fill — язык => доля заполненного, 0..1.
+    Заполнено целиком — тёмная плашка, частично — жёлтая, пусто — рамка.
+    Подпись в title: цвет сам по себе ничего не сообщает тому, кто его
+    не различает. */
+function admin_lang_badges(array $fill, ?string $url = null): string
+{
+    $out = '';
+    foreach (langs() as $l) {
+        $f = (float)($fill[$l] ?? 0);
+        $cls = $f >= 1 ? 'full' : ($f > 0 ? 'part' : 'none');
+        $txt = strtoupper($l) . ': ' . ($f >= 1 ? 'переведено' : ($f > 0
+             ? 'переведено ' . (int)round($f * 100) . '%' : 'перевода нет'));
+        $title = htmlspecialchars($txt . ($url !== null ? ' — открыть' : ''), ENT_QUOTES, 'UTF-8');
+
+        if ($url !== null) {
+            /* С адресом плашка становится ссылкой на эту версию страницы. */
+            $href = ($l === deflang() ? '' : '/' . $l) . $url;
+            $out .= '<a class="lg ' . $cls . '" href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8')
+                  . '" target="_blank" rel="noopener" title="' . $title . '">' . strtoupper($l) . '</a>';
+        } else {
+            $out .= '<span class="lg ' . $cls . '" title="' . $title . '">' . strtoupper($l) . '</span>';
+        }
+    }
+    return '<span class="langs">' . $out . '</span>';
 }

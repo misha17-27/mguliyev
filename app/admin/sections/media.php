@@ -219,7 +219,7 @@ admin_head('media');
                      иначе страница со списком тянет десятки мегабайт. */ ?>
             <video src="<?= $e($path) ?>" preload="metadata" muted playsinline
                    controls style="display:block;width:100%;aspect-ratio:16/10;
-                   object-fit:cover;background:#0e2f47"></video>
+                   object-fit:cover;background:var(--ink)"></video>
           <?php else: ?>
             <img src="<?= $e($path) ?>" alt="" loading="lazy">
           <?php endif; ?>

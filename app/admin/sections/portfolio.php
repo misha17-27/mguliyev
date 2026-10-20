@@ -174,7 +174,7 @@ if ($cur === null):
   <div class="panel">
     <?php admin_list_head(count($groups), 'Отраслей', 'Добавить отрасль', '#dobavit'); ?>
     <div class="tablewrap">
-      <table>
+      <table class="list">
         <tr>
           <th class="num">№</th><th class="pic">Обложка</th><th>Отрасль</th>
           <th>Ключ</th><th>Проектов</th><th>Со снимком</th><th>Перевод</th><th class="right"></th>
@@ -195,7 +195,7 @@ if ($cur === null):
           <td class="dotcell"><?= admin_lang_dots($g['name'], 'название отрасли') ?></td>
           <td class="right"><div class="acts">
             <a class="btn sm" href="<?= $e(admin_url('portfolio', ['g' => $g['slug']])) ?>">Изменить</a>
-            <a class="btn ghost sm" href="/portfolio/#<?= $e($g['slug']) ?>" target="_blank" rel="noopener">Открыть</a>
+            <a class="btn sm" href="/portfolio/#<?= $e($g['slug']) ?>" target="_blank" rel="noopener">Открыть</a>
           </div></td>
         </tr>
         <?php endforeach; ?>
@@ -224,7 +224,7 @@ if ($cur === null):
     /* ---- правка одной отрасли ---- */
     $n = count($cur['projects']);
 ?>
-  <p style="margin:0 0 16px"><a class="btn ghost sm" href="<?= $e(admin_url('portfolio')) ?>">← Все отрасли</a></p>
+  <p style="margin:0 0 16px"><a class="btn sm" href="<?= $e(admin_url('portfolio')) ?>">← Все отрасли</a></p>
 
   <form method="post" action="<?= $e(admin_url('portfolio')) ?>" data-guard="1">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
@@ -290,7 +290,7 @@ if ($cur === null):
         </div>
       <?php endforeach; ?>
 
-      <div class="item" style="background:#f3f8f5;border-color:#cfe3d7">
+      <div class="item" style="background:var(--ok-bg-2);border-color:var(--ok-line)">
         <h4>Добавить проект</h4>
         <div class="row">
           <div>

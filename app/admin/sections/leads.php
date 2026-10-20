@@ -144,7 +144,7 @@ admin_head('leads');
        и когда письмо ушло, и когда не ушло.</p>
   <?php else: ?>
     <div class="tablewrap">
-      <table>
+      <table class="list">
         <tr>
           <th class="num">№</th><th>Когда</th><th>Имя и телефон</th>
           <th>Услуга</th><th>Язык</th><th>Письмо</th><th class="right"></th>
@@ -153,7 +153,7 @@ admin_head('leads');
           $f = (array)($l['fields'] ?? []);
           $isOpen = $open === $l['file'];
         ?>
-        <tr<?= !empty($l['new']) ? ' style="background:#f3f8f5"' : '' ?>>
+        <tr<?= !empty($l['new']) ? ' style="background:var(--ok-bg-2)"' : '' ?>>
           <td class="num"><?= admin_num($i) ?></td>
           <td><?= $e($l['at'] ?? '') ?><?php if (!empty($l['new'])): ?><br><span class="pill">новая</span><?php endif; ?></td>
           <td>
@@ -174,7 +174,7 @@ admin_head('leads');
             <?php endif; ?>
           </td>
           <td class="right"><div class="acts">
-            <a class="btn ghost sm" href="<?= $e(admin_url('leads', $isOpen ? [] : ['open' => $l['file']])) ?>#z"><?= $isOpen ? 'Свернуть' : 'Открыть' ?></a>
+            <a class="btn sm" href="<?= $e(admin_url('leads', $isOpen ? [] : ['open' => $l['file']])) ?>#z"><?= $isOpen ? 'Свернуть' : 'Открыть' ?></a>
             <?php if (!empty($l['new'])): ?>
               <form method="post" action="<?= $e(admin_url('leads')) ?>">
                 <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
@@ -194,7 +194,7 @@ admin_head('leads');
         </tr>
         <?php if ($isOpen): ?>
         <tr id="z">
-          <td colspan="7" style="background:#fbfcfd">
+          <td colspan="7" style="background:var(--field)">
             <div class="item" style="margin:0">
               <?php foreach ($f as $k => $v): if ($v === '') continue; ?>
                 <div class="rowk" style="margin-bottom:8px">

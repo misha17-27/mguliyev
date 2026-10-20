@@ -95,9 +95,9 @@ if ($art === null):
   <div class="panel">
     <?php admin_list_head(count($arts), 'Статей'); ?>
     <div class="tablewrap">
-      <table>
+      <table class="list">
         <tr>
-          <th class="num">№</th><th>Статья</th><th class="addr">Адрес</th>
+          <th class="num">№</th><th>Статья</th><th>Адрес</th>
           <th>Рубрика</th><th>Дата</th><th>Чтение</th><th>Текст есть на</th><th class="right"></th>
         </tr>
         <?php foreach ($arts as $i => $a): ?>
@@ -105,14 +105,14 @@ if ($art === null):
           <td class="num"><?= admin_num($i) ?></td>
           <td><b><?= $e(tr($a['title'], deflang())) ?></b><br>
               <span class="muted"><?= $e(mb_strimwidth(tr($a['desc'], deflang()), 0, 64, '…', 'UTF-8')) ?></span></td>
-          <td class="addr mono">/blog/<?= $e($a['slug']) ?>/</td>
+          <td><span class="path">/blog/<?= $e($a['slug']) ?>/</span></td>
           <td><?= $e(tr($a['rubric'], deflang())) ?></td>
           <td><?= $e($a['date']) ?></td>
           <td><?= (int)$a['read'] ?>&nbsp;мин</td>
           <td class="dotcell"><?= admin_lang_dots($a['body'], 'текст статьи') ?></td>
           <td class="right"><div class="acts">
             <a class="btn sm" href="<?= $e(admin_url('blog', ['a' => $a['slug']])) ?>">Изменить</a>
-            <a class="btn ghost sm" href="/blog/<?= $e($a['slug']) ?>/" target="_blank" rel="noopener">Открыть</a>
+            <a class="btn sm" href="/blog/<?= $e($a['slug']) ?>/" target="_blank" rel="noopener">Открыть</a>
           </div></td>
         </tr>
         <?php endforeach; ?>
@@ -131,7 +131,7 @@ if ($art === null):
     $body = $art['body'][$lang] ?? [];
     $empty = !$body && $lang !== deflang();
 ?>
-  <p style="margin:0 0 16px"><a class="btn ghost sm" href="<?= $e(admin_url('blog')) ?>">← Все статьи</a></p>
+  <p style="margin:0 0 16px"><a class="btn sm" href="<?= $e(admin_url('blog')) ?>">← Все статьи</a></p>
 
   <div class="note">
     Сейчас правится версия <b><?= $e(strtoupper($lang)) ?></b>.
@@ -195,7 +195,7 @@ if ($art === null):
         </div>
       <?php endforeach; ?>
 
-      <div class="item" style="background:#f3f8f5;border-color:#cfe3d7">
+      <div class="item" style="background:var(--ok-bg-2);border-color:var(--ok-line)">
         <h4>Добавить раздел</h4>
         <label>Заголовок раздела</label>
         <input type="text" name="new[h]">

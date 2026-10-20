@@ -143,7 +143,7 @@ admin_head('dashboard');
         <td class="muted"><?= $e($t['hint']) ?></td>
         <td class="right">
           <a class="btn ghost sm" href="<?= $e($t['group'] === 'Строки страниц'
-              ? admin_url('texts', ['q' => $t['key']])
+              ? admin_url('pages')
               : admin_url('settings')) ?>">Заполнить</a>
         </td>
       </tr>
@@ -196,7 +196,7 @@ admin_head('dashboard');
     <?php else: ?>
       <p class="muted">Заполнены все страницы на всех языках — <?= count($seo) ?> × <?= count(langs()) ?>.</p>
     <?php endif; ?>
-    <div class="btnrow"><a class="btn" href="<?= $e(admin_url('seo')) ?>">Открыть заголовки</a></div>
+    <div class="btnrow"><a class="btn" href="<?= $e(admin_url('pages')) ?>">Открыть страницы</a></div>
   </div>
 </div>
 

@@ -132,7 +132,7 @@ admin_head('mail');
 ?>
 
 <?php if ($testResult !== null): ?>
-  <div class="panel" style="border-color:<?= $testResult['ok'] ? '#cfe3d7' : '#f6dcdc' ?>">
+  <div class="panel" style="border-color:<?= $testResult['ok'] ? 'var(--ok-line)' : 'var(--err-line)' ?>">
     <h3><?= $testResult['ok'] ? 'Письмо отправлено' : 'Письмо не ушло' ?></h3>
     <?php if ($testResult['ok']): ?>
       <p class="muted">Способ отправки: <b><?= $e($testResult['via'] === 'smtp' ? 'SMTP' : 'встроенная функция mail()') ?></b>.
@@ -145,7 +145,7 @@ admin_head('mail');
     <?php if (!empty($testResult['log'])): ?>
       <h4>Обмен с почтовым сервером</h4>
       <p class="muted">Пароль из записи вырезан. По этим строкам видно, на каком шаге всё встало.</p>
-      <pre class="mono" style="background:#0e2f47;color:#cfe0ea;padding:14px 16px;border-radius:10px;
+      <pre class="mono" style="background:var(--ink);color:var(--side-text);padding:14px 16px;border-radius:10px;
                                overflow:auto;max-height:340px;line-height:1.55;font-size:12px"><?php
         foreach ($testResult['log'] as $line) echo $e($line) . "\n";
       ?></pre>

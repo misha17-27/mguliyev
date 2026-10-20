@@ -214,14 +214,14 @@ admin_head('security');
 
     <h4>Что пришло</h4>
     <?php foreach ($seen['policies'] as $i => $pol): ?>
-      <pre class="mono" style="background:#f4f7f8;border:1px solid #e5ecef;padding:12px 14px;
+      <pre class="mono" style="background:var(--paper);border:1px solid var(--line);padding:12px 14px;
                                border-radius:9px;overflow:auto;font-size:11.5px;line-height:1.6;
                                white-space:pre-wrap;word-break:break-word"><?= $e($pol) ?></pre>
     <?php endforeach; ?>
 
     <?php if (!$match): ?>
       <h4>Что ожидалось (константа CSP_POLICY в app/security.php)</h4>
-      <pre class="mono" style="background:#f4f7f8;border:1px solid #e5ecef;padding:12px 14px;
+      <pre class="mono" style="background:var(--paper);border:1px solid var(--line);padding:12px 14px;
                                border-radius:9px;overflow:auto;font-size:11.5px;line-height:1.6;
                                white-space:pre-wrap;word-break:break-word"><?= $e(CSP_POLICY) ?></pre>
       <p class="muted">Расхождение само по себе не ошибка — но если браузер получит две

@@ -50,14 +50,21 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         admin_go(admin_url('seo'));
     }
 
-    $in  = (array)($_POST['seo'] ?? []);
-    $out = [];
+    $in    = (array)($_POST['seo'] ?? []);
+    $out   = [];
+    /* Прежние правки — чтобы языки, которых нет в форме, остались как были. */
+    $store = Store::read('seo.json') ?? [];
 
     foreach ($seo as $page => $byLang) {
         $got = is_array($in[$page] ?? null) ? $in[$page] : [];
         foreach (langs() as $l) {
             foreach (['title', 'description'] as $f) {
-                $v = post_one($got[$f][$l] ?? '');
+                /* Языка нет в форме — оставляем как было, а не стираем. */
+                if (!isset($got[$f]) || !is_array($got[$f]) || !array_key_exists($l, $got[$f])) {
+                    if (isset($store[$page][$l][$f])) $out[$page][$l][$f] = $store[$page][$l][$f];
+                    continue;
+                }
+                $v = post_one($got[$f][$l]);
                 /* Пишем только то, что отличается от файла разработчика.
                    Иначе хранилище замораживает нынешние тексты, и правка
                    в репозитории до сайта уже не доходит. */
