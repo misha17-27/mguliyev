@@ -30,8 +30,11 @@ deployment:
     - export WEB=$HOME/public_html
     - export APP=$HOME/app
     - export DATA=$HOME/site-data
-    - /bin/mkdir -p $WEB $APP $DATA $DATA/uploads $WEB/images/uploads
+    # $DATA/uploads тут был лишним: загруженные картинки лежат в корне сайта,
+    # иначе их не отдать по адресу. В site-data — то, что из сети видеть нельзя:
+    # заявки с именами и телефонами, счётчики попыток, сессии панели.
+    - /bin/mkdir -p $WEB $APP $DATA $DATA/leads $DATA/locks $DATA/sessions $WEB/images/uploads
     - /bin/cp -R public/. $WEB/
     - /bin/cp -R app/. $APP/
-    - /bin/chmod 750 $DATA
+    - /bin/chmod 750 $DATA $DATA/leads $DATA/locks $DATA/sessions
     - /bin/echo "Готово. Корень — $WEB, шаблоны — $APP, данные панели — $DATA"
