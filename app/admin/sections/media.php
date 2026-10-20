@@ -21,7 +21,8 @@
 $e   = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $DIR = dirname(__DIR__, 3) . '/public/images/uploads';
 $WEB = '/images/uploads';
-$MAX = 6 * 1024 * 1024;
+$MAX = 6 * 1024 * 1024;        // картинка
+$MAX_VIDEO = 40 * 1024 * 1024; // видео: вертикальный ролик столько и весит
 
 /* Распознанный тип -> расширение. Список закрытый: что не здесь, то не картинка. */
 $TYPES = [
@@ -31,6 +32,27 @@ $TYPES = [
     IMAGETYPE_GIF  => 'gif',
 ];
 
+/** Видео по содержимому файла.
+
+    getimagesize для видео не годится, поэтому читаем метку формата
+    в самом начале файла — её ставит кодировщик, и подделать её так,
+    чтобы файл при этом остался исполняемым, нельзя.
+
+    У mp4 на позиции 4 стоит слово ftyp (это заголовок контейнера ISO BMFF),
+    у webm в самом начале — четыре байта EBML. Проверяем именно их,
+    а не расширение: расширение пишет отправитель. */
+function media_video_ext(string $path): ?string
+{
+    $fh = @fopen($path, 'rb');
+    if (!$fh) return null;
+    $head = (string)fread($fh, 12);
+    fclose($fh);
+
+    if (strlen($head) >= 12 && substr($head, 4, 4) === 'ftyp') return 'mp4';
+    if (substr($head, 0, 4) === "\x1A\x45\xDF\xA3") return 'webm';
+    return null;
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $what = post_one($_POST['do'] ?? '');
 
@@ -38,7 +60,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     if ($what === 'del') {
         $name = post_one($_POST['name'] ?? '');
         /* Имя сверяем целиком, а не «очищаем»: так ../ не пролезет ни в каком виде. */
-        if (preg_match('~^[a-z0-9][a-z0-9._-]{0,80}\.(jpg|png|webp|gif)$~', $name)
+        if (preg_match('~^[a-z0-9][a-z0-9._-]{0,80}\.(jpg|png|webp|gif|mp4|webm)$~', $name)
             && is_file($DIR . '/' . $name)) {
             @unlink($DIR . '/' . $name);
             admin_flash('Файл удалён. Если он стоял в карточке проекта, там снова будет отраслевая подложка.');
@@ -59,21 +81,28 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         admin_flash('Файл не дошёл целиком. Попробуйте ещё раз.', 'err');
     } elseif (!is_uploaded_file($f['tmp_name'])) {
         admin_flash('Это не загруженный файл.', 'err');
-    } elseif ((int)$f['size'] > $MAX) {
+    } elseif (($vext = media_video_ext($f['tmp_name'])) !== null && (int)$f['size'] > $MAX_VIDEO) {
+        admin_flash('Видео больше ' . (int)($MAX_VIDEO / 1048576) . ' МБ. Сожмите перед загрузкой: '
+                  . 'вертикальный ролик на минуту столько не весит.', 'err');
+    } elseif ($vext === null && (int)$f['size'] > $MAX) {
         admin_flash('Файл больше ' . (int)($MAX / 1048576) . ' МБ. Снимок сайта столько не весит — сохраните в JPEG.', 'err');
     } else {
-        $info = @getimagesize($f['tmp_name']);
+        $info = $vext === null ? @getimagesize($f['tmp_name']) : null;
         $type = is_array($info) ? (int)($info[2] ?? 0) : 0;
 
-        if (!isset($TYPES[$type])) {
-            admin_flash('Это не картинка в понятном формате. Нужен JPEG, PNG, WebP или GIF. '
-                      . 'SVG не принимаем: внутри него бывает исполняемый код.', 'err');
-        } elseif ((int)$info[0] < 60 || (int)$info[1] < 60) {
+        /* Проверки размеров — только для картинок: у видео их без разбора
+           контейнера не узнать, а метки формата в начале файла достаточно.
+           Каждое условие начинается с $vext === null именно поэтому:
+           видео проходит мимо них и попадает прямо в сохранение. */
+        if ($vext === null && !isset($TYPES[$type])) {
+            admin_flash('Это не картинка и не видео в понятном формате. Нужен JPEG, PNG, WebP, GIF, '
+                      . 'MP4 или WebM. SVG не принимаем: внутри него бывает исполняемый код.', 'err');
+        } elseif ($vext === null && ((int)$info[0] < 60 || (int)$info[1] < 60)) {
             admin_flash('Картинка меньше 60 пикселей по стороне — для снимка сайта это ошибка.', 'err');
-        } elseif ((int)$info[0] > 6000 || (int)$info[1] > 6000) {
+        } elseif ($vext === null && ((int)$info[0] > 6000 || (int)$info[1] > 6000)) {
             admin_flash('Картинка больше 6000 пикселей по стороне. Уменьшите перед загрузкой.', 'err');
         } else {
-            $ext = $TYPES[$type];
+            $ext = $vext ?? $TYPES[$type];
 
             /* Имя собираем сами. Подсказка — домен проекта или исходное имя,
                но из неё остаются только разрешённые знаки. */
@@ -115,7 +144,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
 /* ------------------------------------------------------------- отрисовка */
 $files = [];
-foreach (glob($DIR . '/*.{jpg,jpeg,png,webp,gif}', GLOB_BRACE) ?: [] as $p) {
+foreach (glob($DIR . '/*.{jpg,jpeg,png,webp,gif,mp4,webm}', GLOB_BRACE) ?: [] as $p) {
     $files[] = ['name' => basename($p), 'size' => (int)@filesize($p), 'time' => (int)@filemtime($p)];
 }
 usort($files, static fn($a, $b) => $b['time'] <=> $a['time']);
@@ -140,17 +169,20 @@ admin_head('media');
 
 <div class="panel">
   <h3>Загрузить картинку</h3>
-  <p class="muted">JPEG, PNG, WebP или GIF, до <?= (int)($MAX / 1048576) ?> МБ.
+  <p class="muted">JPEG, PNG, WebP или GIF до <?= (int)($MAX / 1048576) ?> МБ;
+     MP4 или WebM до <?= (int)($MAX_VIDEO / 1048576) ?> МБ.
      SVG не принимаем: внутри него бывает исполняемый код, и при открытии
-     по прямой ссылке он выполнится в домене сайта.</p>
+     по прямой ссылке он выполнится в домене сайта.
+     Формат определяется по содержимому файла, а не по расширению.</p>
 
   <form method="post" action="<?= $e(admin_url('media')) ?>" enctype="multipart/form-data">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
     <input type="hidden" name="MAX_FILE_SIZE" value="<?= $MAX ?>">
     <div class="row">
       <div>
-        <label for="file">Файл</label>
-        <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/webp,image/gif" required>
+        <label for="file">Изображение или видео</label>
+        <input type="file" id="file" name="file"
+               accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm" required>
       </div>
       <div>
         <label for="name">Как назвать <span class="hint">обычно домен проекта; пусто — возьмём имя файла</span></label>
@@ -176,7 +208,15 @@ admin_head('media');
         $who  = $used[$f['name']] ?? null;
       ?>
         <div class="media-item">
-          <img src="<?= $e($path) ?>" alt="" loading="lazy">
+          <?php if (preg_match('~\.(mp4|webm)$~i', $f['name'])): ?>
+            <?php /* preload="metadata": грузим первый кадр, а не весь ролик —
+                     иначе страница со списком тянет десятки мегабайт. */ ?>
+            <video src="<?= $e($path) ?>" preload="metadata" muted playsinline
+                   controls style="display:block;width:100%;aspect-ratio:16/10;
+                   object-fit:cover;background:#0e2f47"></video>
+          <?php else: ?>
+            <img src="<?= $e($path) ?>" alt="" loading="lazy">
+          <?php endif; ?>
           <div class="m">
             <button type="button" class="copypath" data-copy="<?= $e($path) ?>"
                     title="Кликните, чтобы скопировать путь"><?= $e($path) ?></button>

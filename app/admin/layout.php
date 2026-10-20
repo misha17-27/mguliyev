@@ -84,7 +84,11 @@ function admin_head(string $section): void
 
   <aside class="side">
     <div class="brand">
-      <b>MGuliyev Studio</b>
+      <?php /* Логотип тот же, что в подвале сайта — белый вариант на тёмном.
+               Ссылкой на сводку: в панели привычно, что знак ведёт на главную. */ ?>
+      <a href="<?= $e(admin_url('dashboard')) ?>" aria-label="MGuliyev Studio — сводка">
+        <img src="/images/brand/guliyev-white-logo.svg" alt="MGuliyev Studio" width="190" height="78">
+      </a>
       <span>панель управления</span>
     </div>
     <nav aria-label="Разделы панели">

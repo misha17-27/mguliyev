@@ -19,7 +19,8 @@ img{max-width:100%;height:auto}
 /* ---------------------------------------------------------- боковая колонка */
 .side{width:256px;background:#0e2f47;color:#cfe0ea;display:flex;flex-direction:column;
       position:sticky;top:0;height:100vh;flex:none;z-index:30}
-.brand{padding:18px;border-bottom:1px solid #17415f;display:flex;flex-direction:column;gap:3px}
+.brand{padding:18px;border-bottom:1px solid #17415f;display:flex;flex-direction:column;gap:7px}
+.brand img{display:block;max-height:34px;max-width:168px;width:auto;height:auto}
 .brand b{color:#fff;font-size:15px;letter-spacing:-.01em}
 .brand span{font-size:11px;color:#6f93ac;letter-spacing:.06em;text-transform:uppercase}
 .side nav{display:flex;flex-direction:column;padding:4px 0 14px;flex:1;overflow:auto}
