@@ -347,22 +347,54 @@ function settings_meta(): array
     return require __DIR__ . '/data/settings.php';
 }
 
-/** Текущие значения: значения по умолчанию, поверх — правки из панели. */
-function settings(): array
+/** Значения на всех языках: у переводимого поля — набор по языкам,
+    у остальных — строка. Значения по умолчанию, поверх — правки из панели.
+    Этим пользуется панель; сайт читает settings(). */
+function settings_canon(): array
 {
-    static $out = null;
-    if ($out !== null) return $out;
-
+    $def = deflang();
+    $ov  = Store::read('settings.json') ?? [];
     $out = [];
-    foreach (settings_meta() as $k => $m) $out[$k] = (string)($m['v'] ?? '');
+    foreach (settings_meta() as $k => $m) {
+        $base = $m['v'] ?? '';
+        $v    = $ov[$k] ?? null;
 
-    $ov = Store::read('settings.json');
-    if ($ov) {
-        foreach ($ov as $k => $v) {
-            if (isset($out[$k]) && is_string($v)) $out[$k] = $v;
+        if (empty($m['i18n'])) {
+            $out[$k] = is_string($v) ? $v : (is_array($base) ? tr($base, $def) : (string)$base);
+            continue;
         }
+
+        $d = is_array($base) ? $base : [$def => (string)$base];
+        $set = [];
+        foreach (langs() as $l) {
+            if (is_array($v)) {
+                $set[$l] = is_string($v[$l] ?? null) ? $v[$l] : '';
+            } elseif (is_string($v)) {
+                /* Сохранено, когда поле ещё не было переводимым: это русский
+                   текст. Переводы по умолчанию годятся, только если русский
+                   не меняли, — иначе они описывали бы уже другое. */
+                $set[$l] = $l === $def ? $v : ($v === (string)($d[$def] ?? '') ? (string)($d[$l] ?? '') : '');
+            } else {
+                $set[$l] = (string)($d[$l] ?? '');
+            }
+        }
+        $out[$k] = $set;
     }
     return $out;
+}
+
+/** Значения на языке страницы. Пустой перевод — русский текст. */
+function settings(?string $lang = null): array
+{
+    static $cache = [];
+    $lang = $lang ?? I18n::$lang;
+    if (isset($cache[$lang])) return $cache[$lang];
+
+    $out = [];
+    foreach (settings_canon() as $k => $v) {
+        $out[$k] = is_array($v) ? tr($v, $lang) : $v;
+    }
+    return $cache[$lang] = $out;
 }
 
 /** Значение настройки. Пусто — пустая строка, решение принимает вызывающий. */

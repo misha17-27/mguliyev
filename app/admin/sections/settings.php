@@ -4,9 +4,11 @@
    Форма строится из описания полей в app/data/settings.php, поэтому новое
    поле появляется здесь само — добавлять код не нужно.
 
-   Эти значения не переводятся: телефон, адрес профиля и сумма одинаковы
-   на всех трёх языках. Переключатель языка в верхней строке на этот раздел
-   не влияет, и об этом сказано прямо, чтобы редактор не искал подвох. */
+   Телефон, почта и ссылки одинаковы на всех трёх языках. Часы работы,
+   адрес, цены словами и способы оплаты — текст, и он переводится: такие
+   поля (в описании 'i18n' => true) показаны на языке, выбранном вверху,
+   с русским оригиналом под переводом. Остальные языки едут в форме
+   скрытыми полями, поэтому сохранение одного языка другие не трогает. */
 
 $e    = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $meta = settings_meta();
@@ -22,12 +24,45 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         admin_go(admin_url('settings'));
     }
 
-    $in  = (array)($_POST['f'] ?? []);
-    $out = [];
-    $bad = [];
+    /* Файл пишется целиком, поэтому поле, которого НЕТ в запросе, —
+       это не «стёрли», а «не дошло»: сервер обрезал длинную форму или
+       запрос собран не браузером. Такое поле сохраняет прежнее значение.
+       Раньше оно становилось пустым, и запрос с одним только ключом
+       защиты молча стирал все контакты сайта. */
+    $in = $_POST['f'] ?? null;
+    if (!is_array($in) || !$in) {
+        admin_flash('Форма пришла без полей — ничего не сохранено. Обновите страницу и повторите.', 'err');
+        admin_go(admin_url('settings'));
+    }
+    $cur  = settings_canon();
+    $out  = [];
+    $bad  = [];
+    $lost = 0;
 
     foreach ($meta as $k => $m) {
-        $v = clean_text($in[$k] ?? '');
+        if (!array_key_exists($k, $in)) {
+            $out[$k] = $cur[$k];
+            $lost++;
+            continue;
+        }
+
+        if (!empty($m['i18n'])) {
+            /* Переводимое поле приходит набором f[ключ][язык]. */
+            $src = is_array($in[$k]) ? $in[$k] : [];
+            $set = [];
+            foreach (langs() as $l) {
+                if (!array_key_exists($l, $src)) {
+                    $set[$l] = (string)($cur[$k][$l] ?? '');
+                    $lost++;
+                    continue;
+                }
+                $set[$l] = clean_text(is_string($src[$l]) ? $src[$l] : '');
+            }
+            $out[$k] = $set;
+            continue;
+        }
+
+        $v = clean_text(is_string($in[$k]) ? $in[$k] : '');
         $type = $m['type'] ?? 'text';
 
         if ($v !== '') {
@@ -51,8 +86,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     }
 
     if (Store::write('settings.json', $out)) {
-        $filled = count(array_filter($out, static fn($v) => $v !== ''));
+        $filled = count(array_filter($out, static fn($v) => is_array($v) ? ($v[deflang()] ?? '') !== '' : $v !== ''));
         $msg = 'Сохранено. Заполнено ' . $filled . ' из ' . count($meta) . ' полей.';
+        if ($lost) {
+            $bad[] = 'не дошло полей — ' . $lost . ', у них оставлены прежние значения';
+        }
         if ($bad) {
             admin_flash($msg . ' Не приняты: ' . implode('; ', $bad) . '.', 'warn');
         } else {
@@ -64,7 +102,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     admin_go(admin_url('settings'));
 }
 
-$vals = settings();
+$vals  = settings(deflang());          // для пометок: на сайте их видно, пока пуст русский
+$canon = settings_canon();
+$L     = admin_lang();
+$DEF   = deflang();
 
 /* Группы в том порядке, в котором они описаны в файле настроек. */
 $groups = [];
@@ -76,8 +117,9 @@ admin_head('settings');
 ?>
 
 <div class="note">
-  Эти значения одинаковы на всех языках, поэтому переключатель RU / AZ / EN
-  на этот раздел не влияет.
+  Телефон, почта и ссылки одинаковы на всех языках. Часы работы, адрес и цены
+  словами переводятся: они показаны на языке, выбранном вверху
+  (<b><?= $e(strtoupper($L)) ?></b>), с русским оригиналом под переводом.
   <?php if ($empty): ?>
     Не заполнено полей: <b><?= $empty ?></b>. На сайте вместо каждого стоит
     видимая пометка <b>[УТОЧНИТЬ: …]</b> — она исчезнет сама, как только
@@ -101,14 +143,30 @@ admin_head('settings');
       ?>
         <label for="f_<?= $e($k) ?>">
           <?= $e($m['label']) ?>
+          <?php if (!empty($m['i18n'])): ?>
+            <span class="pill grey"><?= $e(strtoupper($L)) ?></span>
+          <?php endif; ?>
           <?php if ($v === ''): ?>
             <span class="pill yellow">на сайте: [УТОЧНИТЬ: <?= $e($m['ask']) ?>]</span>
           <?php endif; ?>
         </label>
+        <?php if (!empty($m['i18n'])):
+          $set = (array)($canon[$k] ?? []); ?>
+          <input type="text" id="f_<?= $e($k) ?>" name="f[<?= $e($k) ?>][<?= $e($L) ?>]"
+                 value="<?= $e($set[$L] ?? '') ?>"
+                 <?= $L !== $DEF ? 'placeholder="пусто — на сайте будет русский текст"' : '' ?>>
+          <?php if ($L !== $DEF && ($set[$DEF] ?? '') !== ''): ?>
+            <div class="src"><b><?= $e(strtoupper($DEF)) ?>:</b> <?= $e($set[$DEF]) ?></div>
+          <?php endif; ?>
+          <?php foreach (langs() as $l): if ($l === $L) continue; ?>
+            <input type="hidden" name="f[<?= $e($k) ?>][<?= $e($l) ?>]" value="<?= $e($set[$l] ?? '') ?>">
+          <?php endforeach; ?>
+        <?php else: ?>
         <input type="<?= $e($html) ?>" id="f_<?= $e($k) ?>" name="f[<?= $e($k) ?>]"
                value="<?= $e($v) ?>"
                <?= $type === 'url' ? 'placeholder="https://…"' : '' ?>
                <?= $type === 'tel' ? 'inputmode="tel"' : '' ?>>
+        <?php endif; ?>
         <?php if (!empty($m['hint'])): ?>
           <div class="muted" style="margin-top:5px"><?= $e($m['hint']) ?></div>
         <?php endif; ?>
