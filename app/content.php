@@ -180,9 +180,36 @@ function packs_canon(): array
     языках показывает только те статьи, у которых перевод есть. */
 function articles_canon(): array
 {
+    $repo = articles_repo();
     $s = Store::read('articles.json');
-    if (is_array($s) && isset($s[0]['slug'], $s[0]['body'])) return $s;
+    if (!is_array($s) || !isset($s[0]['slug'], $s[0]['body'])) return $repo;
 
+    /* Сохранённое из панели главнее репозитория — кроме пустых переводов.
+       Файл хранилища мог появиться, когда переводов статей ещё не было:
+       тогда у него пустые az и en, и переводы, добавленные в репозиторий
+       позже, на сайт бы не попали никогда. Пустое значение на другом
+       языке здесь значит «не было», а не «стёрли», — его берём из
+       репозитория. Русский и всё, что заполнено в панели, не трогаем. */
+    $bySlug = [];
+    foreach ($repo as $a) $bySlug[$a['slug']] = $a;
+    $def = deflang();
+    foreach ($s as &$a) {
+        $r = $bySlug[$a['slug'] ?? ''] ?? null;
+        if ($r === null) continue;
+        foreach (['rubric', 'title', 'desc', 'lead', 'end', 'seoTitle', 'seoDesc', 'body'] as $f) {
+            foreach (langs() as $l) {
+                if ($l === $def) continue;
+                if (empty($a[$f][$l]) && !empty($r[$f][$l])) $a[$f][$l] = $r[$f][$l];
+            }
+        }
+    }
+    unset($a);
+    return $s;
+}
+
+/** Статьи из файлов репозитория: оригинал и накладки переводов. */
+function articles_repo(): array
+{
     $base = require __DIR__ . '/data/articles.php';
     $ovs  = [];
     foreach (langs() as $l) $ovs[$l] = overlay('articles', $l);
