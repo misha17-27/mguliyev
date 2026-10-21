@@ -151,29 +151,58 @@ function attempts_get(string $bucket, string $key): array
     закрываем на $lock секунд. */
 function attempts_fail(string $bucket, string $key, int $limit, int $window, int $lock): int
 {
+    return attempts_count($bucket, $key, $limit, $window, $lock, false)['tries'];
+}
+
+/** Занять попытку ДО проверки: под блокировкой проверить запрет и
+    прибавить счётчик одним шагом. Возвращает ['ok', 'tries', 'until'];
+    ok=false — запрет уже стоит, проверять нельзя.
+
+    Проверка «прочитали — потом записали» пропускала одновременные
+    запросы: двадцать попыток из разных сессий читали счётчик до того,
+    как первая успевала его поднять, и все двадцать паролей проверялись. */
+function attempts_take(string $bucket, string $key, int $limit, int $window, int $lock): array
+{
+    return attempts_count($bucket, $key, $limit, $window, $lock, true);
+}
+
+function attempts_count(string $bucket, string $key, int $limit, int $window, int $lock, bool $refuseLocked): array
+{
     attempts_sweep_due();
     $rel = 'locks/' . $bucket . '-' . $key . '.json';
-    $d = Store::read($rel) ?? [];
     $now = time();
+    $res = ['ok' => true, 'tries' => 0, 'until' => 0];
 
-    /* Окно истекло — считаем заново, иначе одна ошибка месяц назад
-       складывалась бы с ошибкой сегодня. */
-    $first = (int)($d['first'] ?? 0);
-    if ($first === 0 || $now - $first > $window) {
-        $first = $now;
-        $tries = 0;
-    } else {
-        $tries = (int)($d['tries'] ?? 0);
-    }
-    $tries++;
+    /* Store::update читает файл с диска под замком, а не копию из памяти:
+       копия, прочитанная в начале запроса, к концу проверки пароля уже
+       устарела, и поздняя запись стирала чужие попытки и даже уже
+       поставленный запрет. */
+    Store::update($rel, static function (array $d) use ($now, $limit, $window, $lock, $refuseLocked, &$res) {
+        $until = (int)($d['until'] ?? 0);
+        if ($refuseLocked && $until > $now) {
+            $res = ['ok' => false, 'tries' => (int)($d['tries'] ?? 0), 'until' => $until];
+            return null;                        // запрет стоит — файл не трогаем
+        }
 
-    Store::write($rel, [
-        'first' => $first,
-        'tries' => $tries,
-        'until' => $tries >= $limit ? $now + $lock : 0,
-        'last'  => $now,
-    ]);
-    return $tries;
+        /* Окно истекло — считаем заново, иначе одна ошибка месяц назад
+           складывалась бы с ошибкой сегодня. */
+        $first = (int)($d['first'] ?? 0);
+        if ($first === 0 || $now - $first > $window) {
+            $first = $now;
+            $tries = 0;
+        } else {
+            $tries = (int)($d['tries'] ?? 0);
+        }
+        $tries++;
+        /* Уже стоящий запрет не снимаем. Запрет, поставленный в конце
+           окна, переживает само окно, и попытка, начавшая счёт заново,
+           иначе открывала бы вход досрочно. */
+        $until = $tries >= $limit ? max($until, $now + $lock) : ($until > $now ? $until : 0);
+
+        $res = ['ok' => true, 'tries' => $tries, 'until' => $until];
+        return ['first' => $first, 'tries' => $tries, 'until' => $until, 'last' => $now];
+    });
+    return $res;
 }
 
 /** Снять счётчик: вызывается после успеха. */
@@ -232,8 +261,26 @@ function attempts_sweep(string $bucket, int $olderThan = 86400): void
     $dir = Store::dir() . '/locks';
     if (!is_dir($dir)) return;
     $now = time();
-    foreach (glob($dir . '/' . $bucket . '-*.json') ?: [] as $f) {
-        if ($now - (int)@filemtime($f) > $olderThan) @unlink($f);
+
+    /* Только счётчики по адресу: корзина и 32 знака ключа из ip_key().
+       Шаблон login-*.json цеплял и общий счётчик login-total.json, и после
+       часа тишины подметание стирало суточную историю неудачных входов —
+       ровно ту, по которой виден подбор с тысяч адресов. */
+    $re = '~^' . preg_quote($bucket, '~') . '-[0-9a-f]{32}\.json(\.lock)?$~';
+    $files = glob($dir . '/' . $bucket . '-*') ?: [];
+    foreach ($files as $f) {
+        if (preg_match($re, basename($f), $m) && empty($m[1])
+            && $now - (int)@filemtime($f) > $olderThan) @unlink($f);
+    }
+
+    /* Замок рядом со счётчиком ставит Store::update, и сам он не исчезает:
+       ни attempts_clear, ни подметание выше его не трогают. Убираем замок,
+       когда счётчика уже нет, иначе каждый новый адрес оставлял бы файл
+       навсегда. */
+    foreach ($files as $f) {
+        if (preg_match($re, basename($f), $m) && !empty($m[1])
+            && !is_file(substr($f, 0, -5))
+            && $now - (int)@filemtime($f) > $olderThan) @unlink($f);
     }
 }
 

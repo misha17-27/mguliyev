@@ -22,57 +22,116 @@ $testResult = null;
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $what = post_one($_POST['do'] ?? '');
-    $cur  = Store::read('mail.json') ?? [];
 
     /* ------------------------------------------------------ сохранение */
     if ($what === 'save') {
-        $port = (int)($_POST['port'] ?? 0);
-        $enc  = post_one($_POST['enc'] ?? '');
-        $to   = post_one($_POST['to'] ?? '');
-        $from = post_one($_POST['from'] ?? '');
-
-        $errors = [];
-        if ($to !== '' && !filter_var($to, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'адрес для заявок записан неверно';
-        }
-        if ($from !== '' && !filter_var($from, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'адрес отправителя записан неверно';
-        }
-        if ($port !== 0 && ($port < 1 || $port > 65535)) {
-            $errors[] = 'порт вне допустимых значений';
+        /* Форма несёт все настройки сразу. Вкладка, открытая утром, вернула
+           бы прежние сервер, ящик и адрес заявок, оставив новый пароль из
+           другой вкладки, — пара «старый ящик, новый пароль» не входит,
+           и ни одно письмо не уходит. Метка версии это ловит. */
+        if (admin_stale('mail.json')) {
+            admin_flash('Почту правили из другого места, пока эта страница была открыта. '
+                . 'Чтобы не затереть ту правку, сохранение отменено: обновите страницу '
+                . 'и внесите изменения заново.', 'err');
+            admin_go(admin_url('mail'));
         }
 
-        $new = [
-            'transport' => post_one($_POST['transport'] ?? 'mail') === 'smtp' ? 'smtp' : 'mail',
-            'to'        => $to,
-            /* Имя узла идёт прямо в адрес соединения — оставляем только
-               то, из чего имя узла вообще может состоять. */
-            'host'      => preg_replace('~[^A-Za-z0-9._-]~', '', post_one($_POST['host'] ?? '')) ?? '',
-            /* Только почтовые порты. Любой порт превращал раздел в сканер:
-               «соединиться с узлом X на порту Y» и показать весь ответ — это
-               ровно то, чем ищут открытые службы во внутренней сети хостинга. */
-            'port'      => in_array($port, [25, 465, 587, 2525], true) ? $port : 465,
-            'enc'       => in_array($enc, ['ssl', 'tls', 'none'], true) ? $enc : 'ssl',
-            'user'      => post_one($_POST['user'] ?? ''),
-            'from'      => $from,
-            'from_name' => post_one($_POST['from_name'] ?? ''),
-            /* Пустое поле пароля — оставить прежний. Иначе каждое
-               сохранение любой другой настройки стирало бы пароль. */
-            'pass'      => is_string($_POST['pass'] ?? null) && $_POST['pass'] !== ''
-                ? $_POST['pass']
-                : (string)($cur['pass'] ?? ''),
-        ];
-
-        if ($errors) {
-            admin_flash('Не сохранено: ' . implode('; ', $errors) . '.', 'err');
-        } elseif (Store::write('mail.json', $new)) {
-            Store::forget('mail.json');
-            admin_flash($new['transport'] === 'smtp'
-                ? 'Сохранено. Отправьте проверочное письмо — без этого нельзя быть уверенным, что настройки верные.'
-                : 'Сохранено. Отправка идёт встроенной функцией mail().');
-        } else {
-            admin_flash('Не удалось сохранить.', 'err');
+        /* Поле, которого НЕТ в запросе, — это «не дошло», а не «стёрли»:
+           оно сохраняет прежнее значение. Раньше запрос с одним ключом
+           защиты выключал SMTP и стирал сервер, ящик и отправителя. */
+        $FIELDS = ['transport', 'to', 'host', 'port', 'enc', 'user', 'from', 'from_name'];
+        $got    = array_values(array_filter($FIELDS,
+            static fn($k) => array_key_exists($k, $_POST) && is_string($_POST[$k])));
+        /* Пустое поле пароля — оставить прежний. Иначе каждое сохранение
+           любой другой настройки стирало бы пароль. */
+        $pass   = is_string($_POST['pass'] ?? null) && $_POST['pass'] !== '' ? $_POST['pass'] : null;
+        if (!$got && $pass === null) {
+            admin_flash('Форма пришла без полей — ничего не сохранено. Обновите страницу и повторите.', 'err');
+            admin_go(admin_url('mail'));
         }
+
+        /* Каждое поле проверяется само по себе. Неверное остаётся прежним
+           и попадает в список «не приняты», остальные правки — вместе
+           с вписанным паролем — сохраняются. Раньше одна опечатка в адресе
+           отменяла всю форму, и пароль приходилось вписывать заново. */
+        $set   = [];
+        $bad   = [];
+        $notes = [];
+        $pasted = 0;
+        foreach ($got as $k) {
+            $v = post_one($_POST[$k]);
+            if ($k === 'transport' || $k === 'enc') {
+                $allowed = $k === 'transport' ? ['smtp', 'mail'] : ['ssl', 'tls', 'none'];
+                if (in_array($v, $allowed, true)) $set[$k] = $v;
+                else $bad[] = ($k === 'transport' ? 'способ отправки' : 'шифрование') . ': неизвестное значение';
+            } elseif ($k === 'to' || $k === 'from') {
+                if ($v === '' || filter_var($v, FILTER_VALIDATE_EMAIL)) $set[$k] = $v;
+                else $bad[] = ($k === 'to' ? 'адрес для заявок' : 'адрес отправителя')
+                            . ' «' . $v . '» — не похоже на адрес почты';
+            } elseif ($k === 'port') {
+                /* Только почтовые порты. Любой порт превращал раздел в сканер:
+                   «соединиться с узлом X на порту Y» и показать весь ответ —
+                   ровно то, чем ищут открытые службы во внутренней сети хостинга. */
+                if (in_array((int)$v, [25, 465, 587, 2525], true) && (string)(int)$v === $v) $set[$k] = (int)$v;
+                else $bad[] = 'порт «' . $v . '» — допустимы 25, 465, 587 и 2525';
+            } elseif ($k === 'host') {
+                /* Адрес сервера вставляют целиком: со схемой, портом, косой
+                   в конце. Это снимаем, а остальное проверяем. Молча вырезать
+                   знаки нельзя: «https://smtp.gmail.com» превращалось
+                   в «httpssmtp.gmail.com» и сохранялось с «Сохранено». */
+                $h = preg_replace('~^[a-z][a-z0-9+.-]*://~i', '', $v) ?? '';
+                $h = explode('/', $h, 2)[0];
+                if (preg_match('~^(.*):(\d{1,5})$~', $h, $m)) {
+                    $h = $m[1];
+                    $pasted = (int)$m[2];
+                }
+                $h = rtrim(strtolower($h), '.');
+                if ($h === '' || filter_var($h, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)
+                    || preg_match('~^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$~', $h)) {
+                    $set[$k] = $h;
+                } else {
+                    $pasted = 0;
+                    $bad[] = 'SMTP-сервер «' . $v . '» — это не имя сервера, нужно вида smtp.gmail.com';
+                }
+            } else {
+                $set[$k] = $v;                  // user, from_name: свободный текст
+            }
+        }
+        if ($pass !== null) $set['pass'] = $pass;
+
+        $lost = count($FIELDS) - count($got);
+        if ($lost && $got) {
+            $bad[] = 'не дошло полей — ' . $lost;
+        }
+
+        $res = [];
+        $ok = Store::update('mail.json', static function (array $cur) use ($set, &$res): array {
+            foreach ($set as $k => $v) $cur[$k] = $v;
+            return $res = $cur;
+        });
+
+        if (!$ok) {
+            admin_flash('Не удалось сохранить. Проверьте права на папку ' . Store::dir(), 'err');
+            admin_go(admin_url('mail'));
+        }
+
+        /* Порт из вставленного адреса не применяем: порт выбирается
+           в списке вместе с шифрованием, и одна только смена порта дала бы
+           пару, которая не соединяется. Но и молча его не выбрасываем. */
+        $port = (int)($res['port'] ?? 465);
+        if ($pasted && $pasted !== $port) {
+            $notes[] = 'Порт из адреса сервера (:' . $pasted . ') не применён — порт выбирается '
+                     . 'в списке, сейчас ' . $port . '.';
+        }
+
+        $msg = ($res['transport'] ?? 'mail') === 'smtp'
+            ? 'Сохранено. Отправьте проверочное письмо — без этого нельзя быть уверенным, что настройки верные.'
+            : 'Сохранено. Отправка идёт встроенной функцией mail().';
+        if ($bad) {
+            $msg .= ' Не приняты, у них оставлены прежние значения: ' . implode('; ', $bad) . '.';
+        }
+        if ($notes) $msg .= ' ' . implode(' ', $notes);
+        admin_flash($msg, $bad || $notes ? 'warn' : 'ok');
         admin_go(admin_url('mail'));
     }
 
@@ -174,6 +233,7 @@ admin_head('mail');
 
   <form method="post" action="<?= $e(admin_url('mail')) ?>" data-guard="1">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+    <?= admin_ver_field('mail.json') ?>
     <input type="hidden" name="do" value="save">
 
     <label for="to">Куда приходят заявки с сайта</label>

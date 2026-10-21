@@ -20,8 +20,11 @@ $leadsDir  = Store::dir() . '/leads';
 $leadsNew  = admin_new_leads();
 $leadsBad  = 0;
 foreach (glob($leadsDir . '/*.json') ?: [] as $lf) {
-    $raw = (string)@file_get_contents($lf, false, null, 0, 4096);
-    if (strpos($raw, '"sent": false') !== false) $leadsBad++;
+    /* Файл читается целиком, как в admin_new_leads(): метка «sent» стоит
+       после текста заявки, и у длинного обращения она уходила за первые
+       4 КБ — красной плашки не было как раз по самым подробным заявкам. */
+    $d = json_decode((string)@file_get_contents($lf), true);
+    if (is_array($d) && array_key_exists('sent', $d) && !$d['sent']) $leadsBad++;
 }
 
 $works    = works_canon();

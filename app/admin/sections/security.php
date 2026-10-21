@@ -24,6 +24,23 @@ $TEST = [
 ];
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    /* Устаревшая вкладка с пустым полем секрета сохранила бы свой старый
+       Site Key рядом с новым секретным ключом из другой вкладки. Ключи
+       от разных виджетов Cloudflare не принимает: отбивалась бы каждая
+       заявка, а после выхода — и вход в панель. */
+    if (admin_stale('security.json')) {
+        admin_flash('Ключи капчи правили из другого места, пока эта страница была открыта. '
+            . 'Чтобы не затереть ту правку, сохранение отменено: обновите страницу '
+            . 'и внесите изменения заново.', 'err');
+        admin_go(admin_url('security'));
+    }
+    /* Поля нет вовсе — это «не дошло», а не «очистили»: пустой Site Key
+       выключает капчу, и запрос без полей выключал бы её молча. */
+    if (!array_key_exists('site', $_POST)) {
+        admin_flash('Форма пришла без полей — ничего не сохранено. Обновите страницу и повторите.', 'err');
+        admin_go(admin_url('security'));
+    }
+
     $cur  = Store::read('security.json') ?? [];
     $site = post_one($_POST['site'] ?? '');
     $sec  = (string)($_POST['secret'] ?? '');
@@ -32,6 +49,18 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
        к Cloudflare. Пропускаем только то, из чего ключ вообще состоит. */
     $site = preg_replace('~[^A-Za-z0-9_-]~', '', $site) ?? '';
     $sec  = preg_replace('~[^A-Za-z0-9_-]~', '', $sec) ?? '';
+
+    /* Новый Site Key без нового секрета — это пара от двух разных
+       виджетов: прежний секретный ключ к новому не подойдёт. Подсказка
+       «оставьте пустым» вела ровно к этому. */
+    if ($site !== '' && $sec === '' && $site !== (string)($cur['site'] ?? '')
+        && (string)($cur['secret'] ?? '') !== '') {
+        admin_draft_keep('security', ['site' => $site]);
+        admin_flash('Не сохранено: Site Key сменился, а Secret Key не вписан. У каждого виджета '
+            . 'своя пара ключей, и прежний секретный к новому Site Key не подойдёт — '
+            . 'Cloudflare отбивал бы каждую заявку. Впишите Secret Key вместе с Site Key.', 'err');
+        admin_go(admin_url('security'));
+    }
 
     /* Пустое поле секрета — оставить прежний. Пустой site key при этом
        выключает капчу целиком: это единственный способ её убрать. */
@@ -45,9 +74,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             : 'Сохранено. Проверьте: откройте страницу контактов — под формой должен появиться виджет.';
     }
 
+    /* Пара «всегда НЕ проходит» отбивает все формы сайта. Об этом
+       надо сказать сразу, а не когда кончатся заявки. */
+    $failPair = $new['site'] !== '' && $new['secret'] !== ''
+        && (preg_match('~^2x0{20}AB$~', $new['site']) || preg_match('~^2x0{31}AA$~', $new['secret']));
+
     if (Store::write('security.json', $new)) {
         Store::forget('security.json');
-        admin_flash($msg, $new['site'] !== '' && $new['secret'] === '' ? 'warn' : 'ok');
+        if ($failPair) {
+            admin_flash('Сохранено. Стоит пара «всегда НЕ проходит»: формы сайта отбивают всех, '
+                . 'заявки не принимаются. Вход в панель на тестовых ключах отказ капчи пропускает '
+                . 'и проверяет только пароль. Проверив, впишите свои ключи.', 'warn');
+        } else {
+            admin_flash($msg, $new['site'] !== '' && $new['secret'] === '' ? 'warn' : 'ok');
+        }
     } else {
         admin_flash('Не удалось сохранить.', 'err');
     }
@@ -58,6 +98,10 @@ $cfg    = Store::read('security.json') ?? [];
 $site   = (string)($cfg['site'] ?? '');
 $hasSec = ($cfg['secret'] ?? '') !== '';
 $on     = ts_on();
+/* Отказанный Site Key возвращается в поле, чтобы не искать его заново.
+   Секретный ключ в черновик не попадает: обратно он не выводится. */
+$draft  = admin_draft_take('security');
+$siteIn = is_array($draft) && isset($draft['site']) ? (string)$draft['site'] : $site;
 
 /* ----------------------------------------- что реально пришло в заголовках */
 $seen = null;
@@ -107,8 +151,10 @@ admin_head('security');
 <?php if (ts_is_test()): ?>
   <div class="flash warn">
     Сейчас стоят <b>тестовые ключи Cloudflare</b>. Они ничего не проверяют по-настоящему:
-    пара «всегда проходит» пропускает кого угодно, пара «всегда НЕ проходит» отбивает всех.
-    На боевом сайте так оставлять нельзя — заведите виджет и впишите свои ключи.
+    пара «всегда проходит» пропускает кого угодно, пара «всегда НЕ проходит» отбивает
+    все формы сайта. Вход в панель на тестовых ключах отказ капчи пропускает — пароль
+    и счётчик попыток остаются. На боевом сайте так оставлять нельзя — заведите виджет
+    и впишите свои ключи.
   </div>
 <?php endif; ?>
 
@@ -124,9 +170,10 @@ admin_head('security');
 
   <form method="post" action="<?= $e(admin_url('security')) ?>" data-guard="1">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
+    <?= admin_ver_field('security.json') ?>
 
     <label for="site">Site Key <span class="hint">публичный, он виден в разметке страницы</span></label>
-    <input type="text" id="site" name="site" value="<?= $e($site) ?>" class="mono"
+    <input type="text" id="site" name="site" value="<?= $e($siteIn) ?>" class="mono"
            autocomplete="off" spellcheck="false" placeholder="0x4AAAAAAA…">
 
     <label for="secret">Secret Key
@@ -136,7 +183,8 @@ admin_head('security');
     <input type="password" id="secret" name="secret" class="mono" autocomplete="new-password"
            placeholder="<?= $hasSec ? 'сохранён — оставьте пустым, чтобы не менять' : '0x4AAAAAAA…' ?>">
 
-    <p class="muted" style="margin-top:10px">Чтобы выключить капчу — очистите поле Site Key и сохраните.</p>
+    <p class="muted" style="margin-top:10px">Чтобы выключить капчу — очистите поле Site Key и сохраните.
+       Меняете Site Key — впишите и Secret Key: ключи идут парой от одного виджета.</p>
 
     <div class="btnrow"><button class="btn" type="submit">Сохранить</button></div>
   </form>
@@ -160,7 +208,8 @@ admin_head('security');
   <h3>Проверить встройку, не заводя виджет</h3>
   <p class="muted">У Cloudflare есть пары ключей для проверки. Они работают с любого
      домена, включая локальный сервер. Вставьте пару «всегда НЕ проходит» — и убедитесь,
-     что форма действительно отбивается, а не делает вид.
+     что форма действительно отбивается, а не делает вид. Вход в панель с тестовыми
+     ключами не запирается: отказ капчи он пропускает и проверяет пароль.
      <b>Не оставляйте их на боевом сайте.</b></p>
   <div class="tablewrap">
     <table>
