@@ -88,7 +88,7 @@ function by_lang(string $ru, array $ovs, string ...$path): array
 function works_canon(): array
 {
     $s = Store::read('works.json');
-    if (is_array($s) && isset($s[0]['slug'], $s[0]['projects'])) return $s;
+    if (is_array($s) && isset($s[0]['slug'], $s[0]['projects'])) return works_seo_fill($s);
 
     $base = require __DIR__ . '/data/works.php';
     $ovs  = [];
@@ -113,7 +113,36 @@ function works_canon(): array
             'projects' => $pr,
         ];
     }
-    return $out;
+    return works_seo_fill($out);
+}
+
+/** Заголовки и описания для поиска из app/data/works_seo.php — там, где
+    своих нет. Берутся только языки, которых в записи нет совсем: значение,
+    сохранённое в панели (даже пустое), главнее файла. Так тексты доходят
+    и до сайта, у которого портфолио уже сохранено из панели. */
+function works_seo_fill(array $groups): array
+{
+    static $seo = null;
+    if ($seo === null) {
+        $f = __DIR__ . '/data/works_seo.php';
+        $seo = is_file($f) ? (array) require $f : [];
+    }
+    if (!$seo) return $groups;
+    foreach ($groups as &$g) {
+        $r = $seo[$g['slug'] ?? ''] ?? null;
+        if (!is_array($r)) continue;
+        foreach ((array)($r['seo'] ?? []) as $l => $v) {
+            if (!isset($g['seo'][$l]) && is_array($v)) $g['seo'][$l] = $v;
+        }
+        foreach ($g['projects'] as &$w) {
+            foreach ((array)($r['projects'][$w['domain'] ?? ''] ?? []) as $l => $v) {
+                if (!isset($w['seo'][$l]) && is_array($v)) $w['seo'][$l] = $v;
+            }
+        }
+        unset($w);
+    }
+    unset($g);
+    return $groups;
 }
 
 /** Каталог услуг: четыре направления, внутри услуги.
