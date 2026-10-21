@@ -20,9 +20,9 @@ function admin_assets(): void
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@600;700&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/admin/assets/admin.css?v=3">
-<link rel="icon" href="/admin/assets/favicon.ico?v=2" sizes="32x32">
-<link rel="icon" href="/admin/assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/admin/assets/apple-touch-icon.png?v=2">
+<link rel="icon" href="/admin/assets/favicon.ico?v=3" sizes="32x32">
+<link rel="icon" href="/admin/assets/favicon.svg?v=3" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/admin/assets/apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#0A0A0A">
     <?php
 }
