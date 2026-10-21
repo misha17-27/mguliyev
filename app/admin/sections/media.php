@@ -15,14 +15,26 @@
    4. Папка /images/ отдельным .htaccess запрещает исполнение чего угодно —
       на случай, если первые три рубежа кто-то обойдёт.
 
-   Загруженное лежит в public/images/uploads/. Выкладка туда не лезет:
-   она копирует файлы поверх, но ничего не удаляет. */
+   Загруженное лежит в images/uploads/ корня сайта: в репозитории это
+   public/images/uploads/, на сервере ~/public_html/images/uploads/.
+   Выкладка туда не лезет: она копирует файлы поверх, но ничего не удаляет. */
 
 $e   = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-$DIR = dirname(__DIR__, 3) . '/public/images/uploads';
+/* От корня сайта, а не от папки с кодом: на сервере код в ~/app, и путь
+   от него вёл в ~/public — мимо сайта. Портфолио проверяет снимки от того же корня. */
+$DIR = ADMIN_WEBROOT . '/images/uploads';
 $WEB = '/images/uploads';
-$MAX = 6 * 1024 * 1024;        // картинка
-$MAX_VIDEO = 40 * 1024 * 1024; // видео: вертикальный ролик столько и весит
+
+/* Предел самого сервера: upload_max_filesize на файл, post_max_size на весь
+   запрос. Обещать больше нельзя — PHP отобьёт файл раньше наших проверок,
+   а страница при этом говорила бы «до 40 МБ». */
+$SERVER = 0;
+foreach ([admin_ini_bytes('upload_max_filesize'), admin_ini_bytes('post_max_size')] as $lim) {
+    if ($lim > 0) $SERVER = $SERVER > 0 ? min($SERVER, $lim) : $lim;
+}
+$cap = static fn(int $own) => $SERVER > 0 ? min($own, $SERVER) : $own;
+$MAX = $cap(6 * 1024 * 1024);         // картинка
+$MAX_VIDEO = $cap(40 * 1024 * 1024);  // видео: вертикальный ролик столько и весит
 
 /* Распознанный тип -> расширение. Список закрытый: что не здесь, то не картинка. */
 $TYPES = [
@@ -32,6 +44,28 @@ $TYPES = [
     IMAGETYPE_GIF  => 'gif',
 ];
 
+/* Марки контейнера ISO BMFF, под которыми пишется видео MP4. Тот же
+   контейнер носят и снимки AVIF и HEIC, и звук M4A, и ролики QuickTime:
+   по одному слову ftyp всё это сохранялось как .mp4 и не играло. */
+const MEDIA_MP4_BRANDS = ['isom', 'iso2', 'iso4', 'iso5', 'iso6', 'mp41', 'mp42',
+                          'avc1', 'dash', 'M4V ', 'M4VH', 'M4VP', 'MSNV'];
+
+/** Первые 12 байт файла: по ним виден формат. */
+function media_head(string $path): string
+{
+    $fh = @fopen($path, 'rb');
+    if (!$fh) return '';
+    $head = (string)fread($fh, 12);
+    fclose($fh);
+    return $head;
+}
+
+/** Марка контейнера ISO BMFF (байты 8–11); '' — файл не в нём. */
+function media_brand(string $head): string
+{
+    return strlen($head) >= 12 && substr($head, 4, 4) === 'ftyp' ? substr($head, 8, 4) : '';
+}
+
 /** Видео по содержимому файла.
 
     getimagesize для видео не годится, поэтому читаем метку формата
@@ -39,18 +73,23 @@ $TYPES = [
     чтобы файл при этом остался исполняемым, нельзя.
 
     У mp4 на позиции 4 стоит слово ftyp (это заголовок контейнера ISO BMFF),
-    у webm в самом начале — четыре байта EBML. Проверяем именно их,
-    а не расширение: расширение пишет отправитель. */
-function media_video_ext(string $path): ?string
+    за ним марка — и она должна быть видео. У webm в самом начале — четыре
+    байта EBML. Проверяем именно их, а не расширение: расширение пишет отправитель. */
+function media_video_ext(string $head): ?string
 {
-    $fh = @fopen($path, 'rb');
-    if (!$fh) return null;
-    $head = (string)fread($fh, 12);
-    fclose($fh);
-
-    if (strlen($head) >= 12 && substr($head, 4, 4) === 'ftyp') return 'mp4';
+    if (in_array(media_brand($head), MEDIA_MP4_BRANDS, true)) return 'mp4';
     if (substr($head, 0, 4) === "\x1A\x45\xDF\xA3") return 'webm';
     return null;
+}
+
+/* Где какие файлы стоят. Сверяем путь целиком, а не имя: снимок
+   разработчика /images/works/x.jpg и загруженный /images/uploads/x.jpg —
+   разные файлы. Нужно и списку, и удалению. */
+$used = [];
+foreach (works_canon() as $g) {
+    foreach ($g['projects'] as $w) {
+        if (!empty($w['image'])) $used[(string)$w['image']][] = $w['domain'];
+    }
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
@@ -60,12 +99,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     if ($what === 'del') {
         $name = post_one($_POST['name'] ?? '');
         /* Имя сверяем целиком, а не «очищаем»: так ../ не пролезет ни в каком виде. */
-        if (preg_match('~^[a-z0-9][a-z0-9._-]{0,80}\.(jpe?g|png|webp|gif|mp4|webm)$~', $name)
-            && is_file($DIR . '/' . $name)) {
-            @unlink($DIR . '/' . $name);
-            admin_flash('Файл удалён. Если он стоял в карточке проекта, там снова будет отраслевая подложка.');
-        } else {
+        if (!preg_match('~^[a-z0-9][a-z0-9._-]{0,80}\.(jpe?g|png|webp|gif|mp4|webm)$~', $name)
+            || !is_file($DIR . '/' . $name)) {
             admin_flash('Такого файла нет.', 'err');
+        } elseif ($who = $used[$WEB . '/' . $name] ?? []) {
+            /* Стоящий в карточке не удаляем. Путь в проекте остался бы, и на
+               сайте вместо снимка была бы пустая рамка (подложка не вернётся:
+               путь-то есть), а сохранить проект было бы нельзя, пока снимок
+               не убран, — даже ради перевода. */
+            admin_flash('Файл ' . $name . ' стоит в карточке ' . implode(', ', array_unique($who))
+                . '. Сначала поменяйте или очистите поле «Снимок» в Портфолио, потом удаляйте.', 'err');
+        } elseif (!@unlink($DIR . '/' . $name)) {
+            admin_flash('Файл не удалился. Проверьте права на папку ' . $WEB . '.', 'err');
+        } else {
+            admin_flash('Файл удалён.');
         }
         admin_go(admin_url('media'));
     }
@@ -76,16 +123,17 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     if (!$f || !is_array($f) || ($f['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
         admin_flash('Файл не выбран.', 'warn');
     } elseif (($f['error'] ?? 0) === UPLOAD_ERR_INI_SIZE || ($f['error'] ?? 0) === UPLOAD_ERR_FORM_SIZE) {
-        admin_flash('Файл крупнее, чем разрешает сервер. Уменьшите или сожмите снимок.', 'err');
+        admin_flash('Файл крупнее, чем принимает сервер: не больше ' . admin_size(max($MAX, $MAX_VIDEO))
+                  . '. Сожмите его перед загрузкой.', 'err');
     } elseif (($f['error'] ?? 0) !== UPLOAD_ERR_OK) {
         admin_flash('Файл не дошёл целиком. Попробуйте ещё раз.', 'err');
     } elseif (!is_uploaded_file($f['tmp_name'])) {
         admin_flash('Это не загруженный файл.', 'err');
-    } elseif (($vext = media_video_ext($f['tmp_name'])) !== null && (int)$f['size'] > $MAX_VIDEO) {
-        admin_flash('Видео больше ' . (int)($MAX_VIDEO / 1048576) . ' МБ. Сожмите перед загрузкой: '
+    } elseif (($vext = media_video_ext($head = media_head($f['tmp_name']))) !== null && (int)$f['size'] > $MAX_VIDEO) {
+        admin_flash('Видео больше ' . admin_size($MAX_VIDEO) . '. Сожмите перед загрузкой: '
                   . 'вертикальный ролик на минуту столько не весит.', 'err');
     } elseif ($vext === null && (int)$f['size'] > $MAX) {
-        admin_flash('Файл больше ' . (int)($MAX / 1048576) . ' МБ. Снимок сайта столько не весит — сохраните в JPEG.', 'err');
+        admin_flash('Файл больше ' . admin_size($MAX) . '. Снимок сайта столько не весит — сохраните в JPEG.', 'err');
     } else {
         $info = $vext === null ? @getimagesize($f['tmp_name']) : null;
         $type = is_array($info) ? (int)($info[2] ?? 0) : 0;
@@ -94,7 +142,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
            контейнера не узнать, а метки формата в начале файла достаточно.
            Каждое условие начинается с $vext === null именно поэтому:
            видео проходит мимо них и попадает прямо в сохранение. */
-        if ($vext === null && !isset($TYPES[$type])) {
+        $brand = media_brand($head);
+        if ($vext === null && in_array($brand, ['avif', 'avis', 'heic', 'heix', 'hevc', 'hevx', 'mif1', 'msf1'], true)) {
+            admin_flash('Это снимок AVIF или HEIC, а панель принимает JPEG, PNG, WebP или GIF. '
+                      . 'Сохраните снимок в одном из них.', 'err');
+        } elseif ($vext === null && $brand === 'qt  ') {
+            admin_flash('Это ролик QuickTime (MOV), а панель принимает MP4 или WebM. '
+                      . 'Сохраните ролик в одном из них.', 'err');
+        } elseif ($vext === null && !isset($TYPES[$type])) {
             admin_flash('Это не картинка и не видео в понятном формате. Нужен JPEG, PNG, WebP, GIF, '
                       . 'MP4 или WebM. SVG не принимаем: внутри него бывает исполняемый код.', 'err');
         } elseif ($vext === null && ((int)$info[0] < 60 || (int)$info[1] < 60)) {
@@ -149,14 +204,6 @@ foreach (glob($DIR . '/*.{jpg,jpeg,png,webp,gif,mp4,webm}', GLOB_BRACE) ?: [] as
 }
 usort($files, static fn($a, $b) => $b['time'] <=> $a['time']);
 
-/* Где какие снимки используются — чтобы было видно, что можно удалять. */
-$used = [];
-foreach (works_canon() as $g) {
-    foreach ($g['projects'] as $w) {
-        if (!empty($w['image'])) $used[basename($w['image'])] = $w['domain'];
-    }
-}
-
 $writable = is_dir($DIR) ? is_writable($DIR) : is_writable(dirname($DIR));
 
 admin_head('media');
@@ -169,19 +216,25 @@ admin_head('media');
 
 <div class="panel">
   <h3>Загрузить картинку</h3>
-  <p class="muted">JPEG, PNG, WebP или GIF до <?= (int)($MAX / 1048576) ?> МБ;
-     MP4 или WebM до <?= (int)($MAX_VIDEO / 1048576) ?> МБ.
+  <p class="muted">JPEG, PNG, WebP или GIF до <?= $e(admin_size($MAX)) ?>;
+     MP4 или WebM до <?= $e(admin_size($MAX_VIDEO)) ?>.
      SVG не принимаем: внутри него бывает исполняемый код, и при открытии
      по прямой ссылке он выполнится в домене сайта.
      Формат определяется по содержимому файла, а не по расширению.</p>
+  <?php if ($SERVER > 0 && $SERVER < 40 * 1024 * 1024): ?>
+    <p class="muted">Сервер сейчас принимает файлы не больше <?= $e(admin_size($SERVER)) ?>
+       (upload_max_filesize и post_max_size в настройках PHP) — отсюда и пределы выше.
+       Чтобы загружать ролики крупнее, попросите разработчика поднять оба значения.</p>
+  <?php endif; ?>
 
   <form method="post" action="<?= $e(admin_url('media')) ?>" enctype="multipart/form-data">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
     <?php /* Подсказка PHP о размере — по большему из пределов. PHP проверяет
              её ДО того, как мы узнаём, видео это или картинка, и с пределом
              для картинок отбивал бы любое видео крупнее 6 МБ. Точная
-             проверка по типу файла идёт дальше, на сервере. */ ?>
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?= max($MAX, $MAX_VIDEO) ?>">
+             проверка по типу файла идёт дальше, на сервере. Оба предела
+             уже урезаны до того, что пропустит сам сервер. */ ?>
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?= (int)max($MAX, $MAX_VIDEO) ?>">
     <div class="row">
       <div>
         <label for="file">Изображение или видео</label>
@@ -211,7 +264,7 @@ admin_head('media');
     <div class="grid-media" style="margin-top:14px">
       <?php foreach ($files as $f):
         $path = $WEB . '/' . $f['name'];
-        $who  = $used[$f['name']] ?? null;
+        $who  = implode(', ', array_unique($used[$path] ?? []));
       ?>
         <div class="media-item">
           <?php if (preg_match('~\.(mp4|webm)$~i', $f['name'])): ?>
@@ -227,15 +280,22 @@ admin_head('media');
             <button type="button" class="copypath" data-copy="<?= $e($path) ?>"
                     title="Кликните, чтобы скопировать путь"><?= $e($path) ?></button>
             <?= $e(round($f['size'] / 1024)) ?> КБ · <?= $e(date('d.m.Y', $f['time'])) ?>
-            <?php if ($who): ?><br><span class="pill">стоит у <?= $e($who) ?></span><?php endif; ?>
+            <?php if ($who !== ''): ?><br><span class="pill">стоит у <?= $e($who) ?></span><?php endif; ?>
           </div>
+          <?php if ($who !== ''): ?>
+            <?php /* Стоящий в карточке не удаляется (см. удаление выше) — кнопка
+                     говорит об этом сразу, а не после нажатия. */ ?>
+            <button class="btn ghost sm" type="button" disabled style="width:100%"
+                    title="Сначала поменяйте или очистите поле «Снимок» в Портфолио">Удалить нельзя: в карточке</button>
+          <?php else: ?>
           <form method="post" action="<?= $e(admin_url('media')) ?>"
-                data-confirm="Удалить <?= $e($f['name']) ?><?= $who ? ' — он стоит в карточке ' . $e($who) : '' ?>?">
+                data-confirm="Удалить <?= $e($f['name']) ?>?">
             <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
             <input type="hidden" name="do" value="del">
             <input type="hidden" name="name" value="<?= $e($f['name']) ?>">
             <button class="btn ghost sm" type="submit" style="width:100%">Удалить</button>
           </form>
+          <?php endif; ?>
         </div>
       <?php endforeach; ?>
     </div>

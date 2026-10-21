@@ -211,7 +211,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                      . '.jpg (jpg, png, webp, gif, svg или avif). Снимок оставлен прежним.';
                 return null;
             }
-            $root = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/\\');
+            $root = ADMIN_WEBROOT;   // тот же корень, куда кладёт загрузки раздел «Изображения»
             if ($img !== null && $root !== '' && !is_file($root . $img)) {
                 $err = 'Файла ' . $img . ' на сайте нет. Загрузите его в разделе «Изображения» '
                      . 'и скопируйте путь оттуда. Снимок оставлен прежним.';
