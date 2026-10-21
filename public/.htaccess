@@ -158,6 +158,10 @@ RewriteRule ^sitemap\.xml$  sitemap.php  [L]
 # дефисов, то есть адреса страниц: у файлов в имени есть точка.
 RewriteRule ^(az|en)/([a-z0-9-]+(?:/[a-z0-9-]+)*)$  /$1/$2/  [R=301,L]
 
+# [L] здесь не последний шаг: переписанный адрес снова проходит правила,
+# и у /az/az/tseny/ снимаются оба префикса: открывалась бы страница-дубль.
+# Такой адрес уводит на чистый app/bootstrap.php. [END] остановил бы повтор,
+# но его поддержку на LiteSpeed хостинга никто не проверял.
 RewriteRule ^(az|en)$        /$1/            [R=301,L]
 RewriteRule ^(az|en)/?$      index.php       [E=SITE_LANG:$1,L]
 RewriteRule ^(az|en)/(.*/)?$ $2index.php     [E=SITE_LANG:$1,L]
