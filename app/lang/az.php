@@ -50,6 +50,10 @@ return [
     'blog.ru_only'           => 'Bəzi məqalələr hələlik yalnız rus dilindədir. Saytın digər bölmələri üç dildə mövcuddur.',
     'blog.nf' => 'Məqalə tapılmadı',
 
+    'nf.h'    => 'Belə səhifə yoxdur',
+    'nf.p'    => 'Ola bilsin, ünvan səhv yazılıb və ya səhifə başqa yerə köçürülüb. Aşağıdakı bölmələrdən birinə keçin.',
+    'nf.home' => 'Ana səhifəyə',
+
     'price.missing' => 'Nə yoxdur:',
 
     'units.project'        => 'layihə',
@@ -159,7 +163,7 @@ return [
     'contacts.t43'   => 'Göndər',
     'contacts.t44'   => 'Biznes sahəsi, mövcud saytın linki, nə almaq istədiyiniz…',
     // -- home
-    'home.t1'        => 'Bakı · veb · seo · smm · video',
+    'home.t1'        => 'Bakıda veb-studiya · seo · smm · video',
     'home.t2'        => 'Brendiniz ekranda',
     'home.t3'        => 'necə',
     'home.t4'        => 'görünür?',
@@ -333,7 +337,7 @@ return [
     'portfolio.t11'  => 'Layihəni müzakirə edək',
     'portfolio.t12'  => 'Sahələr üzrə filtr',
     // -- price
-    'price.t1'       => 'Qiymətlər',
+    'price.t1'       => 'Bakıda sayt qiymətləri',
     'price.t2'       => 'başlanğıc məbləğlər',
     'price.t3'       => '«-dən» o deməkdir ki, daha ucuzu olmur, daha bahası isə olur: səhifə çoxdursa, dil çoxdursa, ya da inteqrasiya lazımdırsa. Dəqiq rəqəmi brifdən sonra deyirik — beş səhifəlik sayt və əlli səhifəlik sayt fərqli işdir, məbləği hansının sizinki olduğu bəlli olanda demək daha dürüstdür.',
     'price.t4'       => 'Hər paketə daxildir',

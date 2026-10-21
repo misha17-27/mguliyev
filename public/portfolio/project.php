@@ -62,6 +62,9 @@ $description = $seo['description'];
    отраслевая подложка в SVG, а соцсети SVG не показывают: ссылка ушла бы
    без превью. Тогда берём общую обложку студии. */
 $ogImage = !empty($w['image']) && !preg_match('~\.svg$~i', $w['image']) ? $w['image'] : null;
+/* Крошки для разметки schema.org — те же, что видны над заголовком. */
+$crumbs = [[I18n::raw('portfolio.crumb'), '/portfolio/'], [$cname, '/portfolio/' . $g['slug'] . '/'],
+           [$name !== '' ? $name : $w['domain'], null]];
 
 include __DIR__ . '/../../app/partials/head.php';
 

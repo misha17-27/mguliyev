@@ -61,6 +61,10 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
 <?php endforeach; ?>
 <link rel="alternate" hreflang="x-default" href="<?= $esc($abs($cfg['default_lang'])) ?>">
 <meta property="og:type" content="<?= $esc($ogType) ?>">
+<?php /* Дата статьи — машиночитаемо: на странице она только текстом. */
+      if ($ogType === 'article' && !empty($art['date']) && ($pd = DateTime::createFromFormat('!d.m.Y', (string)$art['date']))): ?>
+<meta property="article:published_time" content="<?= $pd->format('Y-m-d') ?>">
+<?php endif; ?>
 <meta property="og:site_name" content="<?= $esc($cfg['site_name']) ?>">
 <meta property="og:locale" content="<?= $esc($cfg['locales'][I18n::$lang] ?? 'ru_RU') ?>">
 <?php foreach ($langOnly as $l): if ($l === I18n::$lang) continue; ?>
@@ -75,9 +79,14 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
 $og = !empty($ogImage) ? $ogImage : $cfg['og_image'];
 $ogAbs = preg_match('~^https?://~', $og) ? $og : $cfg['site_url'] . $og; ?>
 <meta property="og:image" content="<?= $esc($ogAbs) ?>">
-<?php if (empty($ogImage)): ?>
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<?php /* Размер — из самого файла, у любой картинки: без него соцсети при
+         первой отправке ссылки иногда не показывают превью. Раньше его
+         писали только у общей обложки, и снимок проекта уходил без размера. */
+$ogFile = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/\\') . $og;
+$ogDim  = !preg_match('~^https?://~', $og) && is_file($ogFile) ? @getimagesize($ogFile) : false;
+if ($ogDim): ?>
+<meta property="og:image:width" content="<?= (int)$ogDim[0] ?>">
+<meta property="og:image:height" content="<?= (int)$ogDim[1] ?>">
 <?php endif; ?>
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -95,6 +104,13 @@ $ogAbs = preg_match('~^https?://~', $og) ? $og : $cfg['site_url'] . $og; ?>
          подходит к форме. В шапке он грузился на каждой странице, в том
          числе без формы, а на главной виджет при загрузке тянул сотни
          килобайт ради формы в самом низу. Вход в панель зовёт ts_script() сам. */ ?>
+<?php /* Разметка schema.org (schema_graph() в app/content.php). Блок данных,
+         а не скрипт: браузер его не исполняет, политике содержимого он не
+         мешает. Страницам вне индекса — 404, статье без перевода — не нужна. */
+      if (empty($robots)) echo schema_tag([
+          'canonical' => $canonical, 'desc' => $description, 'page' => $page ?? '',
+          'crumbs' => $crumbs ?? [], 'art' => $ogType === 'article' ? ($art ?? null) : null,
+      ]); ?>
 </head>
 <body>
 <?php /* Первая остановка Tab: без неё до содержимого было десять ссылок шапки на каждой странице. */ ?>

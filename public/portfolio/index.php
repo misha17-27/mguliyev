@@ -51,6 +51,8 @@ if ($catSlug !== null || $lost) {
     $seo = portfolio_seo($cat);
     $title = $seo['title'];
     $description = $seo['description'];
+    /* Крошки для разметки schema.org — те же, что видны над заголовком. */
+    $crumbs = [[I18n::raw('portfolio.crumb'), '/portfolio/'], [tr($cat['name']), null]];
 } else {
     $page = 'portfolio';
 }

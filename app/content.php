@@ -761,3 +761,136 @@ function seo_fit(array $keys, array $vars, int $max, string $lang): string
     $vars['name'] = rtrim($part, " ,.;:—-") . '…';
     return $fill((string)end($keys), $vars);
 }
+
+/* ====================================================================
+   РАЗМЕТКА SCHEMA.ORG: один JSON-LD на страницу.
+
+   Без неё поисковик угадывает сам: как называется студия, какой у неё
+   логотип и телефон, когда вышла статья, где страница стоит в разделе.
+
+   В разметке только то, что уже есть в репозитории и в настройках.
+   Адреса нет, пока его не вписали в панели; отзывов и рейтингов нет
+   вовсе. Выдуманное здесь поисковик покажет в выдаче как наши слова.
+   ==================================================================== */
+
+/** Граф для страницы: студия и сайт — везде, остальное — где есть.
+    $ctx: canonical, desc (описание страницы), page ($page страницы),
+    crumbs ([[имя, путь без префикса языка | null у текущей], …]),
+    art (запись articles(), только у статьи). */
+function schema_graph(array $ctx): array
+{
+    $cfg   = I18n::$cfg;
+    $base  = rtrim($cfg['site_url'], '/');
+    $orgId = $base . '/#organization';
+    $canon = (string)($ctx['canonical'] ?? '');
+    $page  = (string)($ctx['page'] ?? '');
+
+    /* Логотип — квадратный значок: логотип из шапки белый и на белом фоне
+       выдачи пропал бы. Год основания — тот же, что в footer.tagline и в
+       описаниях data/seo.php: меняется вместе с ними. */
+    $org = [
+        '@type'        => 'Organization',
+        '@id'          => $orgId,
+        'name'         => $cfg['site_name'],
+        'url'          => $base . '/',
+        'logo'         => ['@type' => 'ImageObject', 'url' => $base . '/icon-512.png', 'width' => 512, 'height' => 512],
+        'image'        => $base . $cfg['og_image'],
+        'description'  => t_raw('footer.tagline'),
+        'foundingDate' => '2017',
+    ];
+    /* (string): substr('', 4) в PHP 7.4 — false, а не пустая строка. */
+    $tel = (string)substr(tel_href(), 4);                    // tel:+994… -> +994…
+    if ($tel !== '') $org['telephone'] = $tel;
+    if (s('email') !== '') $org['email'] = s('email');
+    /* Адрес — только вписанный в панели. С ним студия становится местной
+       организацией: без улицы поисковик такую разметку не принимает. */
+    if (has_s('address')) {
+        $org['@type']   = 'ProfessionalService';
+        $org['address'] = ['@type' => 'PostalAddress', 'streetAddress' => s('address'),
+                           'addressLocality' => trim(explode(',', t_raw('footer.city'))[0]),
+                           'addressCountry' => 'AZ'];
+    }
+    $same = array_values(array_filter([su('instagram'), su('facebook'), su('tiktok')],
+                         static fn($u) => strpos($u, 'http') === 0));
+    if ($same) $org['sameAs'] = $same;
+
+    $graph = [$org, [
+        '@type'      => 'WebSite',
+        '@id'        => $base . '/#website',
+        'url'        => $base . '/',
+        'name'       => $cfg['site_name'],
+        'inLanguage' => $cfg['languages'],
+        'publisher'  => ['@id' => $orgId],
+    ]];
+
+    /* Направление услуг: страница задаёт $page = slug каталога. Крошки
+       у него те же, что видны на странице: «Услуги» и название. */
+    $svc    = $page !== '' ? (catalog()[$page] ?? null) : null;
+    $crumbs = $ctx['crumbs'] ?? [];
+    if (!$crumbs && $svc !== null) {
+        $crumbs = [[t_raw('nav.services'), '/uslugi/'], [$svc['title'], null]];
+    }
+
+    if ($crumbs) {
+        $items = [['@type' => 'ListItem', 'position' => 1, 'name' => $cfg['site_name'], 'item' => $base . u('/')]];
+        foreach ($crumbs as $i => [$name, $path]) {
+            $items[] = ['@type' => 'ListItem', 'position' => $i + 2, 'name' => (string)$name,
+                        'item' => $path !== null ? $base . u($path) : $canon];
+        }
+        $graph[] = ['@type' => 'BreadcrumbList', '@id' => $canon . '#breadcrumb', 'itemListElement' => $items];
+    }
+
+    /* Статья. Автор — студия: имени автора в данных нет, и придумывать
+       его не будем. Дата правки не хранится — dateModified не пишем. */
+    if (!empty($ctx['art'])) {
+        $a = $ctx['art'];
+        $post = [
+            '@type'            => 'BlogPosting',
+            '@id'              => $canon . '#article',
+            'mainEntityOfPage' => $canon,
+            'headline'         => $a['title'],
+            'description'      => $a['desc'],
+            'inLanguage'       => lang(),
+            'articleSection'   => $a['rubric'],
+            'timeRequired'     => 'PT' . (int)$a['read'] . 'M',
+            'image'            => $base . $cfg['og_image'],
+            'author'           => ['@id' => $orgId],
+            'publisher'        => ['@id' => $orgId],
+        ];
+        $d = DateTime::createFromFormat('!d.m.Y', (string)$a['date']);
+        if ($d) $post['datePublished'] = $d->format('Y-m-d');
+        $graph[] = $post;
+    }
+
+    /* Услуга и её состав — из каталога, поэтому переводы и правки из
+       панели попадают сюда сами. Цен нет: у пунктов каталога их нет,
+       а пакеты с ценами — это страница /tseny/. */
+    if ($svc !== null) {
+        $offers = [];
+        foreach ($svc['items'] as [$n, $desc]) {
+            if ($n === '') continue;
+            $offers[] = ['@type' => 'Offer', 'itemOffered' => ['@type' => 'Service', 'name' => $n, 'description' => $desc]];
+        }
+        $graph[] = [
+            '@type'           => 'Service',
+            '@id'             => $canon . '#service',
+            'name'            => $svc['h1'] !== '' ? $svc['h1'] : $svc['title'],
+            'serviceType'     => $svc['title'],
+            'description'     => (string)($ctx['desc'] ?? '') !== '' ? (string)$ctx['desc'] : $svc['lead'],
+            'url'             => $canon,
+            'provider'        => ['@id' => $orgId],
+            'hasOfferCatalog' => ['@type' => 'OfferCatalog', 'name' => $svc['title'], 'itemListElement' => $offers],
+        ];
+    }
+
+    return ['@context' => 'https://schema.org', '@graph' => $graph];
+}
+
+/** Готовый тег. Строки правятся из панели: JSON_HEX_TAG не даёт «</script>»
+    в заголовке статьи закрыть тег, а битый UTF-8 не обнуляет всю разметку. */
+function schema_tag(array $ctx): string
+{
+    $json = json_encode(schema_graph($ctx), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        | JSON_HEX_TAG | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE);
+    return $json === false ? '' : '<script type="application/ld+json">' . $json . "</script>\n";
+}

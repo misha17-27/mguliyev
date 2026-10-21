@@ -9,8 +9,11 @@ include __DIR__ . '/../app/partials/head.php';
   <div class="wrap">
     <div class="hgrid">
       <div>
-        <p class="lb" style="margin-bottom:clamp(20px,2.8vw,34px)"><?= t('home.t1') ?></p>
-        <h1 class="disp"><span class="ln"><?= t('home.t2') ?></span><span class="ln ser duo-text"><?= t('home.t3') ?></span><span class="ln"><?= t('home.t4') ?></span></h1>
+        <?php /* Строка над заголовком — его частью: в ней «веб-студия в Баку»,
+                 тот запрос, под который у главной заголовок страницы. Отдельным
+                 абзацем она в h1 не попадала, и в самом h1 был только вопрос.
+                 line-height — как у прежнего абзаца, а не .98 от h1. */ ?>
+        <h1 class="disp"><small class="lb" style="display:block;line-height:1.6;margin-bottom:clamp(20px,2.8vw,34px)"><?= t('home.t1') ?></small><span class="ln"><?= t('home.t2') ?></span><span class="ln ser duo-text"><?= t('home.t3') ?></span><span class="ln"><?= t('home.t4') ?></span></h1>
       </div>
       <div class="phone">
         <div class="screen">

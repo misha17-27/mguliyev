@@ -31,8 +31,7 @@ if (strpos($path, "\0") !== false || preg_match('~(^|[/\\\\])\.\.([/\\\\]|$)~', 
    Префиксов может быть и несколько: на боевом /az/az/admin/ после
    повторного прохода правил тоже попадает под это правило. */
 if (preg_match('#^(/(az|en))+/admin(/|$)#', $path)) {
-    http_response_code(404);
-    echo 'Not found';
+    require __DIR__ . '/public/404.php';    // на боевом [R=404] уходит в ErrorDocument
     return true;
 }
 
@@ -112,6 +111,6 @@ if ($inside && is_file($file)) {
     return false;   // статику сервер отдаёт сам
 }
 
-http_response_code(404);
-echo 'Not found';
+/* Та же страница «не найдено», что на боевом (ErrorDocument в .htaccess). */
+require __DIR__ . '/public/404.php';
 return true;

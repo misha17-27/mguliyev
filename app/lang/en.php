@@ -50,6 +50,10 @@ return [
     'blog.ru_only'           => 'Some articles are available in Russian only for now. The rest of the site is available in three languages.',
     'blog.nf' => 'Article not found',
 
+    'nf.h'    => 'Page not found',
+    'nf.p'    => 'The address may have a typo, or the page has moved. Try one of the sections below.',
+    'nf.home' => 'Home page',
+
     'price.missing' => 'Not included:',
 
     'units.project'        => 'project|projects',
@@ -159,7 +163,7 @@ return [
     'contacts.t43'   => 'Send',
     'contacts.t44'   => 'Your line of business, a link to your current site, what you want to get…',
     // -- home
-    'home.t1'        => 'Baku · web · seo · smm · video',
+    'home.t1'        => 'Web studio in Baku · seo · smm · video',
     'home.t2'        => 'How does your brand',
     'home.t3'        => 'look',
     'home.t4'        => 'on screen?',
@@ -333,7 +337,7 @@ return [
     'portfolio.t11'  => 'Discuss your project',
     'portfolio.t12'  => 'Filter by sector',
     // -- price
-    'price.t1'       => 'Pricing',
+    'price.t1'       => 'Website prices in Baku',
     'price.t2'       => 'starting prices',
     'price.t3'       => '“From” means it does not get cheaper than that, but it can get more expensive: if there are more pages, more languages or an integration is needed. We name the exact figure after the brief — a five-page site and a fifty-page site are different jobs, and it is fairer to name a price once it is clear which of them is yours.',
     'price.t4'       => 'Included in every package',

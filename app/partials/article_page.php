@@ -59,6 +59,9 @@ foreach (articles_canon() as $c) {
 if (!$langOnly) $langOnly = [deflang()];
 if (!in_array(lang(), $langOnly, true)) $robots = 'noindex, follow';
 
+/* Крошки для разметки schema.org: «Блог» над заголовком и сама статья. */
+$crumbs = [[I18n::raw('nav.blog'), '/blog/'], [$art['title'], null]];
+
 include __DIR__ . '/head.php';
 include __DIR__ . '/article.php';
 include __DIR__ . '/foot.php';
