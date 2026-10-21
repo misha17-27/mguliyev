@@ -5,6 +5,7 @@ $current = 'services';
 include __DIR__ . '/../../../app/partials/head.php';
 $catalog = catalog();
 $cat = $catalog['veb-sayty'];
+$wc = works_count();   // число проектов и снимков — из данных портфолио, не из текста
 
 /* Главная посадочная по коммерческой цели студии. Цифры 49/48/36 и суммы
    пакетов повторяются в app/data/seo.php и на /tseny/ — при изменении править
@@ -74,7 +75,7 @@ $lnk = 'color:var(--duo-b)';
 
     <div style="<?= $gap ?>">
       <h2 class="disp" style="<?= $h2 ?>"><?= t('web.t26') ?></h2>
-      <p class="sub"><?= t('web.t27') ?></p>
+      <p class="sub"><?= tn('web.t27', ['n' => $wc['n'], 'u' => plural($wc['n'], 'units.project'), 'm' => $wc['covers']]) ?></p>
       <p style="margin-top:clamp(20px,2.4vw,28px)">
         <a class="btn btn-o" href="<?= u('/portfolio/') ?>"><?= t('web.t28') ?></a></p>
     </div>

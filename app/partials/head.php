@@ -95,7 +95,14 @@ $ogAbs = preg_match('~^https?://~', $og) ? $og : $cfg['site_url'] . $og; ?>
   <span class="tl-rec" aria-hidden="true"><i></i>rec</span>
   <div class="tl-bar">
     <span class="tl-fill" id="tlFill"></span>
-    <nav class="tl-marks" id="tlMarks" aria-label="<?= t('nav.sections') ?>"></nav>
+    <?php /* Подписи меток и шаблон их названия — из словаря: метки строит
+             скрипт, и без этого на /az/ и /en/ они были бы русскими. */
+          $tlTitles = json_encode([
+              'services' => t_raw('nav.services'), 'portfolio' => t_raw('nav.portfolio'), 'reels' => 'Reels',
+              'about' => t_raw('nav.about'), 'process' => t_raw('nav.process'), 'price' => t_raw('nav.price'),
+              'blog' => t_raw('nav.blog'), 'faq' => t_raw('footer.faq'), 'contact' => t_raw('nav.contacts'),
+          ], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE) ?: ''; ?>
+    <nav class="tl-marks" id="tlMarks" aria-label="<?= t('nav.sections') ?>" data-titles="<?= $esc($tlTitles) ?>" data-go="<?= t('nav.go_to') ?>"></nav>
     <span class="tl-head" id="tlHead"></span>
   </div>
   <span class="tl-time" id="tlTime" aria-hidden="true">00:00 / 00:00</span>

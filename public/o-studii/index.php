@@ -4,6 +4,7 @@ $page = 'about';
 $current = 'about';
 include __DIR__ . '/../../app/partials/head.php';
 $catalog = catalog();
+$wc = works_count();   // число проектов — из данных портфолио, не из текста
 ?>
 <main id="top">
 <section class="sec">
@@ -13,7 +14,7 @@ $catalog = catalog();
       <p class="lb"><?= t('about.t2') ?></p>
     </div>
     <p class="about-lead" style="margin-top:8px"><?= t('about.t3') ?></p>
-    <p class="sub" style="margin-top:22px"><?= t('about.t4') ?></p>
+    <p class="sub" style="margin-top:22px"><?= tn('about.t4', ['n' => $wc['n'], 'u' => plural($wc['n'], 'units.project')]) ?></p>
     <p class="sub"><?= t('about.t5') ?></p>
 
     <div style="margin-top:clamp(40px,5vw,68px)">
@@ -34,7 +35,7 @@ $catalog = catalog();
 
     <div class="band" style="margin-top:clamp(40px,5vw,68px)">
       <div class="bcell"><b>2017</b><span><?= t('about.t10') ?></span></div>
-      <div class="bcell"><b>49</b><span><?= t('about.t11') ?></span></div>
+      <div class="bcell"><b><?= $wc['n'] ?></b><span><?= t('about.t11') ?></span></div>
       <div class="bcell"><b>24</b><span><?= t('about.t12') ?></span></div>
     </div>
 

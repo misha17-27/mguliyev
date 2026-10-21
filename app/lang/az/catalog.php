@@ -9,7 +9,7 @@ return [
         'lead'  => 'Təqdimat saytı, mağaza və ya elan platforması — struktur, maket və menecerinizin başa çıxacağı idarə paneli ilə.',
         'items' => [
             ['Korporativ saytlar', 'Şirkət saytı: xidmətlər, layihələr, komanda, əlaqə.'],
-            ['İnternet mağazalar', 'Kataloq, səbət, onlayn ödəniş, məlumat ixracı və anbar.'],
+            ['İnternet mağazaları', 'Kataloq, səbət, onlayn ödəniş, məlumat ixracı və anbar.'],
             ['Xidmət saytları', 'Konkret xidmətlər üçün səhifələr və müraciət forması.'],
             ['Elan saytları', 'Elanları istifadəçilərin özlərinin yerləşdirdiyi platforma.'],
             ['Turizm saytları', 'İstiqamətlər, turlar və rezervasiya müraciəti.'],

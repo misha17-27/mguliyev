@@ -96,7 +96,8 @@ include __DIR__ . '/../app/partials/head.php';
   <div class="wrap">
     <div class="shead rv">
       <h2 class="disp h2"><?= t('home.t35') ?></h2>
-      <p class="lb"><?= t('home.t36') ?></p>
+      <?php $wc = works_count(); /* число проектов — из данных портфолио, не из текста */ ?>
+      <p class="lb"><?= tn('home.t36', ['n' => $wc['n'], 'u' => plural($wc['n'], 'units.project')]) ?></p>
     </div>
     <div class="works rv">
       <a class="work" href="https://elson-group.com" target="_blank" rel="noopener">
@@ -163,10 +164,10 @@ include __DIR__ . '/../app/partials/head.php';
       <div class="vf-side">
         <p class="lb"><?= t('home.t60') ?></p>
         <ul class="vf-list" id="vfList" role="tablist" aria-label="<?= t('home.t160') ?>">
-          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="true" aria-controls="vfScr" data-img="/images/demo/shot-1.svg" data-vid="/images/demo/shot-1.mp4" data-poster="/images/demo/shot-1-poster.jpg" data-sub="снимаем в день события|режем под ритм площадки|субтитры вшиваем в кадр"><i>01</i><b><?= t('home.t61') ?></b><span><?= t('home.t62') ?></span></button></li>
-          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-2.svg" data-vid="/images/demo/shot-2.mp4" data-poster="/images/demo/shot-2-poster.jpg" data-sub="снимаем на территории|крупные планы работы|показываем масштаб"><i>02</i><b><?= t('home.t63') ?></b><span><?= t('home.t64') ?></span></button></li>
-          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-3.svg" data-vid="/images/demo/shot-3.mp4" data-poster="/images/demo/shot-3-poster.jpg" data-sub="специалист говорит в кадр|показываем процесс|сложное объясняем просто"><i>03</i><b><?= t('home.t65') ?></b><span><?= t('home.t66') ?></span></button></li>
-          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-4.svg" data-vid="/images/demo/shot-4.mp4" data-poster="/images/demo/shot-4-poster.jpg" data-sub="товар крупно и в деле|фактура и детали|обложка под ленту"><i>04</i><b><?= t('home.t67') ?></b><span><?= t('home.t68') ?></span></button></li>
+          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="true" aria-controls="vfScr" data-img="/images/demo/shot-1.svg" data-vid="/images/demo/shot-1.mp4" data-poster="/images/demo/shot-1-poster.jpg" data-sub="<?= t('home.sub1') ?>"><i>01</i><b><?= t('home.t61') ?></b><span><?= t('home.t62') ?></span></button></li>
+          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-2.svg" data-vid="/images/demo/shot-2.mp4" data-poster="/images/demo/shot-2-poster.jpg" data-sub="<?= t('home.sub2') ?>"><i>02</i><b><?= t('home.t63') ?></b><span><?= t('home.t64') ?></span></button></li>
+          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-3.svg" data-vid="/images/demo/shot-3.mp4" data-poster="/images/demo/shot-3-poster.jpg" data-sub="<?= t('home.sub3') ?>"><i>03</i><b><?= t('home.t65') ?></b><span><?= t('home.t66') ?></span></button></li>
+          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-4.svg" data-vid="/images/demo/shot-4.mp4" data-poster="/images/demo/shot-4-poster.jpg" data-sub="<?= t('home.sub4') ?>"><i>04</i><b><?= t('home.t67') ?></b><span><?= t('home.t68') ?></span></button></li>
         </ul>
         <div>
           <p class="lb" style="margin-bottom:12px"><?= t('home.t69') ?></p>
@@ -181,7 +182,7 @@ include __DIR__ . '/../app/partials/head.php';
 
 <section class="band">
   <div class="bcell"><b>2017</b><span><?= t('home.t74') ?></span></div>
-  <div class="bcell"><b data-count="55">55</b><span><?= t('home.t75') ?></span></div>
+  <div class="bcell"><b data-count="<?= $wc['n'] ?>"><?= $wc['n'] ?></b><span><?= t('home.t75') ?></span></div>
   <div class="bcell"><b data-count="6">6</b><span><?= t('home.t76') ?></span></div>
 </section>
 
@@ -256,7 +257,7 @@ include __DIR__ . '/../app/partials/head.php';
     <div class="posts rv">
       <?php foreach ($arts as $a): ?>
       <article class="post">
-        <div class="pm"><span><?= htmlspecialchars($a['rubric']) ?></span><span><?= e($a['date']) ?> · <?= tn('blog.read', ['n' => (int)$a['read']]) ?></span></div>
+        <div class="pm"><span><?= htmlspecialchars($a['rubric']) ?></span><span><?= date_h((string)$a['date']) ?> · <?= tn('blog.read', ['n' => (int)$a['read']]) ?></span></div>
         <h3><a href="<?= u('/blog/' . $a['slug'] . '/') ?>"><?= htmlspecialchars($a['title']) ?></a></h3>
         <p><?= htmlspecialchars($a['desc']) ?></p>
       </article>
@@ -288,9 +289,12 @@ include __DIR__ . '/../app/partials/head.php';
            в никуда хуже отсутствия ссылки. */ ?>
       <div class="cg"><em>Instagram</em><?php if (su('instagram') !== ''): ?><a href="<?= e(su('instagram')) ?>" target="_blank" rel="noopener me"><?= e(s('instagram_name') !== '' ? s('instagram_name') : su('instagram')) ?></a><?php else: ?><span><?= e(sv('instagram')) ?></span><?php endif; ?></div>
       <div class="cg"><em><?= t('home.t133') ?></em><span><?= t('home.t134') ?></span></div>
-      <div class="cg"><em><?= t('home.t135') ?></em><span><?= t('home.t136') ?></span></div>
+      <?php /* Часы — из настройки панели, как в меню: копия в словаре с ней расходилась. */ ?>
+      <div class="cg"><em><?= t('home.t135') ?></em><span><?= e(sv('hours')) ?></span></div>
     </div>
-    <form class="rv" id="lead" method="post" action="/send.php" data-retry="<?= t('form.retry') ?>">
+    <?php /* Адрес с префиксом языка: send.php узнаёт язык только из адреса,
+             и без префикса ответы и пометка языка в заявке были русскими. */ ?>
+    <form class="rv" id="lead" method="post" action="<?= e(u('/send.php')) ?>" data-retry="<?= t('form.retry') ?>">
       <?php /* Ловушка для ботов: человек этого поля не видит и не заполнит.
              Рядом отметка времени — мгновенная отправка выдаёт автомат. */ ?>
       <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"

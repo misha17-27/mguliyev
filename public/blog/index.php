@@ -26,7 +26,7 @@ foreach (articles_canon() as $c) {
     <div class="posts" style="margin-top:clamp(28px,4vw,52px)">
       <?php foreach ($arts as $a): ?>
       <article class="post">
-        <div class="pm"><span><?= htmlspecialchars($a['rubric']) ?></span><span><?= e($a['date']) ?> · <?= tn('blog.read', ['n' => (int)$a['read']]) ?></span></div>
+        <div class="pm"><span><?= htmlspecialchars($a['rubric']) ?></span><span><?= date_h((string)$a['date']) ?> · <?= tn('blog.read', ['n' => (int)$a['read']]) ?></span></div>
         <h3><a href="<?= u('/blog/' . $a['slug'] . '/') ?>"><?= htmlspecialchars($a['title']) ?></a></h3>
         <p><?= htmlspecialchars($a['desc']) ?></p>
       </article>

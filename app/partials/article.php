@@ -8,7 +8,7 @@ if (empty($art)) return;
   <div class="wrap">
     <p class="lb"><a href="<?= u('/blog/') ?>"><?= t('nav.blog') ?></a> · <?= htmlspecialchars($art['rubric']) ?></p>
     <h1 class="disp h2" style="margin-block:18px 16px"><?= htmlspecialchars($art['title']) ?></h1>
-    <p class="art-meta"><?= e($art['date']) ?> · <?= tn('blog.read_full', ['n' => (int)$art['read']]) ?></p>
+    <p class="art-meta"><?= date_h((string)$art['date']) ?> · <?= tn('blog.read_full', ['n' => (int)$art['read']]) ?></p>
     <p class="art-lead"><?= nl2br(htmlspecialchars($art['lead'])) ?></p>
 
     <?php foreach ($art['body'] as $s): ?>

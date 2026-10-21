@@ -15,14 +15,14 @@ return [
     'business' => [
         1 => 'Business',
         3 => 'from',
-        4 => '10–20 pages · 3 languages · blog · extended SEO · Cloudflare',
+        4 => '10–20 pages · 3 languages · blog · advanced SEO · Cloudflare',
         5 => 'For a company with a catalogue of services or products and customers in several languages. The three languages are usually Azerbaijani, Russian and English, but you choose the set.',
-        6 => 'A cart, online payments and warehouse integration.',
+        6 => 'A cart, online payments and inventory integration.',
     ],
     'premium' => [
         1 => 'Premium',
         3 => 'from',
-        4 => 'WooCommerce · online payments · warehouse integration · speed 90+',
+        4 => 'WooCommerce · online payments · inventory integration · speed 90+',
         5 => 'For a store with a real warehouse and a flow of orders — where a manager should not retype stock by hand, and a buyer should pay on the site rather than “ask us in DMs”.',
     ],
     'reels' => [

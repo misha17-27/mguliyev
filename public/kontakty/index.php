@@ -15,7 +15,8 @@ include __DIR__ . '/../../app/partials/head.php';
     <div class="cgrid" style="margin-top:0;border-top:0;padding-top:0">
       <div class="cg"><em><?= t('contacts.t3') ?></em><a href="mailto:<?= e(s('email')) ?>"><?= e(sv('email')) ?></a></div>
       <div class="cg"><em><?= t('contacts.t4') ?></em><a href="<?= e(tel_href()) ?>"><?= e(sv('phone')) ?></a></div>
-      <div class="cg"><em><?= t('contacts.t5') ?></em><span><?= t('contacts.t6') ?></span></div>
+      <?php /* Часы — из настройки панели, как в меню: копия в словаре с ней расходилась. */ ?>
+      <div class="cg"><em><?= t('contacts.t5') ?></em><span><?= e(sv('hours')) ?></span></div>
       <div class="cg"><em><?= t('contacts.t7') ?></em><span><?= t('contacts.t8') ?></span></div>
     </div>
     <?php /* WhatsApp и адрес: кнопка и строка появляются, когда поля
@@ -78,7 +79,9 @@ include __DIR__ . '/../../app/partials/head.php';
 
     <div id="zayavka" style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
       <h2 class="disp h2"><?= t('contacts.t30') ?></h2>
-      <form id="lead" method="post" action="/send.php" style="margin-top:clamp(24px,3vw,38px)"
+      <?php /* Адрес с префиксом языка: send.php узнаёт язык только из адреса,
+               и без префикса ответы и пометка языка в заявке были русскими. */ ?>
+      <form id="lead" method="post" action="<?= e(u('/send.php')) ?>" style="margin-top:clamp(24px,3vw,38px)"
             data-retry="<?= t('form.retry') ?>">
       <?php /* Ловушка для ботов: человек этого поля не видит и не заполнит.
              Рядом отметка времени — мгновенная отправка выдаёт автомат. */ ?>

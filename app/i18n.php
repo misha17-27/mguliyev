@@ -177,6 +177,17 @@ function plural(int $n, string $key, ?string $lang = null): string
     return $forms[min($i, count($forms) - 1)];
 }
 
+/** Дата статьи для вывода. В данных она дд.мм.гггг — так её вводят в панели;
+    по-английски такая запись читается двояко, поэтому там «4 Sep 2026».
+    '!' обнуляет время, иначе в объект попали бы текущие часы. */
+function date_h(string $d): string
+{
+    $dt = DateTime::createFromFormat('!d.m.Y', $d);
+    if (!$dt) return e($d);
+    $txt = I18n::$lang === 'en' ? $dt->format('j M Y') : $dt->format('d.m.Y');
+    return '<time datetime="' . $dt->format('Y-m-d') . '">' . e($txt) . '</time>';
+}
+
 /** Строка словаря с подстановками: tn('portfolio.all', ['n' => 55, 'u' => '...']). */
 function tn(string $key, array $vars): string
 {
