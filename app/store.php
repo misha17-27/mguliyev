@@ -173,13 +173,17 @@ final class Store
             return is_array($new) ? self::write($rel, $new) : false;
         }
 
-        @flock($fh, LOCK_EX);
+        /* Результат flock() сохраняем: в PHP 8.5 отброшенный результат
+           некоторых функций даёт предупреждение. Не получили замок —
+           работаем без него, как и без файла замка выше. */
+        $locked = @flock($fh, LOCK_EX);
+        if (!$locked) error_log('Store: не взялся замок для ' . $rel);
         try {
             self::forget($rel);                     // читаем с диска, не из памяти
             $new = $fn(self::read($rel) ?? []);
             $ok = is_array($new) ? self::write($rel, $new) : false;
         } finally {
-            @flock($fh, LOCK_UN);
+            if ($locked) $locked = !@flock($fh, LOCK_UN);
             fclose($fh);
         }
         self::forget($rel);

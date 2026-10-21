@@ -66,4 +66,8 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['GET', 'HEAD'], true)) {
    дают ту же самую. */
 if (!headers_sent()) {
     header('Content-Security-Policy: ' . CSP_POLICY);
+    /* Версию PHP не сообщаем: X-Powered-By: PHP/8.5.11 подсказывает, какие
+       уязвимости пробовать. Правило в .htaccess делает то же, но на части
+       хостингов PHP отдаёт заголовок в обход mod_headers. */
+    header_remove('X-Powered-By');
 }

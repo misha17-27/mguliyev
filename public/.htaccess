@@ -32,6 +32,11 @@ Options -Indexes
   # нельзя, браузер будет помнить запрет весь срок.
   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 
+  # Точная версия PHP в заголовке — подсказка тому, кто ищет сервер
+  # с известной уязвимостью. Убираем; то же делает app/bootstrap.php.
+  Header always unset X-Powered-By
+  Header unset X-Powered-By
+
   # Браузер не должен угадывать тип файла: загруженная картинка, которую
   # он решит считать скриптом, — это выполнение чужого кода на нашем домене.
   Header always set X-Content-Type-Options "nosniff"

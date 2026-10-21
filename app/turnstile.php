@@ -148,7 +148,11 @@ function ts_ask(array $post): array
         $raw  = curl_exec($ch);
         $code = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         $err  = curl_error($ch);
-        curl_close($ch);
+        /* С PHP 8.0 curl_close() ничего не делает — соединение закрывается
+           само, когда $ch выходит из области видимости, — а в 8.5 она
+           объявлена устаревшей и пишет предупреждение в журнал при каждой
+           заявке. Нужна она только на PHP 7. */
+        if (PHP_VERSION_ID < 80000) curl_close($ch);
 
         if ($raw === false) return ['net' => false, 'data' => null, 'why' => 'сеть: ' . $err];
 
@@ -177,14 +181,23 @@ function ts_ask(array $post): array
             ],
             'ssl' => ['verify_peer' => true, 'verify_peer_name' => true],
         ]);
-        $raw = @file_get_contents(TS_VERIFY, false, $ctx);
-        if ($raw === false) return ['net' => false, 'data' => null, 'why' => 'сеть: запрос не прошёл'];
+        /* fopen(), а не file_get_contents(): заголовки ответа берём из
+           stream_get_meta_data(). Прежний способ — переменная
+           $http_response_header — в PHP 8.5 объявлен устаревшим, а
+           заменяющая его функция есть только с 8.4; этот работает везде. */
+        $fp = @fopen(TS_VERIFY, 'r', false, $ctx);
+        if ($fp === false) return ['net' => false, 'data' => null, 'why' => 'сеть: запрос не прошёл'];
+        $meta = stream_get_meta_data($fp);
+        $raw  = stream_get_contents($fp);
+        fclose($fp);
+        if ($raw === false) return ['net' => false, 'data' => null, 'why' => 'сеть: ответ не дочитан'];
+        $hdrs = (array)($meta['wrapper_data'] ?? []);
 
         /* Тот же разбор кода, что и у cURL: с ignore_errors=true тело
            приходит и при 400, и путь должен вести себя одинаково —
            иначе поведение капчи зависит от того, собран ли на хостинге cURL. */
         $code = 0;
-        foreach ($http_response_header ?? [] as $h) {
+        foreach ($hdrs as $h) {
             if (preg_match('~^HTTP/\S+\s+(\d{3})~', $h, $m)) $code = (int)$m[1];
         }
         if ($code !== 0 && $code !== 200 && $code !== 400) {

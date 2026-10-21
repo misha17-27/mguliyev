@@ -114,7 +114,7 @@ if ($selfUrl !== '' && function_exists('curl_init')) {
     ]);
     $raw = curl_exec($ch);
     $err = curl_error($ch);
-    curl_close($ch);
+    if (PHP_VERSION_ID < 80000) curl_close($ch);   // с PHP 8.0 не нужна, в 8.5 устарела
 
     if (is_string($raw)) {
         $found = [];
@@ -303,6 +303,10 @@ admin_head('security');
   <div class="tablewrap">
     <table>
       <tr><th>Где</th><th>Что стоит</th></tr>
+      <?php /* Версию PHP сайт наружу не сообщает (заголовок X-Powered-By убран),
+               поэтому сверить её после обновления на хостинге можно здесь. */ ?>
+      <tr><td>PHP на сервере</td><td><b><?= $e(PHP_VERSION) ?></b>
+        <span class="muted">— после выхода исправлений безопасности сверьте номер с php.net</span></td></tr>
       <tr><td>Форма заявки</td><td>поле-ловушка · время заполнения от 3 секунд · не чаще одной заявки в минуту с адреса</td></tr>
       <tr><td>Неудачных входов за сутки</td><td><b><?= $fails24 ?></b> · за этот час <?= $fails1 ?>
         <span class="muted">— со всех адресов вместе</span></td></tr>
