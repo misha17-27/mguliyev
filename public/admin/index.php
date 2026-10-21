@@ -34,6 +34,59 @@ function admin_size(int $bytes): string
     return $bytes >= 1048576 ? (int)floor($bytes / 1048576) . ' МБ' : max(1, (int)floor($bytes / 1024)) . ' КБ';
 }
 
+/** Сколько сервер примет в одном файле: меньшее из upload_max_filesize
+    (на файл) и post_max_size (на весь запрос). 0 — предела нет. */
+function admin_upload_cap(): int
+{
+    $cap = 0;
+    foreach ([admin_ini_bytes('upload_max_filesize'), admin_ini_bytes('post_max_size')] as $lim) {
+        if ($lim > 0) $cap = $cap > 0 ? min($cap, $lim) : $lim;
+    }
+    return $cap;
+}
+
+/* Поля с паролями и секретными ключами: account — current, password,
+   password2; mail — pass; security — secret. Отложенная форма их не
+   хранит (см. ниже, у страницы входа). */
+const ADMIN_SECRET_FIELDS = ['current', 'password', 'password2', 'pass', 'secret'];
+
+/** Ключ отложенной формы — экран, куда она шла: раздел, запись, язык. */
+function admin_resume_key(string $section, array $q, string $lang): string
+{
+    unset($q['resume']);
+    return $section . '?' . http_build_query($q) . '|' . $lang;
+}
+
+/** Отложенные формы, ещё не разобранные: ключ => {section, q, lang, post, secret}. */
+function admin_resume_all(): array
+{
+    $out = [];
+    foreach ((array)($_SESSION['resume'] ?? []) as $k => $r) {
+        if (is_array($r) && is_string($r['section'] ?? null) && is_array($r['post'] ?? null)) $out[$k] = $r;
+    }
+    return $out;
+}
+
+/** Отложить форму до входа. У каждого экрана своя ячейка: две вкладки,
+    отправленные в истёкшую сессию одна за другой, делили одну, и вторая
+    молча стирала первую — хотя обеим обещали, что вписанное не пропало.
+    Не больше пяти, как черновики. Вернёт название раздела, чью форму
+    пришлось вытеснить, или ''. */
+function admin_resume_keep(array $r): string
+{
+    $all = admin_resume_all();
+    $key = admin_resume_key($r['section'], $r['q'], $r['lang']);
+    unset($all[$key]);
+    $all[$key] = $r;
+    $lost = '';
+    if (count($all) > 5) {
+        $old  = reset($all);
+        $lost = admin_sections()[$old['section']][0] ?? $old['section'];
+    }
+    $_SESSION['resume'] = array_slice($all, -5, null, true);
+    return $lost;
+}
+
 /** Поля формы плоским списком: ['t[web.t45][az]' => '…']. Так их можно
     снова вывести в форму, и PHP разберёт их в тот же массив. */
 function admin_flat_fields(array $a, string $pre = ''): array
@@ -75,9 +128,15 @@ $back = admin_url(in_array($section, $known, true) ? $section : 'dashboard', $q)
 $postCap = admin_ini_bytes('post_max_size');
 $tooBig  = $isPost && !$_POST && !$_FILES && $postCap > 0
         && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > $postCap;
-$tooBigMsg = 'Отправленное больше, чем принимает сервер: не больше ' . admin_size($postCap) . ' за раз. '
-           . 'Ничего не сохранено — PHP отбросил запрос целиком. Сожмите файл или попросите '
-           . 'разработчика поднять post_max_size в настройках PHP.';
+/* У загрузки называем предел на файл, а не на запрос: при upload_max_filesize
+   меньше post_max_size файл, сжатый «под 8 МБ», отбился бы снова. */
+$tooBigMsg = stripos((string)($_SERVER['CONTENT_TYPE'] ?? ''), 'multipart/form-data') === 0
+    ? 'Файл больше, чем принимает сервер: не больше ' . admin_size(admin_upload_cap()) . '. '
+      . 'Ничего не сохранено — PHP отбросил запрос целиком. Сожмите файл или попросите '
+      . 'разработчика поднять upload_max_filesize и post_max_size в настройках PHP.'
+    : 'Отправленное больше, чем принимает сервер: не больше ' . admin_size($postCap) . ' за раз. '
+      . 'Ничего не сохранено — PHP отбросил запрос целиком. Сожмите файл или попросите '
+      . 'разработчика поднять post_max_size в настройках PHP.';
 
 if ($tooBig && headers_sent()) {
     /* При включённом display_errors и без буфера вывода PHP печатает
@@ -135,10 +194,24 @@ if (!admin_user()) {
         }
         $post = $_POST;
         unset($post['_csrf']);
+        /* Пароли и секретные ключи не откладываем: файл сессии лежит на
+           диске открытым текстом, а экран отложенной формы показывает поля
+           как есть. Запоминаем только, какие из них были вписаны, — их
+           спросят заново. Пустой пароль почты и пустой секрет капчи значат
+           «оставить прежний», так что повторной отправке это не мешает. */
+        $secret = [];
+        foreach (ADMIN_SECRET_FIELDS as $k) {
+            if (isset($post[$k]) && is_string($post[$k]) && $post[$k] !== '') $secret[] = $k;
+            unset($post[$k]);
+        }
         $typed = false;
-        foreach (admin_flat_fields($post) as $name => $v) {
-            if (admin_service_field($name)) continue;
-            if (trim($v) !== '') { $typed = true; break; }
+        /* Учётную запись не откладываем вовсе: кроме паролей в ней только
+           почта, а без текущего пароля её форма всё равно не пройдёт. */
+        if ($section !== 'account') {
+            foreach (admin_flat_fields($post) as $name => $v) {
+                if (admin_service_field($name)) continue;
+                if (trim($v) !== '') { $typed = true; break; }
+            }
         }
         $hadFile = false;
         foreach ($_FILES as $fv) {
@@ -150,19 +223,24 @@ if (!admin_user()) {
         } elseif (!in_array($section, $known, true) || !isset($_COOKIE[session_name()])) {
             admin_flash('Сессия истекла, и отправленное не сохранено. Войдите заново и повторите.', 'warn');
         } else {
-            $_SESSION['resume'] = [
+            /* Первый экран после входа — этот раздел. */
+            $_SESSION['resume_land'] = ['section' => $section, 'q' => $q, 'lang' => admin_lang()];
+            $lost = $typed ? admin_resume_keep([
                 'section' => $section,
                 'q'       => $q,
                 'lang'    => admin_lang(),
-                'post'    => $typed ? $post : null,
-                'land'    => true,
-            ];
+                'post'    => $post,
+                'secret'  => $secret,
+            ]) : '';
             admin_flash('Сессия истекла, и правки не сохранились. '
                 . ($typed
                     ? 'Но вписанное не пропало: войдите заново — панель откроет тот же раздел '
                       . 'и покажет отправленное, его останется проверить и отправить ещё раз.'
                     : 'Войдите заново — панель откроет тот же раздел.')
-                . ($hadFile ? ' Файл придётся выбрать заново: файлы в сессии не хранятся.' : ''), 'warn');
+                . ($secret ? ' Пароли и секретные ключи в сессии не храним — их придётся вписать заново.' : '')
+                . ($hadFile ? ' Файл придётся выбрать заново: файлы в сессии не хранятся.' : '')
+                . ($lost !== '' ? ' Самая давняя из отложенных форм (раздел «' . $lost . '») вытеснена: '
+                                  . 'больше пяти панель не держит.' : ''), 'warn');
         }
         admin_go(admin_url('login'));
     }
@@ -191,23 +269,34 @@ admin_check_post();
 /* Отложенное при истёкшей сессии (см. выше, у страницы входа). Первый
    экран после входа — тот раздел, где сессия кончилась, и там вместо
    раздела отправленное: «Отправить ещё раз» или «Открыть без них».
-   Любая отправка формы в этом разделе — значит, решение принято. */
-$resume = $_SESSION['resume'] ?? null;
-if (is_array($resume) && in_array($resume['section'] ?? '', $known, true)) {
-    if (!empty($resume['land']) && !$isPost) {
-        $_SESSION['resume']['land'] = false;
-        if (($resume['post'] ?? null) === null) unset($_SESSION['resume']);
-        admin_set_lang((string)($resume['lang'] ?? ''));
-        admin_go(admin_url($resume['section'], (array)$resume['q']));
+   Отправка формы на тот же экран — значит, решение принято. */
+$land = $_SESSION['resume_land'] ?? null;
+if (is_array($land) && !$isPost) {
+    unset($_SESSION['resume_land']);
+    if (in_array($land['section'] ?? '', $known, true)) {
+        admin_set_lang((string)($land['lang'] ?? ''));
+        admin_go(admin_url($land['section'], (array)($land['q'] ?? [])));
     }
-    if ($resume['section'] === $section) {
-        if ($isPost) {
-            unset($_SESSION['resume']);
-        } elseif (($q['resume'] ?? '') === 'drop') {
-            unset($_SESSION['resume'], $q['resume']);
-            admin_go(admin_url($section, $q));
-        } elseif (is_array($resume['post'] ?? null)) {
-            admin_resume_page($resume, $q);
+}
+if ($pending = admin_resume_all()) {
+    $key = admin_resume_key($section, $q, admin_lang());
+    if ($isPost) {
+        unset($_SESSION['resume'][$key]);
+    } elseif (($q['resume'] ?? '') === 'drop') {
+        unset($_SESSION['resume'][$key], $q['resume']);
+        admin_go(admin_url($section, $q));
+    } else {
+        /* Свой экран, а если открыт раздел без записи — последняя
+           отложенная форма этого раздела на текущем языке. На другом
+           языке её не показываем: отправка ушла бы не в тот язык. */
+        $mine = $pending[$key] ?? null;
+        if (!$mine) {
+            foreach (array_reverse($pending) as $r) {
+                if ($r['section'] === $section && ($r['lang'] ?? '') === admin_lang()) { $mine = $r; break; }
+            }
+        }
+        if ($mine) {
+            admin_resume_page($mine, $pending);
             exit;
         }
     }
@@ -224,13 +313,27 @@ require $file;
     для копирования, служебные (ключ версии, число полей) идут скрытыми —
     повторная отправка повторяет исходную в точности, и проверка
     устаревшей вкладки в разделе срабатывает так же, как сработала бы тогда. */
-function admin_resume_page(array $r, array $q): void
+function admin_resume_page(array $r, array $pending): void
 {
     $shown = $hidden = [];
     foreach (admin_flat_fields((array)$r['post']) as $name => $v) {
         if (!admin_service_field($name) && trim($v) !== '') $shown[$name] = $v; else $hidden[$name] = $v;
     }
+    $q = (array)$r['q'];
     unset($q['resume']);
+    /* Прочие отложенные формы — ссылками: после входа панель ведёт только
+       на последнюю, и про остальные иначе не узнать. */
+    $others = [];
+    $titles = admin_sections();
+    foreach ($pending as $k => $o) {
+        if ($k === admin_resume_key($r['section'], $q, (string)($r['lang'] ?? ''))) continue;
+        $others[] = [
+            'href'  => admin_url($o['section'], (array)$o['q'] + ['lang' => (string)($o['lang'] ?? '')]),
+            'label' => '«' . ($titles[$o['section']][0] ?? $o['section']) . '»'
+                     . ($o['q'] ? ' — ' . implode(', ', array_map('strval', (array)$o['q'])) : '')
+                     . ' (' . strtoupper((string)($o['lang'] ?? '')) . ')',
+        ];
+    }
 
     admin_head($r['section']);
     ?>
@@ -255,10 +358,21 @@ function admin_resume_page(array $r, array $q): void
 <?= e($v) ?></textarea>
       <?php endforeach; ?>
     </details>
+    <?php /* Вписанные пароли и ключи в сессии не хранились — спрашиваем здесь.
+             Пустое поле в почте и капче значит «оставить прежний». */
+    foreach ((array)($r['secret'] ?? []) as $j => $name): if (!is_string($name)) continue; ?>
+      <label for="rp<?= (int)$j ?>"><span class="mono"><?= e($name) ?></span>
+        <span class="hint">впишите заново: пароли и секретные ключи в сессии не храним; пусто — останется прежний</span></label>
+      <input type="password" id="rp<?= (int)$j ?>" name="<?= e($name) ?>" class="mono" autocomplete="new-password">
+    <?php endforeach; ?>
     <div class="btnrow">
       <button class="btn" type="submit">Отправить ещё раз</button>
       <a class="btn ghost" href="<?= e(admin_url($r['section'], $q + ['resume' => 'drop'])) ?>">Открыть раздел без этих правок</a>
     </div>
+    <?php if ($others): ?>
+      <p class="muted">Отложены и другие формы:
+        <?php foreach ($others as $k => $o): ?><?= $k ? ', ' : '' ?><a href="<?= e($o['href']) ?>"><?= e($o['label']) ?></a><?php endforeach; ?>.</p>
+    <?php endif; ?>
   </div>
 </form>
     <?php

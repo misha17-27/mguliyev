@@ -28,10 +28,7 @@ $WEB = '/images/uploads';
 /* Предел самого сервера: upload_max_filesize на файл, post_max_size на весь
    запрос. Обещать больше нельзя — PHP отобьёт файл раньше наших проверок,
    а страница при этом говорила бы «до 40 МБ». */
-$SERVER = 0;
-foreach ([admin_ini_bytes('upload_max_filesize'), admin_ini_bytes('post_max_size')] as $lim) {
-    if ($lim > 0) $SERVER = $SERVER > 0 ? min($SERVER, $lim) : $lim;
-}
+$SERVER = admin_upload_cap();
 $cap = static fn(int $own) => $SERVER > 0 ? min($own, $SERVER) : $own;
 $MAX = $cap(6 * 1024 * 1024);         // картинка
 $MAX_VIDEO = $cap(40 * 1024 * 1024);  // видео: вертикальный ролик столько и весит
@@ -49,6 +46,8 @@ $TYPES = [
    по одному слову ftyp всё это сохранялось как .mp4 и не играло. */
 const MEDIA_MP4_BRANDS = ['isom', 'iso2', 'iso4', 'iso5', 'iso6', 'mp41', 'mp42',
                           'avc1', 'dash', 'M4V ', 'M4VH', 'M4VP', 'MSNV'];
+/* Марки снимков AVIF и HEIC в том же контейнере. */
+const MEDIA_STILL_BRANDS = ['avif', 'avis', 'heic', 'heix', 'hevc', 'hevx', 'mif1', 'msf1'];
 
 /** Первые 12 байт файла: по ним виден формат. */
 function media_head(string $path): string
@@ -88,7 +87,12 @@ function media_video_ext(string $head): ?string
 $used = [];
 foreach (works_canon() as $g) {
     foreach ($g['projects'] as $w) {
-        if (!empty($w['image'])) $used[(string)$w['image']][] = $w['domain'];
+        if (empty($w['image'])) continue;
+        /* post_image() пропускает и /images//uploads/x.png, и /images/./uploads/x.png,
+           и файл по ним находится. Без приведения такой путь не совпал бы
+           со списком, и стоящий в карточке файл удалился бы. */
+        $k = preg_replace('~/(?:\./)+~', '/', preg_replace('~/{2,}~', '/', (string)$w['image']) ?? '') ?? '';
+        $used[$k][] = $w['domain'];
     }
 }
 
@@ -119,6 +123,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
     /* ---------------------------------------------------------- загрузка */
     $f = $_FILES['file'] ?? null;
+    $NOT_MEDIA = 'Это не картинка и не видео в понятном формате. Нужен JPEG, PNG, WebP, GIF, '
+               . 'MP4 или WebM. SVG не принимаем: внутри него бывает исполняемый код.';
 
     if (!$f || !is_array($f) || ($f['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
         admin_flash('Файл не выбран.', 'warn');
@@ -129,7 +135,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         admin_flash('Файл не дошёл целиком. Попробуйте ещё раз.', 'err');
     } elseif (!is_uploaded_file($f['tmp_name'])) {
         admin_flash('Это не загруженный файл.', 'err');
-    } elseif (($vext = media_video_ext($head = media_head($f['tmp_name']))) !== null && (int)$f['size'] > $MAX_VIDEO) {
+    /* Марка контейнера — раньше проверок размера. Иначе MOV, HEIC или M4A
+       крупнее предела для картинок получали «сохраните в JPEG», ролик тоже,
+       а свои сообщения ниже не показывались почти никогда: MOV редко
+       бывает меньше 6 МБ. */
+    } elseif (($brand = media_brand($head = media_head($f['tmp_name']))) === 'qt  ') {
+        admin_flash('Это ролик QuickTime (MOV), а панель принимает MP4 или WebM. '
+                  . 'Сохраните ролик в одном из них.', 'err');
+    } elseif (in_array($brand, MEDIA_STILL_BRANDS, true)) {
+        admin_flash('Это снимок AVIF или HEIC, а панель принимает JPEG, PNG, WebP или GIF. '
+                  . 'Сохраните снимок в одном из них.', 'err');
+    } elseif ($brand !== '' && !in_array($brand, MEDIA_MP4_BRANDS, true)) {
+        /* Тот же контейнер, но не видео: звук M4A и прочее. Картинкой он тоже быть не может. */
+        admin_flash($NOT_MEDIA, 'err');
+    } elseif (($vext = media_video_ext($head)) !== null && (int)$f['size'] > $MAX_VIDEO) {
         admin_flash('Видео больше ' . admin_size($MAX_VIDEO) . '. Сожмите перед загрузкой: '
                   . 'вертикальный ролик на минуту столько не весит.', 'err');
     } elseif ($vext === null && (int)$f['size'] > $MAX) {
@@ -142,16 +161,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
            контейнера не узнать, а метки формата в начале файла достаточно.
            Каждое условие начинается с $vext === null именно поэтому:
            видео проходит мимо них и попадает прямо в сохранение. */
-        $brand = media_brand($head);
-        if ($vext === null && in_array($brand, ['avif', 'avis', 'heic', 'heix', 'hevc', 'hevx', 'mif1', 'msf1'], true)) {
-            admin_flash('Это снимок AVIF или HEIC, а панель принимает JPEG, PNG, WebP или GIF. '
-                      . 'Сохраните снимок в одном из них.', 'err');
-        } elseif ($vext === null && $brand === 'qt  ') {
-            admin_flash('Это ролик QuickTime (MOV), а панель принимает MP4 или WebM. '
-                      . 'Сохраните ролик в одном из них.', 'err');
-        } elseif ($vext === null && !isset($TYPES[$type])) {
-            admin_flash('Это не картинка и не видео в понятном формате. Нужен JPEG, PNG, WebP, GIF, '
-                      . 'MP4 или WebM. SVG не принимаем: внутри него бывает исполняемый код.', 'err');
+        if ($vext === null && !isset($TYPES[$type])) {
+            admin_flash($NOT_MEDIA, 'err');
         } elseif ($vext === null && ((int)$info[0] < 60 || (int)$info[1] < 60)) {
             admin_flash('Картинка меньше 60 пикселей по стороне — для снимка сайта это ошибка.', 'err');
         } elseif ($vext === null && ((int)$info[0] > 6000 || (int)$info[1] > 6000)) {

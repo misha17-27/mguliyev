@@ -66,11 +66,15 @@ function admin_boot(): void
         if ($idle > ADMIN_SESSION_IDLE || $age > ADMIN_SESSION_MAX) {
             /* Язык правки переживает выход: форму, пришедшую в истёкшую
                сессию, index.php откладывает до входа, и показать её надо
-               на том же языке, на котором её заполняли. */
-            $lang = $_SESSION['lang'] ?? null;
+               на том же языке, на котором её заполняли. Отложенные раньше
+               и ещё не разобранные формы — тоже: им обещано, что вписанное
+               не пропадёт, а вторая истёкшая сессия стёрла бы их молча. */
+            $lang   = $_SESSION['lang'] ?? null;
+            $resume = $_SESSION['resume'] ?? null;
             admin_logout();
             admin_flash('Сессия истекла. Войдите заново.', 'warn');
             if (is_string($lang)) $_SESSION['lang'] = $lang;
+            if (is_array($resume)) $_SESSION['resume'] = $resume;
         }
     }
     $_SESSION['seen'] = $now;
