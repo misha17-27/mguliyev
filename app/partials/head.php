@@ -91,6 +91,8 @@ $ogAbs = preg_match('~^https?://~', $og) ? $og : $cfg['site_url'] . $og; ?>
 <?= ts_script() ?>
 </head>
 <body>
+<?php /* Первая остановка Tab: без неё до содержимого было десять ссылок шапки на каждой странице. */ ?>
+<a class="skip" href="#top"><?= t('nav.skip') ?></a>
 <div class="tl" id="tl">
   <span class="tl-rec" aria-hidden="true"><i></i>rec</span>
   <div class="tl-bar">

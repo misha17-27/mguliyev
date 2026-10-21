@@ -43,15 +43,15 @@ $wc = works_count();   // число проектов — из данных по
       <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:20px"><?= t('about.t13') ?></h2>
       <div class="princ" style="margin-top:0">
         <div>
-          <h4><?= t('about.t14') ?></h4>
+          <h3><?= t('about.t14') ?></h3>
           <p><?= t('about.t15') ?></p>
         </div>
         <div>
-          <h4><?= t('about.t16') ?></h4>
+          <h3><?= t('about.t16') ?></h3>
           <p><?= t('about.t17') ?></p>
         </div>
         <div>
-          <h4><?= t('about.t18') ?></h4>
+          <h3><?= t('about.t18') ?></h3>
           <p><?= t('about.t19') ?></p>
         </div>
       </div>

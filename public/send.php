@@ -40,7 +40,9 @@ function finish(bool $ok, string $key, string $back, bool $ajax): void
         exit;
     }
     $sep = strpos($back, '?') === false ? '?' : '&';
-    header('Location: ' . $back . $sep . ($ok ? 'sent=1' : 'error=1') . '#contact', true, 303);
+    /* #lead — сама форма: она есть и на главной, и на /kontakty/, а #contact
+       на странице контактов нет, и человек возвращался в начало страницы. */
+    header('Location: ' . $back . $sep . ($ok ? 'sent=1' : 'error=1') . '#lead', true, 303);
     exit;
 }
 

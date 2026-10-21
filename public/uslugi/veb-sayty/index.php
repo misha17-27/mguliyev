@@ -23,7 +23,7 @@ $lnk = 'color:var(--duo-b)';
     <h1 class="disp h2" style="margin-block:18px 20px"><?= e($cat['h1'] !== '' ? $cat['h1'] : $cat['title']) ?></h1>
     <p class="sub"><?= t('web.t2') ?></p>
     <p style="margin-top:clamp(24px,3vw,34px);display:flex;flex-wrap:wrap;gap:12px">
-      <a class="btn" href="<?= u('/kontakty/') ?>"><?= t('web.t3') ?></a>
+      <a class="btn" href="<?= u('/kontakty/') . '#zayavka' ?>"><?= t('web.t3') ?></a>
       <a class="btn btn-o" href="<?= u('/portfolio/') ?>"><?= t('web.t4') ?></a>
     </p>
   </div>
@@ -114,7 +114,7 @@ $lnk = 'color:var(--duo-b)';
       <h2 class="disp h2"><?= t('web.t52') ?></h2>
       <p class="sub" style="margin-top:16px"><?= t('web.t53') ?></p>
       <p style="margin-top:22px;display:flex;flex-wrap:wrap;gap:12px">
-        <a class="btn" href="<?= u('/kontakty/') ?>"><?= t('web.t54') ?></a>
+        <a class="btn" href="<?= u('/kontakty/') . '#zayavka' ?>"><?= t('web.t54') ?></a>
         <a class="btn btn-o" href="<?= e(tel_href()) ?>"><?= e(sv('phone')) ?></a></p>
     </div>
 

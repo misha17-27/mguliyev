@@ -5,13 +5,13 @@
         <a class="wm wm-foot" href="<?= htmlspecialchars(u('/'), ENT_QUOTES) ?>" aria-label="<?= t('nav.home') ?>"><img src="/images/brand/guliyev-white-logo.svg" alt="MGuliyev Studio" width="838" height="346"></a>
         <p style="color:var(--grey);font-size:.88rem;margin-top:14px;max-width:30ch"><?= t('footer.tagline') ?></p>
       </div>
-      <div class="fcol"><h5><?= t('nav.services') ?></h5><ul>
+      <div class="fcol"><h2><?= t('nav.services') ?></h2><ul>
         <li><a href="<?= htmlspecialchars(u('/uslugi/veb-sayty/'), ENT_QUOTES) ?>"><?= t('cat.veb-sayty') ?></a></li><li><a href="<?= htmlspecialchars(u('/uslugi/dizayn/'), ENT_QUOTES) ?>"><?= t('cat.dizayn') ?></a></li><li><a href="<?= htmlspecialchars(u('/uslugi/marketing/'), ENT_QUOTES) ?>"><?= t('cat.marketing') ?></a></li><li><a href="<?= htmlspecialchars(u('/uslugi/podderzhka/'), ENT_QUOTES) ?>"><?= t('cat.podderzhka') ?></a></li><li><a href="<?= htmlspecialchars(u('/uslugi/'), ENT_QUOTES) ?>"><?= t('footer.all_services') ?></a></li>
       </ul></div>
-      <div class="fcol"><h5><?= t('footer.studio') ?></h5><ul>
+      <div class="fcol"><h2><?= t('footer.studio') ?></h2><ul>
         <li><a href="<?= htmlspecialchars(u('/o-studii/'), ENT_QUOTES) ?>"><?= t('nav.about') ?></a></li><li><a href="<?= htmlspecialchars(u('/portfolio/'), ENT_QUOTES) ?>"><?= t('nav.portfolio') ?></a></li><li><a href="<?= htmlspecialchars(u('/') . '#process', ENT_QUOTES) ?>"><?= t('footer.how') ?></a></li><li><a href="<?= htmlspecialchars(u('/tseny/'), ENT_QUOTES) ?>"><?= t('nav.price') ?></a></li><li><a href="<?= htmlspecialchars(u('/kontakty/'), ENT_QUOTES) ?>"><?= t('nav.contacts') ?></a></li><li><a href="<?= htmlspecialchars(u('/') . '#faq', ENT_QUOTES) ?>"><?= t('footer.faq') ?></a></li>
       </ul></div>
-      <div class="fcol"><h5><?= t('nav.contacts') ?></h5><ul>
+      <div class="fcol"><h2><?= t('nav.contacts') ?></h2><ul>
         <?php /* Контакты и соцсети — из настроек панели. Незаполненное
            показывается пометкой, а не пропадает молча: так видно,
            что данные ждут, а не что их решили не показывать. */ ?>

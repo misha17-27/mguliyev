@@ -32,7 +32,12 @@ var phone = document.querySelector(".phone");
 var reelsBlock = document.getElementById("reels");
 var reelCards = [].slice.call(document.querySelectorAll(".reels .rl"));
 
+/* Подписи глав и шаблон названия метки — из разметки, где они взяты
+   из словаря: зашитые здесь по-русски, они звучали и на /az/, и на /en/.
+   Русские остаются запасным вариантом на случай битого атрибута. */
 var TITLES = { services: "Услуги", portfolio: "Портфолио", reels: "Reels", about: "О студии", process: "Процесс", price: "Цены", blog: "Блог", faq: "Вопросы", contact: "Контакты" };
+try { var tlT = JSON.parse(tlMarks.getAttribute("data-titles") || "null"); if (tlT) TITLES = tlT; } catch (e) { /* остаёмся на русских */ }
+var TL_GO = tlMarks.getAttribute("data-go") || "Перейти к разделу «{s}»";
 var chapters = Object.keys(TITLES).map(function (id) { return { id: id, el: document.getElementById(id) }; }).filter(function (c) { return c.el; });
 
 function maxScroll() { return Math.max(1, document.documentElement.scrollHeight - innerHeight); }
@@ -49,7 +54,8 @@ function layout() {
     b.className = "tl-mark";
     b.style.left = Math.min(100, (c.el.offsetTop / max) * 100) + "%";
     b.setAttribute("data-id", c.id);
-    b.setAttribute("aria-label", "Перейти к разделу «" + TITLES[c.id] + "»");
+    /* Подстановка функцией: строкой replace() понял бы «$&» в названии как шаблон. */
+    b.setAttribute("aria-label", TL_GO.replace("{s}", function () { return TITLES[c.id]; }));
     var s = document.createElement("span");
     s.textContent = TITLES[c.id];
     b.appendChild(s);
@@ -102,7 +108,7 @@ var burger = document.getElementById("burger");
 var drawer = document.getElementById("drawer");
 /* Шторка непрозрачно накрывает страницу, но за ней оставалось ~70 фокусируемых
    элементов. inert гасит их целиком — включая шапку, которая лежит вне main. */
-var behind = [".wm", ".nav .menu", ".nav .lang", ".pill.nav-cta", "main", "footer.site"]
+var behind = [".skip", ".wm", ".nav .menu", ".nav .lang", ".pill.nav-cta", "main", "footer.site"]
   .map(function (s) { return document.querySelector(s); }).filter(Boolean);
 var lastFocus = null;
 var menuScrollY = 0;
@@ -128,7 +134,13 @@ function setMenu(open) {
     document.body.style.top = "";
     document.body.style.left = "";
     document.body.style.right = "";
+    /* html{scroll-behavior:smooth} делал возврат плавным проездом от начала
+       страницы: мелькал первый экран, и всё ехало вниз почти секунду.
+       Плавность снимаем на один вызов — якорные ссылки её сохраняют. */
+    var root = document.documentElement;
+    root.style.scrollBehavior = "auto";
     window.scrollTo(0, menuScrollY);
+    root.style.scrollBehavior = "";
   }
   behind.forEach(function (el) { if (open) { el.setAttribute("inert", ""); } else { el.removeAttribute("inert"); } });
   if (open) {
@@ -148,7 +160,9 @@ function setMenu(open) {
 }
 burger.addEventListener("click", function () { setMenu(!drawer.classList.contains("open")); });
 drawer.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { setMenu(false); }); });
-addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
+/* Только открытое меню: иначе Escape в поле формы (закрыть автоподстановку)
+   выдёргивал фокус на кнопку меню. */
+addEventListener("keydown", function (e) { if (e.key === "Escape" && drawer.classList.contains("open")) setMenu(false); });
 
 /* Переключение формата на «мониторе». Список — вкладки, а не четыре
    независимых тумблера: выбран всегда ровно один. */
@@ -156,11 +170,17 @@ var vfList = document.getElementById("vfList"), vfNow = document.getElementById(
 if (vfList && vfNow) {
   var tabs = [].slice.call(vfList.querySelectorAll(".vfr"));
   var cur = Math.max(0, tabs.indexOf(vfList.querySelector('.vfr[aria-selected="true"]')));
+  /* Роль tab обещает диктору стрелки, поэтому в обходе Tab стоит только
+     выбранная вкладка, а между вкладками ходят стрелками. В разметке
+     tabindex не ставим: без скрипта вкладки ничего не делают. */
+  function rove() { tabs.forEach(function (b, i) { b.tabIndex = i === cur ? 0 : -1; }); }
+  rove();
 
   var pick = function (btn) {
     if (!btn || btn.getAttribute("aria-selected") === "true") return;
     tabs.forEach(function (b) { b.setAttribute("aria-selected", b === btn ? "true" : "false"); });
     cur = tabs.indexOf(btn);
+    rove();
     vfNow.textContent = btn.querySelector("b").textContent;
     var shot = document.getElementById("vfShot"), src = btn.getAttribute("data-img");
     if (shot && src && shot.getAttribute("src") !== src) {
@@ -171,6 +191,16 @@ if (vfList && vfNow) {
     if (typeof start === "function") start(btn.getAttribute("data-sub"));
   };
   vfList.addEventListener("click", function (e) { pick(e.target.closest(".vfr")); });
+  vfList.addEventListener("keydown", function (e) {
+    var n = tabs.length, k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key], to;
+    if (k) to = (cur + k + n) % n;
+    else if (e.key === "Home") to = 0;
+    else if (e.key === "End") to = n - 1;
+    else return;
+    e.preventDefault();                   // стрелки не должны заодно прокручивать страницу
+    pick(tabs[to]);
+    tabs[to].focus();
+  });
 
   /* Демонстрация формата: полосы глав, тикающий таймкод и строка субтитров.
      Никакой подделки под съёмку — показываем ремесло, а не чужой материал. */
@@ -304,10 +334,14 @@ if (vfList && vfNow) {
   /* Кнопка остановки: движение идёт петлёй дольше пяти секунд, а по WCAG 2.2.2
      у такого контента должен быть способ его прекратить. Делаем её из скрипта,
      чтобы без JS не висел мёртвый орган управления. */
+  var osd = document.querySelector(".vf-osd");
   var pp = document.createElement("button");
   pp.type = "button"; pp.className = "vf-pp";
+  /* Название постоянное, состояние говорит aria-pressed — так устроена
+     кнопка-переключатель. Текст из разметки: зашитый по-русски, он звучал
+     и на /az/, и на /en/. */
+  pp.setAttribute("aria-label", osd.getAttribute("data-pause") || "Пауза демонстрации");
   function labelPP() {
-    pp.setAttribute("aria-label", paused ? "Запустить демонстрацию" : "Остановить демонстрацию");
     pp.setAttribute("aria-pressed", paused ? "true" : "false");
   }
   labelPP();
@@ -320,7 +354,6 @@ if (vfList && vfNow) {
   });
   /* Строка служебных надписей разнесена по краям. Третий элемент вытолкнул бы
      «9:16» в середину, поэтому собираем правую группу явно. */
-  var osd = document.querySelector(".vf-osd");
   var right = document.createElement("span");
   right.className = "vf-osd-r";
   right.appendChild(osd.lastElementChild);
@@ -367,6 +400,19 @@ if (vfList && vfNow) {
   };
   if (mqStill.addEventListener) mqStill.addEventListener("change", onStill);
   else if (mqStill.addListener) mqStill.addListener(onStill);
+}
+
+/* ---- Пауза первого экрана. «Телефон» с роликами и бегущая строка идут
+       петлёй без конца, а по WCAG 2.2.2 такое движение должно останавливаться.
+       Кнопка в разметке скрыта и появляется только со скриптом; при «меньше
+       движения» этих анимаций нет вовсе, и кнопка не нужна. ---- */
+var heroPP = document.getElementById("heroPP");
+if (heroPP && !reduce) {
+  heroPP.hidden = false;
+  heroPP.addEventListener("click", function () {
+    var on = document.documentElement.classList.toggle("still");
+    heroPP.setAttribute("aria-pressed", on ? "true" : "false");
+  });
 }
 
 /* Форма есть не на каждой странице: без проверки скрипт падал бы на внутренних,

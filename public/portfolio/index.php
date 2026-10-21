@@ -153,7 +153,7 @@ $unit = static fn(int $n): string => plural($n, 'units.project');
     <div style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
       <h2 class="disp h2"><?= t('portfolio.t9') ?></h2>
       <p class="sub" style="margin-top:16px"><?= t('portfolio.t10') ?></p>
-      <p style="margin-top:22px"><a class="btn" href="<?= u('/kontakty/') ?>"><?= t('portfolio.t11') ?></a></p>
+      <p style="margin-top:22px"><a class="btn" href="<?= u('/kontakty/') . '#zayavka' ?>"><?= t('portfolio.t11') ?></a></p>
     </div>
   </div>
 </section>

@@ -148,7 +148,7 @@ $more = array_slice($more, 0, 6);
       <h2 class="disp h2"><?= t('portfolio.cta_h') ?></h2>
       <p class="sub" style="margin-top:16px"><?= t('portfolio.cta_p') ?></p>
       <p style="margin-top:22px;display:flex;gap:12px;flex-wrap:wrap">
-        <a class="btn" href="<?= u('/kontakty/') ?>"><?= t('portfolio.cta_btn') ?></a>
+        <a class="btn" href="<?= u('/kontakty/') . '#zayavka' ?>"><?= t('portfolio.cta_btn') ?></a>
         <a class="btn btn-o" href="<?= e(portfolio_url()) ?>"><?= t('portfolio.all_works') ?></a>
       </p>
     </div>

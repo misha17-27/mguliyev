@@ -28,7 +28,7 @@ $packs = packs();
     <div class="steps" style="margin-top:clamp(40px,5vw,68px)">
       <?php foreach ($packs as $p): ?>
       <div class="st">
-        <h4><?= e($p[1]) ?></h4>
+        <h3><?= e($p[1]) ?></h3>
         <p><?= e($p[5]) ?></p>
         <?php if ($p[6]): ?><p style="margin-top:10px;color:var(--dim)"><?= t('price.missing') ?> <?= e($p[6]) ?></p><?php endif; ?>
       </div>
@@ -77,7 +77,7 @@ $packs = packs();
     <div style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
       <h2 class="disp h2"><?= t('price.t25') ?></h2>
       <p class="sub" style="margin-top:16px"><?= t('price.t26') ?></p>
-      <p style="margin-top:22px"><a class="btn" href="<?= u('/kontakty/') ?>"><?= t('price.t27') ?></a></p>
+      <p style="margin-top:22px"><a class="btn" href="<?= u('/kontakty/') . '#zayavka' ?>"><?= t('price.t27') ?></a></p>
     </div>
   </div>
 </section>

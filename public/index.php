@@ -31,6 +31,9 @@ include __DIR__ . '/../app/partials/head.php';
             <b>Elson<br>Group</b><small><?= t('home.t7') ?></small>
           </div>
         </div>
+        <?php /* Остановка ролика и бегущей строки (WCAG 2.2.2). Скрыта, пока её
+                 не покажет скрипт: без него кнопка ничего бы не делала. */ ?>
+        <button type="button" class="hero-pp" id="heroPP" hidden aria-pressed="false" aria-label="<?= t('home.motion_pause') ?>"></button>
         <span class="phone-tag"><?= t('home.t8') ?></span>
       </div>
     </div>
@@ -144,7 +147,9 @@ include __DIR__ . '/../app/partials/head.php';
       <figure class="vf-mon">
         <div class="vf-scr" id="vfScr" role="tabpanel" aria-label="<?= t('home.t159') ?>">
           <img class="vf-shot" id="vfShot" src="/images/demo/shot-1.svg" alt="" width="1080" height="1920">
-          <div class="vf-osd" aria-hidden="true"><span class="vf-stby"><i></i><em id="vfState">stby</em></span><span>9:16</span></div>
+          <?php /* aria-hidden — на подписях, а не на всей строке: скрипт кладёт сюда
+                   кнопку паузы, и внутри скрытого от диктора блока она была бы безымянной. */ ?>
+          <div class="vf-osd" data-pause="<?= t('home.demo_pause') ?>"><span class="vf-stby" aria-hidden="true"><i></i><em id="vfState">stby</em></span><span aria-hidden="true">9:16</span></div>
           <div class="vf-bars" id="vfBars" aria-hidden="true"><i></i><i></i><i></i></div>
           <div class="vf-zone top"><span><?= t('home.t53') ?></span></div>
           <div class="vf-safe">
@@ -199,15 +204,17 @@ include __DIR__ . '/../app/partials/head.php';
         <span class="cap ph-only"><?= t('home.t77') ?></span>
       </div>
       <div class="rv">
-        <p class="lb" style="margin-bottom:18px"><?= t('home.t78') ?></p>
+        <?php /* Заголовок, а не подпись: иначе при переходе по заголовкам блок
+                 «О студии» не находился, а принципы попадали под «Вертикальный формат». */ ?>
+        <h2 class="lb" style="margin-bottom:18px"><?= t('home.t78') ?></h2>
         <p class="about-lead"><?= t('home.t79') ?></p>
         <p class="sub" style="margin-top:20px"><?= t('home.t80') ?></p>
         <p class="sub"><?= t('home.t81') ?></p>
         <p class="sub"><?= t('home.t82') ?></p>
         <div class="princ">
-          <div><h4><?= t('home.t83') ?></h4><p><?= t('home.t84') ?></p></div>
-          <div><h4><?= t('home.t85') ?></h4><p><?= t('home.t86') ?></p></div>
-          <div><h4><?= t('home.t87') ?></h4><p><?= t('home.t88') ?></p></div>
+          <div><h3><?= t('home.t83') ?></h3><p><?= t('home.t84') ?></p></div>
+          <div><h3><?= t('home.t85') ?></h3><p><?= t('home.t86') ?></p></div>
+          <div><h3><?= t('home.t87') ?></h3><p><?= t('home.t88') ?></p></div>
         </div>
         <div class="stack">
           <i>WordPress</i><i>WooCommerce</i><i>Elementor</i><i>ACF</i><i>WPML</i><i>Yoast SEO</i><i>Figma</i><i>Photoshop</i><i>Illustrator</i><i>Google Analytics</i><i>Search Console</i><i>Cloudflare</i><i>Premiere Pro</i><i>After Effects</i><i>Meta Business Suite</i>
@@ -221,12 +228,12 @@ include __DIR__ . '/../app/partials/head.php';
   <div class="wrap">
     <h2 class="disp h2 rv" style="margin-bottom:clamp(24px,3.2vw,44px)"><?= t('home.t89') ?> <span class="ser"><?= t('home.t90') ?></span></h2>
     <div class="steps rv">
-      <div class="st"><div class="st-top"><b>01</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="3" width="15" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg></div><h4><?= t('home.t91') ?></h4><p><?= t('home.t92') ?></p></div>
-      <div class="st"><div class="st-top"><b>02</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="5" rx="1"></rect><rect x="3" y="16" width="6" height="5" rx="1"></rect><rect x="15" y="16" width="6" height="5" rx="1"></rect><path d="M12 8v3.5M6 16v-4.5h12V16"></path></svg></div><h4><?= t('home.t93') ?></h4><p><?= t('home.t94') ?></p></div>
-      <div class="st"><div class="st-top"><b>03</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18M9 9v11"></path></svg></div><h4><?= t('home.t95') ?></h4><p><?= t('home.t96') ?></p></div>
-      <div class="st"><div class="st-top"><b>04</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14"></path></svg></div><h4><?= t('home.t97') ?></h4><p><?= t('home.t98') ?></p></div>
-      <div class="st"><div class="st-top"><b>05</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 4h7v7M20 4l-8 8"></path><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"></path></svg></div><h4><?= t('home.t99') ?></h4><p><?= t('home.t100') ?></p></div>
-      <div class="st"><div class="st-top"><b>06</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.3 3.1 8.3 7.5 9.5 4.4-1.2 7.5-5.2 7.5-9.5V6L12 3Z"></path><path d="m9 12 2.2 2.2L15.5 10"></path></svg></div><h4><?= t('home.t101') ?></h4><p><?= t('home.t102') ?></p></div>
+      <div class="st"><div class="st-top"><b>01</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="3" width="15" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg></div><h3><?= t('home.t91') ?></h3><p><?= t('home.t92') ?></p></div>
+      <div class="st"><div class="st-top"><b>02</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="5" rx="1"></rect><rect x="3" y="16" width="6" height="5" rx="1"></rect><rect x="15" y="16" width="6" height="5" rx="1"></rect><path d="M12 8v3.5M6 16v-4.5h12V16"></path></svg></div><h3><?= t('home.t93') ?></h3><p><?= t('home.t94') ?></p></div>
+      <div class="st"><div class="st-top"><b>03</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18M9 9v11"></path></svg></div><h3><?= t('home.t95') ?></h3><p><?= t('home.t96') ?></p></div>
+      <div class="st"><div class="st-top"><b>04</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14"></path></svg></div><h3><?= t('home.t97') ?></h3><p><?= t('home.t98') ?></p></div>
+      <div class="st"><div class="st-top"><b>05</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 4h7v7M20 4l-8 8"></path><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"></path></svg></div><h3><?= t('home.t99') ?></h3><p><?= t('home.t100') ?></p></div>
+      <div class="st"><div class="st-top"><b>06</b><svg class="st-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.3 3.1 8.3 7.5 9.5 4.4-1.2 7.5-5.2 7.5-9.5V6L12 3Z"></path><path d="m9 12 2.2 2.2L15.5 10"></path></svg></div><h3><?= t('home.t101') ?></h3><p><?= t('home.t102') ?></p></div>
     </div>
   </div>
 </section>
@@ -281,7 +288,7 @@ include __DIR__ . '/../app/partials/head.php';
 
 <section class="sec" id="contact" style="background:var(--off);border-top:1px solid var(--line)">
   <div class="wrap">
-    <p class="lb rv" style="margin-bottom:clamp(18px,2.4vw,32px)"><?= t('home.t131') ?></p>
+    <h2 class="lb rv" id="lead-h" style="margin-bottom:clamp(18px,2.4vw,32px)"><?= t('home.t131') ?></h2>
     <a class="mailto rv" href="mailto:<?= e(s('email')) ?>"><?= e(sv('email')) ?></a>
     <div class="cgrid rv">
       <div class="cg"><em><?= t('home.t132') ?></em><a href="<?= e(tel_href()) ?>"><?= e(sv('phone')) ?></a></div>
@@ -294,7 +301,7 @@ include __DIR__ . '/../app/partials/head.php';
     </div>
     <?php /* Адрес с префиксом языка: send.php узнаёт язык только из адреса,
              и без префикса ответы и пометка языка в заявке были русскими. */ ?>
-    <form class="rv" id="lead" method="post" action="<?= e(u('/send.php')) ?>" data-retry="<?= t('form.retry') ?>">
+    <form class="rv" id="lead" aria-labelledby="lead-h" method="post" action="<?= e(u('/send.php')) ?>" data-retry="<?= t('form.retry') ?>">
       <?php /* Ловушка для ботов: человек этого поля не видит и не заполнит.
              Рядом отметка времени — мгновенная отправка выдаёт автомат. */ ?>
       <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"
