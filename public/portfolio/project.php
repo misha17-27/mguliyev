@@ -77,11 +77,13 @@ $more = array_slice($more, 0, 6);
 <main id="top">
 <section class="sec">
   <div class="wrap">
-    <p class="lb">
+    <nav class="lb" aria-label="<?= t('portfolio.crumb') ?>">
       <a href="<?= e(portfolio_url()) ?>"><?= t('portfolio.crumb') ?></a>
       <span aria-hidden="true"> / </span>
       <a href="<?= e(portfolio_url($g['slug'])) ?>"><?= e($cname) ?></a>
-    </p>
+      <span aria-hidden="true"> / </span>
+      <span aria-current="page"><?= e($name !== '' ? $name : $w['domain']) ?></span>
+    </nav>
 
     <div class="shead" style="margin-top:14px">
       <div>
@@ -89,9 +91,8 @@ $more = array_slice($more, 0, 6);
         <p class="lb" lang="en" style="margin-bottom:10px"><?= e($w['domain']) ?></p>
         <h1 class="disp h2"><?= e($name) ?></h1>
       </div>
-      <?php if (!$isDead): ?>
-        <a class="btn" href="<?= e('https://' . $w['domain']) ?>" target="_blank" rel="noopener"><?= t('portfolio.visit') ?> ↗</a>
-      <?php endif; ?>
+      <?php /* Большой кнопки «Открыть сайт» нет: страница проекта — про работу
+               студии, а не переход к заказчику. Ссылка на сайт — строкой ниже. */ ?>
     </div>
 
     <?php /* Подпись — только у настоящего снимка сайта (то же условие, что
@@ -131,6 +132,20 @@ $more = array_slice($more, 0, 6);
           <p class="sub" style="margin:0 0 14px"><?= nl2br(e(trim($para))) ?></p>
         <?php endforeach; ?>
       </div>
+    <?php endif; ?>
+
+    <?php $gallery = project_gallery($w); if ($gallery): ?>
+      <section style="margin-top:clamp(40px,5vw,72px)" aria-labelledby="gal-h">
+        <h2 class="disp" id="gal-h" style="font-size:clamp(1.3rem,2.4vw,1.7rem)"><?= t('portfolio.gallery') ?></h2>
+        <div class="gallery">
+          <?php foreach ($gallery as $i => $im): ?>
+            <figure>
+              <img src="<?= e($im['src']) ?>" alt="<?= e(($name !== '' ? $name . ' — ' : '') . $w['domain'] . ' (' . ($i + 1) . '/' . count($gallery) . ')') ?>"
+                   width="<?= $im['w'] ?>" height="<?= $im['h'] ?>" loading="lazy" decoding="async">
+            </figure>
+          <?php endforeach; ?>
+        </div>
+      </section>
     <?php endif; ?>
 
     <?php if ($more): ?>

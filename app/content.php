@@ -116,16 +116,30 @@ function works_canon(): array
     return works_seo_fill($out);
 }
 
-/** Заголовки и описания для поиска из app/data/works_seo.php — там, где
-    своих нет. Берутся только языки, которых в записи нет совсем: значение,
-    сохранённое в панели (даже пустое), главнее файла. Так тексты доходят
-    и до сайта, у которого портфолио уже сохранено из панели. */
+/** Заголовки и описания для поиска из app/data/works_seo.php и галереи
+    из app/data/works_gallery.php — там, где своих нет. Берётся только то,
+    чего в записи нет совсем: значение, сохранённое в панели (даже пустое),
+    главнее файла. Так тексты и снимки доходят и до сайта, у которого
+    портфолио уже сохранено из панели. */
 function works_seo_fill(array $groups): array
 {
-    static $seo = null;
+    static $seo = null, $gal = null;
     if ($seo === null) {
         $f = __DIR__ . '/data/works_seo.php';
         $seo = is_file($f) ? (array) require $f : [];
+        $f = __DIR__ . '/data/works_gallery.php';
+        $gal = is_file($f) ? (array) require $f : [];
+    }
+    if ($gal) {
+        foreach ($groups as &$g) {
+            foreach ($g['projects'] as &$w) {
+                if (!array_key_exists('gallery', $w) && isset($gal[$w['domain'] ?? ''])) {
+                    $w['gallery'] = (array)$gal[$w['domain']];
+                }
+            }
+            unset($w);
+        }
+        unset($g);
     }
     if (!$seo) return $groups;
     foreach ($groups as &$g) {
@@ -646,6 +660,30 @@ function portfolio_find(?string $cat, ?string $proj = null): array
         }
     }
     return $old ?? $out;
+}
+
+/** Страница проекта по домену на языке страницы. Нет такого проекта —
+    список портфолио: ссылка с главной не должна вести в 404. */
+function project_page(string $domain, ?string $lang = null): string
+{
+    $f = portfolio_find(null, project_slug($domain));
+    return $f['project'] !== null ? portfolio_url($f['cat'], $f['slug'], $lang) : portfolio_url(null, null, $lang);
+}
+
+/** Галерея проекта: [['src' => …, 'w' => …, 'h' => …], …] — только файлы,
+    которые на сайте есть, с настоящими размерами (для width/height: без
+    них страница прыгала бы, пока снимки догружаются). */
+function project_gallery(array $w): array
+{
+    $root = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/\\');
+    $out  = [];
+    foreach ((array)($w['gallery'] ?? []) as $src) {
+        if (!is_string($src) || !preg_match('~^/images/[A-Za-z0-9._/-]+$~', $src) || strpos($src, '..') !== false) continue;
+        $size = $root !== '' ? @getimagesize($root . $src) : false;
+        if ($root !== '' && !$size) continue;
+        $out[] = ['src' => $src, 'w' => (int)($size[0] ?? 1000), 'h' => (int)($size[1] ?? 1600)];
+    }
+    return $out;
 }
 
 /** Обложка проекта: снимок сайта или отраслевая подложка. */

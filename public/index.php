@@ -113,32 +113,32 @@ include __DIR__ . '/../app/partials/head.php';
     <?php /* alt у обложек пустой: название и домен уже в тексте ссылки,
              с подписью диктор читал их дважды. */ ?>
     <div class="works rv">
-      <a class="work" href="https://elson-group.com" target="_blank" rel="noopener">
+      <a class="work" href="<?= e(project_page('elson-group.com')) ?>">
         <div class="cover w1"><img class="media" src="/images/works/elson-group.com.jpg"<?= cover_srcset('/images/works/elson-group.com.jpg') ?> data-ph="/images/placeholder/work-1.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t37') ?></b></div>
         <h3>Elson Group</h3>
         <div class="wmeta"><span><?= t('home.t38') ?></span><b>elson-group.com</b></div>
       </a>
-      <a class="work" href="https://lynkco.az" target="_blank" rel="noopener">
+      <a class="work" href="<?= e(project_page('lynkco.az')) ?>">
         <div class="cover w2"><img class="media" src="/images/home/work-2.jpg"<?= cover_srcset('/images/home/work-2.jpg') ?> data-ph="/images/placeholder/work-2.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t39') ?></b></div>
         <h3><?= t('home.t40') ?></h3>
         <div class="wmeta"><span><?= t('home.t41') ?></span><b>lynkco.az</b></div>
       </a>
-      <a class="work" href="https://marshal.az" target="_blank" rel="noopener">
+      <a class="work" href="<?= e(project_page('marshal.az')) ?>">
         <div class="cover w3"><img class="media" src="/images/home/work-3.jpg"<?= cover_srcset('/images/home/work-3.jpg') ?> data-ph="/images/placeholder/work-3.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t42') ?></b></div>
         <h3><?= t('home.t43') ?></h3>
         <div class="wmeta"><span><?= t('home.t44') ?></span><b>marshal.az</b></div>
       </a>
-      <a class="work" href="https://grandmoto.az" target="_blank" rel="noopener">
+      <a class="work" href="<?= e(project_page('grandmoto.az')) ?>">
         <div class="cover w4"><img class="media" src="/images/home/work-4.jpg"<?= cover_srcset('/images/home/work-4.jpg') ?> data-ph="/images/placeholder/work-4.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t45') ?></b></div>
         <h3>Grandmoto</h3>
         <div class="wmeta"><span><?= t('home.t46') ?></span><b>grandmoto.az</b></div>
       </a>
-      <a class="work" href="https://store.az" target="_blank" rel="noopener">
+      <a class="work" href="<?= e(project_page('store.az')) ?>">
         <div class="cover w5"><img class="media" src="/images/home/work-5.jpg"<?= cover_srcset('/images/home/work-5.jpg') ?> data-ph="/images/placeholder/work-5.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t47') ?></b></div>
         <h3>Store.az</h3>
         <div class="wmeta"><span><?= t('home.t48') ?></span><b>store.az</b></div>
       </a>
-      <a class="work" href="https://ymkwatercolor.com" target="_blank" rel="noopener">
+      <a class="work" href="<?= e(project_page('ymkwatercolor.com')) ?>">
         <div class="cover w6"><img class="media" src="/images/works/ymkwatercolor.com.jpg"<?= cover_srcset('/images/works/ymkwatercolor.com.jpg') ?> data-ph="/images/placeholder/work-6.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t49') ?></b></div>
         <h3>YMK Watercolor</h3>
         <div class="wmeta"><span><?= t('home.t50') ?></span><b>ymkwatercolor.com</b></div>

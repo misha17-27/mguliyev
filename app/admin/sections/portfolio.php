@@ -106,7 +106,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $keep = static function () use ($what, $gs, $ps, $L): void {
         $f = [];
         foreach (['name', 'slug', 'desc', 'intro', 'domain', 'move_to', 'image', 'archived',
-                  'text', 'seo_title', 'seo_desc'] as $k) {
+                  'text', 'seo_title', 'seo_desc', 'gallery'] as $k) {
             if (isset($_POST[$k]) && is_string($_POST[$k])) $f[$k] = post_one($_POST[$k], true);
         }
         $_SESSION['pf_draft'] = ['do' => $what, 'g' => $gs, 'p' => $ps, 'lang' => $L, 'f' => $f];
@@ -277,6 +277,24 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if ($was !== null && $was !== $slug) $al[] = $was;
             $al  = array_values(array_unique(array_diff($al, [$slug])));
             if ($al) $w['aliases'] = $al; else unset($w['aliases']);
+
+            /* Галерея — пути снимков по одному в строке. Неверная строка —
+               отказ, как у обложки: иначе опечатка молча выкидывала бы снимок. */
+            if (array_key_exists('gallery', $_POST)) {
+                $gal = [];
+                foreach (preg_split('~\R~u', post_one($_POST['gallery'], true)) as $line) {
+                    $line = trim($line);
+                    if ($line === '') continue;
+                    $gp = post_image($line);
+                    if ($gp === null || !is_file(ADMIN_WEBROOT . $gp)) {
+                        $err = 'В галерее строка «' . $line . '» — не путь к картинке на сайте. '
+                             . 'Нужен путь вида /images/…; загрузить снимок — в разделе «Изображения».';
+                        return null;
+                    }
+                    $gal[] = $gp;
+                }
+                $w['gallery'] = $gal;
+            }
 
             $w['domain']   = $dom;
             $w['image']    = $img;
@@ -460,7 +478,8 @@ if ($prj !== null || $ps === 'new'):
         <span class="lg full" style="vertical-align:3px;margin-left:6px"><?= $e(strtoupper($L)) ?></span></h3>
       <?php if (!$isNew): ?>
         <p class="muted" style="margin-top:6px">Страница:
-          <span class="path"><?= $e(portfolio_url($grp['slug'], $slug, $L)) ?></span>
+          <a class="path" href="<?= $e(portfolio_url($grp['slug'], $slug, $L)) ?>" target="_blank" rel="noopener"
+             title="Открыть страницу проекта на сайте"><?= $e(portfolio_url($grp['slug'], $slug, $L)) ?> ↗</a>
           · язык переключается вверху, справа</p>
       <?php elseif ($topL !== $DEF): ?>
         <p class="muted" style="margin-top:6px">Новый проект заполняется на русском — он основа
@@ -501,6 +520,17 @@ if ($prj !== null || $ps === 'new'):
           <?php endif; ?>
         </div>
       </div>
+
+      <?php $galList = implode("\n", array_map('strval', (array)($d['gallery'] ?? null ?: ($w['gallery'] ?? [])))); ?>
+      <label for="pf-gallery">Галерея на странице проекта <span class="hint">снимки сайта, путь по одному в строке; пусто — галереи нет</span></label>
+      <textarea id="pf-gallery" name="gallery" class="mono" rows="<?= max(3, min(9, substr_count($galList, "\n") + 2)) ?>"><?= $e($galList) ?></textarea>
+      <?php if (!empty($w['gallery'])): ?>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <?php foreach ((array)$w['gallery'] as $gp): ?>
+            <img src="<?= $e($gp) ?>" alt="" loading="lazy" style="width:110px;height:76px;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--line)">
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
 
       <label class="check">
         <input type="checkbox" name="archived" value="1"<?= !empty($w['archived']) ? ' checked' : '' ?>>
@@ -570,7 +600,8 @@ elseif ($grp !== null):
       <h3><?= $inL($grp['name']) ?>
         <span class="lg full" style="vertical-align:3px;margin-left:6px"><?= $e(strtoupper($L)) ?></span></h3>
       <p class="muted" style="margin-top:6px">Страница категории:
-        <span class="path"><?= $e(portfolio_url($grp['slug'], null, $L)) ?></span>
+        <a class="path" href="<?= $e(portfolio_url($grp['slug'], null, $L)) ?>" target="_blank" rel="noopener"
+           title="Открыть страницу категории на сайте"><?= $e(portfolio_url($grp['slug'], null, $L)) ?> ↗</a>
         · язык переключается вверху, справа</p>
 
       <?php
