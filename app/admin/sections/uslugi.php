@@ -155,20 +155,20 @@ if (!isset($cat[$cur])):
           /* Ключ в seo.php плоский — «veb-sayty», а не «uslugi/veb-sayty»:
              тот же, что $page в файле страницы. С путём точка врала,
              показывая «не заполнено» у заполненных. */
-          $hasSeo = !empty($seo[$slug][deflang()]['title']);
+          $hasSeo = !empty($seo[$slug][admin_lang()]['title']);     // на языке, выбранном вверху
           $fill = [];
           foreach (langs() as $l) $fill[$l] = ($c['title'][$l] ?? '') !== '' ? 1 : 0; ?>
         <tr>
           <td class="num"><?= admin_num($i++) ?></td>
-          <td><b><?= $e(tr($c['title'], deflang())) ?></b><br>
-              <span class="muted"><?= $e(mb_strimwidth(tr($c['lead'], deflang()), 0, 72, '…', 'UTF-8')) ?></span></td>
-          <td><span class="path">/uslugi/<?= $e($slug) ?>/</span></td>
+          <td><b><?= admin_in_lang($c['title']) ?></b><br>
+              <span class="muted"><?= admin_in_lang($c['lead'], 72) ?></span></td>
+          <td><span class="path"><?= $e(admin_site_url('/uslugi/' . $slug . '/')) ?></span></td>
           <td><b><?= count($c['items']) ?></b></td>
           <td><?= admin_lang_badges($fill, '/uslugi/' . $slug . '/') ?></td>
           <td><?= admin_dot($hasSeo, 'заголовок для поиска') ?></td>
           <td class="right"><div class="acts">
             <a class="btn sm" href="<?= $e(admin_url('uslugi', ['c' => $slug])) ?>">Изменить</a>
-            <a class="btn sm" href="/uslugi/<?= $e($slug) ?>/" target="_blank" rel="noopener">Открыть</a>
+            <a class="btn sm" href="<?= $e(admin_site_url('/uslugi/' . $slug . '/')) ?>" target="_blank" rel="noopener">Открыть ↗</a>
           </div></td>
         </tr>
         <?php endforeach; ?>

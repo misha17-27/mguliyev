@@ -411,3 +411,23 @@ table.list .acts .btn.x:hover{background:var(--err);color:#fff;border-color:var(
    экране она уже стоит в верхней строке. */
 .side nav a.only-phone{display:none}
 @media(max-width:900px){ .side nav a.only-phone{display:flex;margin-top:10px} }
+
+/* ---- Подпункты раздела в меню (Все проекты / Добавить / Категории) ---- */
+.side nav .subnav{background:var(--ink-2);padding:4px 0 8px}
+.side nav .subnav a{padding:8px 20px 8px 50px;font-size:13px;border-left:3px solid transparent}
+.side nav .subnav a.on{background:none;color:#fff;font-weight:700;border-left-color:var(--coral)}
+.side nav .subnav a.on:hover{background:var(--side-2)}
+
+/* ---- Фильтр списка по категориям: «Все 55 · Логистика 8 · …» ---- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.chips a{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--line);
+         border-radius:999px;font-size:13px;color:var(--text-2);background:#fff;text-decoration:none}
+.chips a span{color:var(--muted);font-size:12px}
+.chips a:hover{border-color:var(--text-2)}
+.chips a.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.chips a.on span{color:rgba(255,255,255,.7)}
+
+/* ---- Две колонки: форма добавления слева, список справа (как «Рубрики») ---- */
+.split{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:22px;align-items:start}
+.split > .panel{margin:0}
+@media(max-width:1100px){ .split{grid-template-columns:1fr} }

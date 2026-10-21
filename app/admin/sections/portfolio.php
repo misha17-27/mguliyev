@@ -1,14 +1,20 @@
 <?php
-/* Портфолио: отрасли и проекты, у каждого — своя страница на сайте.
+/* Портфолио: проекты и категории (отрасли), у каждого — своя страница на сайте.
 
-   ТРИ ВИДА:
-     ?section=portfolio                    список отраслей
-     ?section=portfolio&g=logistika        отрасль: её текст, SEO и список проектов
-     ?section=portfolio&g=logistika&p=…    проект: всё, что видно на его странице
+   ПРОЕКТЫ И КАТЕГОРИИ — ОТДЕЛЬНО, как записи и рубрики в WordPress:
+     ?section=portfolio                    все проекты одним списком
+     ?section=portfolio&cat=logistika      те же, только одной категории (и порядок)
+     ?section=portfolio&p=new              добавить проект
+     ?section=portfolio&p=itas-az          проект: всё, что видно на его странице
+     ?section=portfolio&view=cats          категории: список и «Добавить категорию»
+     ?section=portfolio&g=logistika        категория: название, текст, SEO
 
-   Раньше отрасль правилась одной формой со всеми проектами сразу — до
-   семисот полей, и чтобы поправить описание одного проекта, приходилось
-   отправлять все. Теперь у проекта своя форма, как у страницы на сайте.
+   Раньше проекты были видны только изнутри отрасли: чтобы найти проект,
+   надо было помнить, в какой он отрасли. Теперь главный экран — все
+   проекты сразу, с поиском и колонкой «Категория».
+
+   На сайте категория называется «отрасль» — так она и подписана на
+   страницах портфолио. В панели это одно и то же.
 
    ЯЗЫК — ТОТ, ЧТО ВЫБРАН ВВЕРХУ. Тексты правятся на одном языке за раз,
    под переводом виден русский оригинал. Сохранение меняет только этот
@@ -67,7 +73,18 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $what = post_one($_POST['do'] ?? '');
     $gs   = post_slug($_POST['g'] ?? '');
     $ps   = post_slug($_POST['p'] ?? '');
-    $back = admin_url('portfolio', array_filter(['g' => $gs, 'p' => $what === 'add-project' ? 'new' : $ps]));
+    /* Новый проект выбирает категорию в самой форме. */
+    if ($what === 'add-project') $gs = post_slug($_POST['move_to'] ?? '');
+
+    /* Куда вернуться, если сохранение не удалось: на тот же экран. */
+    switch ($what) {
+        case 'add-project':  $back = admin_url('portfolio', ['p' => 'new']); break;
+        case 'save-project':
+        case 'del-project':  $back = admin_url('portfolio', ['p' => $ps]); break;
+        case 'save-group':   $back = admin_url('portfolio', ['g' => $gs]); break;
+        case 'move':         $back = admin_url('portfolio', ['cat' => $gs]); break;
+        default:             $back = admin_url('portfolio', ['view' => 'cats']);
+    }
 
     /* Язык правки — из самой формы. См. комментарий в начале файла. */
     $L = post_one($_POST['lang'] ?? '');
@@ -78,7 +95,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             admin_go($back);
         }
         if (($what === 'add-group' || $what === 'add-project') && $L !== $DEF) {
-            admin_flash('НЕ СОХРАНЕНО: новые отрасли и проекты заводятся на русском — '
+            admin_flash('НЕ СОХРАНЕНО: новые категории и проекты заводятся на русском — '
                 . 'он основа для переводов. Переводы добавляются после.', 'err');
             admin_go($back);
         }
@@ -114,29 +131,62 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
            менялась, только когда менялась именно она. */
         $today = date('Y-m-d');
 
-        /* ------------------------------------------------ новая отрасль */
+        /* ---------------------------------------------- новая категория */
         if ($what === 'add-group') {
             $name = post_one($_POST['name'] ?? '');
             $k    = post_slug($_POST['slug'] ?? '');
             if ($name === '' || $k === '') { $err = 'Нужны и название, и адрес латиницей.'; return null; }
-            foreach ($groups as $g) if ($g['slug'] === $k) { $err = 'Отрасль с адресом «' . $k . '» уже есть.'; return null; }
-            $groups[] = ['slug' => $k, 'name' => [$L => $name], 'desc' => [], 'projects' => [], 'updated' => $today];
-            $msg = 'Отрасль добавлена. Её страница: /portfolio/' . $k . '/';
-            $go  = admin_url('portfolio', ['g' => $k]);
+            foreach ($groups as $g) if ($g['slug'] === $k) { $err = 'Категория с адресом «' . $k . '» уже есть.'; return null; }
+            $desc = post_one($_POST['desc'] ?? '', true);
+            $groups[] = ['slug' => $k, 'name' => [$L => $name], 'desc' => $desc !== '' ? [$L => $desc] : [],
+                         'projects' => [], 'updated' => $today];
+            $msg = 'Категория «' . $name . '» добавлена. Её страница: /portfolio/' . $k . '/ — '
+                 . 'она появится на сайте, когда в ней будут проекты.';
+            $go  = admin_url('portfolio', ['view' => 'cats']);
             return $groups;
         }
 
+        /* Проект ищется по адресу во всех категориях: экран проекта знает
+           только его адрес, а не категорию. */
         [$gi, $pi] = pf_locate($groups, $gs, ($what === 'save-project' || $what === 'del-project'
             || $what === 'move') ? $ps : null);
-        if ($gi === null) { $err = 'Отрасль или проект не найдены — возможно, их изменили из другой вкладки.'; return null; }
+        if ($gi === null) {
+            $err = $what === 'add-project'
+                ? 'Выберите категорию проекта.'
+                : 'Категория или проект не найдены — возможно, их изменили из другой вкладки.';
+            return null;
+        }
 
-        /* ---------------------------------------------- удалить отрасль */
+        /* ------------------------------------------ порядок категорий */
+        if ($what === 'move-group') {
+            $to = post_one($_POST['dir'] ?? '') === 'up' ? $gi - 1 : $gi + 1;
+            if (isset($groups[$to])) [$groups[$gi], $groups[$to]] = [$groups[$to], $groups[$gi]];
+            $msg = 'Порядок категорий изменён — так они идут и на сайте.';
+            $go  = admin_url('portfolio', ['view' => 'cats']);
+            return $groups;
+        }
+
+        /* --------------------------------------------- удалить категорию */
         if ($what === 'del-group') {
-            if (count($groups) < 2) { $err = 'Нельзя удалить последнюю отрасль: портфолио останется пустым.'; return null; }
+            if (count($groups) < 2) { $err = 'Нельзя удалить последнюю категорию: проектам негде будет быть.'; return null; }
+            /* Проекты не удаляются вместе с категорией, а переходят в
+               выбранную — как записи удалённой рубрики в WordPress. Удалить
+               проекты целиком — отдельное и осознанное действие. */
             $n = count($groups[$gi]['projects']);
+            $name = tr($groups[$gi]['name'], deflang());
+            if ($n > 0) {
+                $to = post_slug($_POST['move_to'] ?? '');
+                [$ti] = pf_locate($groups, $to);
+                if ($ti === null || $ti === $gi) { $err = 'Выберите, в какую категорию перейдут её проекты.'; return null; }
+                foreach ($groups[$gi]['projects'] as $w) $groups[$ti]['projects'][] = $w;
+                $groups[$ti]['updated'] = $today;
+                $msg = 'Категория «' . $name . '» удалена. Её проекты (' . $n . ') перешли в «'
+                     . tr($groups[$ti]['name'], deflang()) . '»; их прежние адреса ведут на новые сами.';
+            } else {
+                $msg = 'Категория «' . $name . '» удалена.';
+            }
             array_splice($groups, $gi, 1);
-            $msg = 'Отрасль удалена вместе с проектами: ' . $n . '.';
-            $go  = admin_url('portfolio');
+            $go = admin_url('portfolio', ['view' => 'cats']);
             return $groups;
         }
 
@@ -152,7 +202,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 'description' => post_one($_POST['seo_desc'] ?? '', true),
             ];
             $groups[$gi]['updated'] = $today;
-            $msg = 'Отрасль сохранена (' . strtoupper($L) . ').';
+            $msg = 'Категория сохранена (' . strtoupper($L) . ').';
             return $groups;
         }
 
@@ -164,8 +214,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if (isset($list[$to])) [$list[$pi], $list[$to]] = [$list[$to], $list[$pi]];
             unset($list);
             $groups[$gi]['updated'] = $today;
-            $msg = 'Порядок изменён.';
-            $go  = admin_url('portfolio', ['g' => $gs]);
+            $msg = 'Порядок изменён — так проекты идут и на сайте.';
+            $go  = admin_url('portfolio', ['cat' => $groups[$gi]['slug']]);
             return $groups;
         }
 
@@ -176,7 +226,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             array_splice($groups[$gi]['projects'], $pi, 1);
             $groups[$gi]['updated'] = $today;
             $msg = 'Проект ' . $dom . ' удалён. Его страница больше не открывается.';
-            $go  = admin_url('portfolio', ['g' => $gs]);
+            $go  = admin_url('portfolio');
             return $groups;
         }
 
@@ -192,7 +242,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if (isset($taken[$slug])) {
                 /* Проверка по ВСЕМ отраслям: из домена собирается адрес страницы,
                    и два проекта с одним адресом открывали бы одну страницу. */
-                $err = 'Проект с адресом /' . $slug . '/ уже есть в отрасли «' . $taken[$slug] . '».';
+                $err = 'Проект с адресом /' . $slug . '/ уже есть в категории «' . $taken[$slug] . '».';
                 return null;
             }
 
@@ -264,7 +314,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if ($was !== null && ($was !== $slug || $ti !== $gi)) {
                 $msg .= ' Адрес страницы сменился — прежний ведёт на новый сам.';
             }
-            $go   = admin_url('portfolio', ['g' => $newG, 'p' => $slug]);
+            $go   = admin_url('portfolio', ['p' => $slug]);
             return $groups;
         }
 
@@ -288,16 +338,41 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
 /* ============================================================= отрисовка */
 $groups = works_canon();
-$gs  = post_slug($_GET['g'] ?? '');
-$ps  = (string)($_GET['p'] ?? '');
-$ps  = $ps === 'new' ? 'new' : post_slug($ps);
-[$gi, $pi] = $gs !== '' ? pf_locate($groups, $gs, $ps !== '' && $ps !== 'new' ? $ps : null) : [null, null];
-$grp = $gi !== null ? $groups[$gi] : null;
-$prj = ($grp !== null && $pi !== null) ? $grp['projects'][$pi] : null;
+$gs   = post_slug($_GET['g'] ?? '');
+$ps   = is_string($_GET['p'] ?? null) ? $_GET['p'] : '';
+$ps   = $ps === 'new' ? 'new' : post_slug($ps);
+$cat  = post_slug($_GET['cat'] ?? '');
+$view = ($_GET['view'] ?? '') === 'cats' ? 'cats' : '';
+
+/* Категория по адресу: номер в массиве или null. */
+$catIndex = static function (string $slug) use ($groups): ?int {
+    foreach ($groups as $i => $g) if ($g['slug'] === $slug) return $i;
+    return null;
+};
+
+/* Что открыто. Проект ищется по адресу во всех категориях. */
+$grp = $prj = null;
+if ($ps !== '' && $ps !== 'new') {
+    [$gi, $pi] = pf_locate($groups, '', $ps);
+    if ($gi === null) {
+        admin_flash('Проекта с адресом «' . $ps . '» нет — возможно, его удалили или сменили домен.', 'warn');
+        admin_go(admin_url('portfolio'));
+    }
+    $grp = $groups[$gi];
+    $prj = $grp['projects'][$pi];
+} elseif ($gs !== '') {
+    $gi = $catIndex($gs);
+    if ($gi === null) {
+        admin_flash('Категории «' . $gs . '» нет.', 'warn');
+        admin_go(admin_url('portfolio', ['view' => 'cats']));
+    }
+    $grp = $groups[$gi];
+}
+if ($cat !== '' && $catIndex($cat) === null) $cat = '';
 
 /* Новый проект заполняется на русском, какой бы язык ни был выбран. */
 $topL = $L;
-if ($grp !== null && $prj === null && $ps === 'new') $L = $DEF;
+if ($ps === 'new') $L = $DEF;
 
 /* Текст, вписанный перед ошибкой сохранения: вернуть его в форму. */
 $draft = $_SESSION['pf_draft'] ?? null;
@@ -328,89 +403,38 @@ $field = static function (string $name, array $vals, string $label, array $o = [
     if ($isT && $src !== '') echo '<div class="src"><b>' . $e(strtoupper($DEF)) . ':</b> ' . nl2br($e($src)) . '</div>';
 };
 
+/* В списках и заголовках — текст на языке, выбранном вверху. Нет перевода —
+   русский и пометка: на сайте на этом языке будет он же. Раньше списки
+   всегда были русскими, и переключение языка в них ничего не меняло. */
+$txt = static fn(array $vals): string => (string)(($vals[$L] ?? '') !== '' ? $vals[$L] : ($vals[$DEF] ?? ''));
+$inL = static fn(array $vals): string => admin_in_lang($vals);   // см. app/admin/layout.php
+
 /** Заполнен ли свой заголовок для поиска на текущем языке. */
 $hasSeo = static fn(array $x): bool => ($x['seo'][$L]['title'] ?? '') !== '';
 
+/** Скрытые поля, общие для всех форм раздела. */
+$hidden = static function (string $do, array $more = []) use ($e): void {
+    echo '<input type="hidden" name="_csrf" value="' . $e(csrf_token()) . '">';
+    echo admin_ver_field('works.json');
+    echo '<input type="hidden" name="do" value="' . $e($do) . '">';
+    foreach ($more as $k => $v) echo '<input type="hidden" name="' . $e($k) . '" value="' . $e($v) . '">';
+};
+
+$total = 0;
+foreach ($groups as $g) $total += count($g['projects']);
+
 admin_head('portfolio');
 
-/* ------------------------------------------------------- 1. ОТРАСЛИ */
-if ($grp === null):
-?>
-  <div class="note">
-    У каждой отрасли и у каждого проекта своя страница на сайте — со своим
-    заголовком и описанием для поиска. Пока их не заполнили, они собираются
-    сами из названия, домена и отрасли.
-  </div>
-
-  <div class="panel">
-    <?php admin_list_head(count($groups), 'Отраслей', 'Добавить отрасль', '#dobavit'); ?>
-    <div class="tablewrap">
-      <table class="list">
-        <tr>
-          <th class="num">№</th><th class="pic">Обложка</th><th>Отрасль</th><th>Адрес</th>
-          <th>Проектов</th><th>SEO</th><th>Языки</th><th class="right"></th>
-        </tr>
-        <?php foreach ($groups as $i => $g):
-          $n = count($g['projects']);
-          $a = count(array_filter($g['projects'], static fn($w) => !empty($w['archived'])));
-          $fill = [];
-          foreach (langs() as $l) $fill[$l] = ($g['name'][$l] ?? '') !== '' ? 1 : 0;
-        ?>
-        <tr>
-          <td class="num"><?= admin_num($i) ?></td>
-          <td class="pic"><?= admin_thumb(group_cover($g['slug']), '') ?></td>
-          <td><b class="clamp"><?= $e(tr($g['name'], $DEF)) ?></b>
-              <span class="muted clamp"><?= $e(tr($g['desc'], $DEF)) ?></span></td>
-          <td><span class="path" title="<?= $e('/portfolio/' . $g['slug'] . '/') ?>">/portfolio/<?= $e($g['slug']) ?>/</span></td>
-          <td><b><?= $n ?></b><?= $a ? ' <span class="pill grey">' . $a . ' в архиве</span>' : '' ?></td>
-          <td><?= admin_dot($hasSeo($g), 'свой заголовок для поиска') ?></td>
-          <td><?= admin_lang_badges($fill, '/portfolio/' . $g['slug'] . '/') ?></td>
-          <td class="right"><div class="acts">
-            <a class="btn sm" href="<?= $e(admin_url('portfolio', ['g' => $g['slug']])) ?>">Изменить</a>
-            <a class="btn sm" href="<?= $e(portfolio_url($g['slug'], null, $DEF)) ?>" target="_blank" rel="noopener">Открыть ↗</a>
-          </div></td>
-        </tr>
-        <?php endforeach; ?>
-      </table>
-    </div>
-  </div>
-
-  <?php $d = $df('add-group', null, null) ?? []; ?>
-  <div class="panel" id="dobavit">
-    <h3>Добавить отрасль</h3>
-    <?php if ($L !== $DEF): ?>
-      <p class="muted">Новая отрасль заводится на русском — он основа для переводов.
-         Перевести название можно сразу после, на странице отрасли.</p>
-    <?php endif; ?>
-    <form method="post" action="<?= $e(admin_url('portfolio')) ?>">
-      <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
-      <?= admin_ver_field('works.json') ?>
-      <input type="hidden" name="do" value="add-group">
-      <input type="hidden" name="lang" value="<?= $e($DEF) ?>">
-      <div class="row">
-        <div>
-          <label>Название <span class="pill grey"><?= $e(strtoupper($DEF)) ?></span></label>
-          <input type="text" name="name" value="<?= $e($d['name'] ?? '') ?>" placeholder="Образование и курсы">
-        </div>
-        <div>
-          <label>Адрес <span class="hint">латиницей: станет /portfolio/адрес/</span></label>
-          <input type="text" name="slug" class="mono" value="<?= $e($d['slug'] ?? '') ?>" placeholder="obrazovanie">
-        </div>
-      </div>
-      <div class="btnrow"><button class="btn" type="submit">Добавить</button></div>
-    </form>
-  </div>
-
-<?php
-/* ----------------------------------------------- 2. ПРОЕКТ (правка/новый) */
-elseif ($prj !== null || $ps === 'new'):
+/* ================================================== 1. ПРОЕКТ (правка/новый) */
+if ($prj !== null || $ps === 'new'):
     $isNew = $prj === null;
     $w = $prj ?? ['domain' => '', 'desc' => [], 'image' => null, 'archived' => false, 'text' => [], 'seo' => []];
     $slug = $isNew ? '' : project_slug($w['domain']);
     $auto = $isNew ? ['title' => '', 'description' => ''] : portfolio_seo($grp, $w, $L);
-    $moveTo = $grp['slug'];
+    /* Категория: у нового — та, из списка которой пришли, иначе первая. */
+    $moveTo = $grp !== null ? $grp['slug'] : ($cat !== '' ? $cat : ($groups[0]['slug'] ?? ''));
 
-    $d = $isNew ? $df('add-project', $grp['slug'], null) : $df('save-project', $grp['slug'], $slug);
+    $d = $isNew ? $df('add-project', null, null) : $df('save-project', null, $slug);
     if ($d !== null) {
         $w['domain']   = $d['domain'] ?? $w['domain'];
         $w['image']    = ($d['image'] ?? '') !== '' ? $d['image'] : null;
@@ -422,20 +446,17 @@ elseif ($prj !== null || $ps === 'new'):
     }
 ?>
   <p style="margin:0 0 16px;display:flex;gap:8px;flex-wrap:wrap">
-    <a class="btn ghost sm" href="<?= $e(admin_url('portfolio')) ?>">← Все отрасли</a>
-    <a class="btn ghost sm" href="<?= $e(admin_url('portfolio', ['g' => $grp['slug']])) ?>">← <?= $e(tr($grp['name'], $DEF)) ?></a>
+    <a class="btn ghost sm" href="<?= $e(admin_url('portfolio')) ?>">← Все проекты</a>
+    <?php if ($grp !== null): ?>
+      <a class="btn ghost sm" href="<?= $e(admin_url('portfolio', ['cat' => $grp['slug']])) ?>">Проекты категории «<?= $e($txt($grp['name'])) ?>»</a>
+    <?php endif; ?>
   </p>
 
   <form method="post" action="<?= $e(admin_url('portfolio')) ?>" data-guard="1">
-    <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
-    <?= admin_ver_field('works.json') ?>
-    <input type="hidden" name="do" value="<?= $isNew ? 'add-project' : 'save-project' ?>">
-    <input type="hidden" name="g" value="<?= $e($grp['slug']) ?>">
-    <input type="hidden" name="p" value="<?= $e($slug) ?>">
-    <input type="hidden" name="lang" value="<?= $e($L) ?>">
+    <?php $hidden($isNew ? 'add-project' : 'save-project', ['g' => $grp['slug'] ?? '', 'p' => $slug, 'lang' => $L]); ?>
 
     <div class="panel">
-      <h3><?= $isNew ? 'Новый проект' : $e(tr($w['desc'], $DEF)) ?>
+      <h3><?= $isNew ? 'Новый проект' : $inL($w['desc']) ?>
         <span class="lg full" style="vertical-align:3px;margin-left:6px"><?= $e(strtoupper($L)) ?></span></h3>
       <?php if (!$isNew): ?>
         <p class="muted" style="margin-top:6px">Страница:
@@ -452,12 +473,13 @@ elseif ($prj !== null || $ps === 'new'):
           <input type="text" name="domain" class="mono" value="<?= $e($w['domain']) ?>" placeholder="example.az" required>
         </div>
         <div>
-          <label>Отрасль</label>
+          <label>Категория <span class="hint">при смене прежний адрес ведёт на новый</span></label>
           <select name="move_to">
             <?php foreach ($groups as $g): ?>
-              <option value="<?= $e($g['slug']) ?>"<?= $g['slug'] === $moveTo ? ' selected' : '' ?>><?= $e(tr($g['name'], $DEF)) ?></option>
+              <option value="<?= $e($g['slug']) ?>"<?= $g['slug'] === $moveTo ? ' selected' : '' ?>><?= $e($txt($g['name'])) ?></option>
             <?php endforeach; ?>
           </select>
+          <p class="muted" style="margin-top:6px"><a href="<?= $e(admin_url('portfolio', ['view' => 'cats'])) ?>">Категории</a> — добавить новую или поправить название.</p>
         </div>
       </div>
 
@@ -466,7 +488,7 @@ elseif ($prj !== null || $ps === 'new'):
 
       <div class="row">
         <div>
-          <label>Снимок сайта <span class="hint">путь внутри сайта; пусто — отраслевая подложка</span></label>
+          <label>Снимок сайта <span class="hint">путь внутри сайта; пусто — подложка категории</span></label>
           <input type="text" name="image" class="mono" value="<?= $e($w['image'] ?? '') ?>"
                  placeholder="/images/works/<?= $e($w['domain'] !== '' ? $w['domain'] : 'example.az') ?>.jpg">
           <p class="muted" style="margin-top:6px">Загрузить снимок — в разделе
@@ -489,7 +511,7 @@ elseif ($prj !== null || $ps === 'new'):
     <div class="panel">
       <h3>Текст страницы</h3>
       <p class="muted">Что было за задача и что сделали. Абзацы разделяйте пустой строкой.
-         Пусто — на странице будут только снимок, отрасль и ссылка: придумывать рассказ
+         Пусто — на странице будут только снимок, категория и ссылка: придумывать рассказ
          о проекте за заказчика мы не будем.</p>
       <?php $field('text', $w['text'] ?? [], 'Текст', ['area' => true, 'rows' => 7]); ?>
     </div>
@@ -507,7 +529,7 @@ elseif ($prj !== null || $ps === 'new'):
 
     <div class="btnrow">
       <button class="btn" type="submit"><?= $isNew ? 'Добавить проект' : 'Сохранить' ?></button>
-      <a class="btn ghost" href="<?= $e(admin_url('portfolio', ['g' => $grp['slug']])) ?>">Отменить</a>
+      <a class="btn ghost" href="<?= $e(admin_url('portfolio', $grp !== null ? ['cat' => $grp['slug']] : [])) ?>">Отменить</a>
       <?php if (!$isNew): ?>
         <a class="btn ghost" href="<?= $e(portfolio_url($grp['slug'], $slug, $L)) ?>" target="_blank" rel="noopener">Открыть страницу ↗</a>
       <?php endif; ?>
@@ -517,18 +539,14 @@ elseif ($prj !== null || $ps === 'new'):
   <?php if (!$isNew): ?>
   <form method="post" action="<?= $e(admin_url('portfolio')) ?>" style="margin-top:26px"
         data-confirm="Удалить проект <?= $e($w['domain']) ?>? Его страница перестанет открываться, восстановить будет нечем.">
-    <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
-    <?= admin_ver_field('works.json') ?>
-    <input type="hidden" name="do" value="del-project">
-    <input type="hidden" name="g" value="<?= $e($grp['slug']) ?>">
-    <input type="hidden" name="p" value="<?= $e($slug) ?>">
+    <?php $hidden('del-project', ['g' => $grp['slug'], 'p' => $slug]); ?>
     <button class="btn red sm" type="submit">Удалить проект</button>
   </form>
   <?php endif; ?>
 
 <?php
-/* --------------------------------------------------------- 3. ОТРАСЛЬ */
-else:
+/* ========================================================== 2. КАТЕГОРИЯ */
+elseif ($grp !== null):
     $n = count($grp['projects']);
     $auto = portfolio_seo($grp, null, $L);
 
@@ -540,26 +558,25 @@ else:
         $grp['seo'][$L]   = ['title' => $d['seo_title'] ?? '', 'description' => $d['seo_desc'] ?? ''];
     }
 ?>
-  <p style="margin:0 0 16px"><a class="btn ghost sm" href="<?= $e(admin_url('portfolio')) ?>">← Все отрасли</a></p>
+  <p style="margin:0 0 16px;display:flex;gap:8px;flex-wrap:wrap">
+    <a class="btn ghost sm" href="<?= $e(admin_url('portfolio', ['view' => 'cats'])) ?>">← Все категории</a>
+    <a class="btn ghost sm" href="<?= $e(admin_url('portfolio', ['cat' => $grp['slug']])) ?>">Проекты этой категории — <?= $n ?></a>
+  </p>
 
   <form method="post" action="<?= $e(admin_url('portfolio')) ?>" data-guard="1">
-    <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
-    <?= admin_ver_field('works.json') ?>
-    <input type="hidden" name="do" value="save-group">
-    <input type="hidden" name="g" value="<?= $e($grp['slug']) ?>">
-    <input type="hidden" name="lang" value="<?= $e($L) ?>">
+    <?php $hidden('save-group', ['g' => $grp['slug'], 'lang' => $L]); ?>
 
     <div class="panel">
-      <h3><?= $e(tr($grp['name'], $DEF)) ?>
+      <h3><?= $inL($grp['name']) ?>
         <span class="lg full" style="vertical-align:3px;margin-left:6px"><?= $e(strtoupper($L)) ?></span></h3>
-      <p class="muted" style="margin-top:6px">Страница:
+      <p class="muted" style="margin-top:6px">Страница категории:
         <span class="path"><?= $e(portfolio_url($grp['slug'], null, $L)) ?></span>
         · язык переключается вверху, справа</p>
 
       <?php
-      $field('name', $grp['name'], 'Название отрасли', ['hint' => 'заголовок страницы и кнопка в портфолио']);
+      $field('name', $grp['name'], 'Название', ['hint' => 'заголовок страницы и кнопка в портфолио']);
       $field('desc', $grp['desc'], 'Коротко', ['area' => true, 'rows' => 2, 'hint' => 'под заголовком страницы']);
-      $field('intro', $grp['intro'] ?? [], 'Текст страницы отрасли',
+      $field('intro', $grp['intro'] ?? [], 'Текст страницы категории',
           ['area' => true, 'rows' => 5, 'hint' => 'необязательно; абзацы — через пустую строку']);
       ?>
     </div>
@@ -576,64 +593,181 @@ else:
     </div>
 
     <div class="btnrow">
-      <button class="btn" type="submit">Сохранить отрасль</button>
+      <button class="btn" type="submit">Сохранить категорию</button>
       <a class="btn ghost" href="<?= $e(portfolio_url($grp['slug'], null, $L)) ?>" target="_blank" rel="noopener">Открыть страницу ↗</a>
     </div>
   </form>
 
+  <?php if (count($groups) > 1): ?>
   <div class="panel" style="margin-top:26px">
-    <?php admin_list_head($n, 'Проектов в отрасли', 'Добавить проект',
-        admin_url('portfolio', ['g' => $grp['slug'], 'p' => 'new'])); ?>
+    <h3>Удалить категорию</h3>
+    <form method="post" action="<?= $e(admin_url('portfolio')) ?>"
+          data-confirm="Удалить категорию «<?= $e($txt($grp['name'])) ?>»? Её страница перестанет открываться.">
+      <?php $hidden('del-group', ['g' => $grp['slug']]); ?>
+      <?php if ($n > 0): ?>
+        <p class="muted">Проекты не удаляются вместе с категорией: её <?= $n ?> <?= $n === 1 ? 'проект перейдёт' : 'проекта или больше перейдут' ?>
+           в выбранную категорию, а их прежние адреса будут вести на новые.</p>
+        <label>Куда перенести проекты</label>
+        <select name="move_to" required>
+          <option value="">— выберите категорию —</option>
+          <?php foreach ($groups as $g): if ($g['slug'] === $grp['slug']) continue; ?>
+            <option value="<?= $e($g['slug']) ?>"><?= $e($txt($g['name'])) ?> (<?= count($g['projects']) ?>)</option>
+          <?php endforeach; ?>
+        </select>
+      <?php else: ?>
+        <p class="muted">В категории нет проектов.</p>
+      <?php endif; ?>
+      <div class="btnrow"><button class="btn red sm" type="submit">Удалить категорию</button></div>
+    </form>
+  </div>
+  <?php endif; ?>
+
+<?php
+/* ======================================================== 3. КАТЕГОРИИ */
+elseif ($view === 'cats'):
+    $d = $df('add-group', null, null) ?? [];
+?>
+  <div class="split">
+    <div class="panel" id="dobavit">
+      <h3>Добавить категорию</h3>
+      <?php if ($L !== $DEF): ?>
+        <p class="muted">Новая категория заводится на русском — он основа для переводов.
+           Перевести название можно сразу после, на странице категории.</p>
+      <?php endif; ?>
+      <form method="post" action="<?= $e(admin_url('portfolio')) ?>">
+        <?php $hidden('add-group', ['lang' => $DEF]); ?>
+        <label for="cat-name">Название <span class="pill grey"><?= $e(strtoupper($DEF)) ?></span></label>
+        <input type="text" id="cat-name" name="name" value="<?= $e($d['name'] ?? '') ?>" placeholder="Образование и курсы" required>
+        <p class="muted" style="margin-top:6px">Так категория называется на сайте.</p>
+
+        <label for="cat-slug">Адрес</label>
+        <input type="text" id="cat-slug" name="slug" class="mono" value="<?= $e($d['slug'] ?? '') ?>" placeholder="obrazovanie" required>
+        <p class="muted" style="margin-top:6px">Латиницей, цифрами и дефисом: станет /portfolio/адрес/.</p>
+
+        <label for="cat-desc">Описание <span class="hint">необязательно</span></label>
+        <textarea id="cat-desc" name="desc" rows="3"><?= $e($d['desc'] ?? '') ?></textarea>
+        <p class="muted" style="margin-top:6px">Строка под заголовком страницы категории.</p>
+
+        <div class="btnrow"><button class="btn" type="submit">Добавить категорию</button></div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <?php admin_list_head(count($groups), 'Категорий'); ?>
+      <div class="tablewrap">
+        <table class="list">
+          <tr>
+            <th class="pic">Обложка</th><th>Название</th><th>Адрес</th><th>Проектов</th>
+            <th>SEO</th><th>Языки</th><th class="right"></th>
+          </tr>
+          <?php foreach ($groups as $i => $g):
+            $n = count($g['projects']);
+            $fill = [];
+            foreach (langs() as $l) $fill[$l] = ($g['name'][$l] ?? '') !== '' ? 1 : 0;
+          ?>
+          <tr>
+            <td class="pic"><?= admin_thumb(group_cover($g['slug']), '') ?></td>
+            <td><a href="<?= $e(admin_url('portfolio', ['g' => $g['slug']])) ?>"><b class="clamp"><?= $inL($g['name']) ?></b></a>
+                <span class="muted clamp"><?= $e($txt($g['desc'])) ?></span></td>
+            <td><span class="path" title="<?= $e('/portfolio/' . $g['slug'] . '/') ?>">/portfolio/<?= $e($g['slug']) ?>/</span></td>
+            <td><a href="<?= $e(admin_url('portfolio', ['cat' => $g['slug']])) ?>"><b><?= $n ?></b></a></td>
+            <td><?= admin_dot($hasSeo($g), 'свой заголовок для поиска') ?></td>
+            <td><?= admin_lang_badges($fill, '/portfolio/' . $g['slug'] . '/') ?></td>
+            <td class="right"><div class="acts">
+              <a class="btn sm" href="<?= $e(admin_url('portfolio', ['g' => $g['slug']])) ?>">Изменить</a>
+              <?php foreach (['up' => '↑', 'down' => '↓'] as $dir => $arrow):
+                $edge = $dir === 'up' ? $i === 0 : $i === count($groups) - 1; ?>
+                <form method="post" action="<?= $e(admin_url('portfolio')) ?>">
+                  <?php $hidden('move-group', ['dir' => $dir, 'g' => $g['slug']]); ?>
+                  <button class="btn sm" type="submit" title="<?= $dir === 'up' ? 'Выше' : 'Ниже' ?>"<?= $edge ? ' disabled' : '' ?>><?= $arrow ?></button>
+                </form>
+              <?php endforeach; ?>
+              <a class="btn sm" href="<?= $e(portfolio_url($g['slug'], null, $L)) ?>" target="_blank" rel="noopener" title="Открыть страницу на <?= $e(strtoupper($L)) ?>">↗</a>
+            </div></td>
+          </tr>
+          <?php endforeach; ?>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:12px">Порядок категорий — тот же, что в портфолио на сайте.
+         Удалить категорию можно на её странице: проекты при этом переходят в другую.</p>
+    </div>
+  </div>
+
+<?php
+/* ===================================================== 4. ВСЕ ПРОЕКТЫ */
+else:
+    /* Строки списка: все проекты в порядке сайта или одной категории. */
+    $rows = [];
+    foreach ($groups as $g) {
+        if ($cat !== '' && $g['slug'] !== $cat) continue;
+        foreach ($g['projects'] as $pi => $w) $rows[] = [$g, $w, $pi, count($g['projects'])];
+    }
+    $catName = $cat !== '' ? $txt($groups[$catIndex($cat)]['name']) : '';
+?>
+  <div class="panel">
+    <?php admin_list_head(count($rows), $cat !== '' ? 'Проектов в категории' : 'Проектов', 'Добавить проект',
+        admin_url('portfolio', array_filter(['p' => 'new', 'cat' => $cat]))); ?>
+
+    <nav class="chips" aria-label="Категории">
+      <a href="<?= $e(admin_url('portfolio')) ?>"<?= $cat === '' ? ' class="on" aria-current="true"' : '' ?>>Все <span><?= $total ?></span></a>
+      <?php foreach ($groups as $g): ?>
+        <a href="<?= $e(admin_url('portfolio', ['cat' => $g['slug']])) ?>"<?= $cat === $g['slug'] ? ' class="on" aria-current="true"' : '' ?>><?= $e($txt($g['name'])) ?> <span><?= count($g['projects']) ?></span></a>
+      <?php endforeach; ?>
+    </nav>
+
+    <div class="row" style="align-items:end;margin-top:6px">
+      <div>
+        <label for="texts-filter">Поиск по названию и домену</label>
+        <input type="search" id="texts-filter" placeholder="например, itas или перевозки" autocomplete="off">
+      </div>
+      <div><p class="muted" id="texts-count" aria-live="polite" style="margin:0 0 10px"></p></div>
+    </div>
+
+    <?php if ($cat === ''): ?>
+      <p class="muted">Порядок проектов меняется стрелками внутри категории — откройте её выше.</p>
+    <?php endif; ?>
+
     <div class="tablewrap">
       <table class="list">
         <tr>
-          <th class="num">№</th><th class="pic">Снимок</th><th>Проект</th><th>Адрес страницы</th>
-          <th>Текст</th><th>SEO</th><th>Языки</th><th class="right"></th>
+          <th class="num">№</th><th class="pic">Снимок</th><th>Проект</th><th>Категория</th>
+          <th>Адрес страницы</th><th>Текст</th><th>SEO</th><th>Языки</th><th class="right"></th>
         </tr>
-        <?php foreach ($grp['projects'] as $i => $w):
+        <?php foreach ($rows as $i => [$g, $w, $pi, $cnt]):
           $slug = project_slug($w['domain']);
           $fill = [];
           foreach (langs() as $l) $fill[$l] = ($w['desc'][$l] ?? '') !== '' ? 1 : 0;
+          $hay  = mb_strtolower($txt($w['desc']) . ' ' . tr($w['desc'], $DEF) . ' ' . $w['domain'] . ' ' . $txt($g['name']));
         ?>
-        <tr>
+        <tr data-text-row="<?= $e($hay) ?>">
           <td class="num"><?= admin_num($i) ?></td>
-          <td class="pic"><?= admin_thumb(project_cover($w, $grp), $w['domain']) ?></td>
-          <td><b class="clamp"><?= $e(tr($w['desc'], $DEF)) ?></b>
+          <td class="pic"><?= admin_thumb(project_cover($w, $g), $w['domain']) ?></td>
+          <td><a href="<?= $e(admin_url('portfolio', ['p' => $slug])) ?>"><b class="clamp"><?= $inL($w['desc']) ?></b></a>
               <span class="muted"><?= $e($w['domain']) ?><?= !empty($w['archived']) ? ' · <span class="pill grey">архив</span>' : '' ?></span></td>
-          <td><span class="path" title="<?= $e('/portfolio/' . $grp['slug'] . '/' . $slug . '/') ?>">…/<?= $e($slug) ?>/</span></td>
+          <td><a href="<?= $e(admin_url('portfolio', ['cat' => $g['slug']])) ?>"><?= $e($txt($g['name'])) ?></a></td>
+          <td><span class="path" title="<?= $e('/portfolio/' . $g['slug'] . '/' . $slug . '/') ?>">…/<?= $e($slug) ?>/</span></td>
           <td><?= admin_dot(($w['text'][$L] ?? '') !== '', 'текст страницы') ?></td>
           <td><?= admin_dot($hasSeo($w), 'свой заголовок для поиска') ?></td>
-          <td><?= admin_lang_badges($fill, '/portfolio/' . $grp['slug'] . '/' . $slug . '/') ?></td>
+          <td><?= admin_lang_badges($fill, '/portfolio/' . $g['slug'] . '/' . $slug . '/') ?></td>
           <td class="right"><div class="acts">
-            <a class="btn sm" href="<?= $e(admin_url('portfolio', ['g' => $grp['slug'], 'p' => $slug])) ?>">Изменить</a>
-            <?php foreach (['up' => '↑', 'down' => '↓'] as $dir => $arrow):
-              $edge = $dir === 'up' ? $i === 0 : $i === $n - 1; ?>
+            <a class="btn sm" href="<?= $e(admin_url('portfolio', ['p' => $slug])) ?>">Изменить</a>
+            <?php if ($cat !== ''): foreach (['up' => '↑', 'down' => '↓'] as $dir => $arrow):
+              $edge = $dir === 'up' ? $pi === 0 : $pi === $cnt - 1; ?>
               <form method="post" action="<?= $e(admin_url('portfolio')) ?>">
-                <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
-                <?= admin_ver_field('works.json') ?>
-                <input type="hidden" name="do" value="move">
-                <input type="hidden" name="dir" value="<?= $dir ?>">
-                <input type="hidden" name="g" value="<?= $e($grp['slug']) ?>">
-                <input type="hidden" name="p" value="<?= $e($slug) ?>">
+                <?php $hidden('move', ['dir' => $dir, 'g' => $g['slug'], 'p' => $slug]); ?>
                 <button class="btn sm" type="submit" title="<?= $dir === 'up' ? 'Выше' : 'Ниже' ?>"<?= $edge ? ' disabled' : '' ?>><?= $arrow ?></button>
               </form>
-            <?php endforeach; ?>
-            <a class="btn sm" href="<?= $e(portfolio_url($grp['slug'], $slug, $DEF)) ?>" target="_blank" rel="noopener" title="Открыть страницу">↗</a>
+            <?php endforeach; endif; ?>
+            <a class="btn sm" href="<?= $e(portfolio_url($g['slug'], $slug, $L)) ?>" target="_blank" rel="noopener" title="Открыть страницу на <?= $e(strtoupper($L)) ?>">↗</a>
           </div></td>
         </tr>
         <?php endforeach; ?>
       </table>
     </div>
+    <?php if (!$rows): ?>
+      <p class="muted" style="margin-top:12px">В этой категории пока нет проектов.</p>
+    <?php endif; ?>
   </div>
-
-  <form method="post" action="<?= $e(admin_url('portfolio')) ?>" style="margin-top:26px"
-        data-confirm="Удалить отрасль «<?= $e(tr($grp['name'], $DEF)) ?>» вместе с <?= $n ?> проектами? Их страницы перестанут открываться, восстановить будет нечем.">
-    <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
-    <?= admin_ver_field('works.json') ?>
-    <input type="hidden" name="do" value="del-group">
-    <input type="hidden" name="g" value="<?= $e($grp['slug']) ?>">
-    <button class="btn red sm" type="submit">Удалить отрасль вместе с проектами</button>
-  </form>
 <?php endif; ?>
 
 <?php admin_foot(); ?>

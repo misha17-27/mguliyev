@@ -19,7 +19,7 @@ function admin_assets(): void
     ?>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@600;700&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/admin/assets/admin.css?v=3">
+<link rel="stylesheet" href="/admin/assets/admin.css?v=4">
 <link rel="icon" href="/admin/assets/favicon.ico?v=3" sizes="32x32">
 <link rel="icon" href="/admin/assets/favicon.svg?v=3" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/admin/assets/apple-touch-icon.png?v=3">
@@ -56,6 +56,45 @@ function admin_sections(): array
 
         'seo'       => ['Заголовки для поиска', '⌕', null],
         'texts'     => ['Строки страниц',      'Aa', null],
+    ];
+}
+
+/** Значение на языке, выбранном вверху, — готово к выводу в разметку.
+    Нет перевода — русское и пометка «нет AZ»: на сайте на этом языке
+    будет оно же. Раньше списки разделов всегда были русскими, и
+    переключение языка в них ничего видимого не меняло. */
+function admin_in_lang(array $vals, int $max = 0): string
+{
+    $e   = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    $L   = admin_lang();
+    $def = deflang();
+    $own = is_string($vals[$L] ?? null) && $vals[$L] !== '';
+    $v   = (string)($own ? $vals[$L] : ($vals[$def] ?? ''));
+    if ($max > 0) $v = mb_strimwidth($v, 0, $max, '…', 'UTF-8');
+    if ($own || $L === $def || $v === '') return $e($v);
+    return $e($v) . ' <span class="pill grey" title="перевода нет — на сайте будет русский текст">нет '
+         . $e(strtoupper($L)) . '</span>';
+}
+
+/** Адрес страницы сайта на языке, выбранном вверху: /uslugi/x/ → /az/uslugi/x/. */
+function admin_site_url(string $path): string
+{
+    return u($path, admin_lang());
+}
+
+/** Подпункты раздела в меню — как «Все записи / Добавить / Рубрики»
+    в WordPress: [подпись, параметры адреса, признак «открыт сейчас»].
+    Показываются под разделом, когда он открыт. */
+function admin_subnav(string $key): array
+{
+    if ($key !== 'portfolio') return [];
+    $g = static fn(string $k): string => is_string($_GET[$k] ?? null) ? $_GET[$k] : '';
+    $cats = $g('view') === 'cats' || $g('g') !== '';
+    $new  = $g('p') === 'new';
+    return [
+        ['Все проекты',     [],                  !$cats && !$new],
+        ['Добавить проект', ['p' => 'new'],      $new],
+        ['Категории',       ['view' => 'cats'],  $cats],
     ];
 }
 
@@ -118,6 +157,13 @@ function admin_head(string $section): void
           <i aria-hidden="true"><?= $icon ?></i><?= $e($name) ?>
           <?php if (!empty($counts[$key])): ?><span class="badge"><?= (int)$counts[$key] ?></span><?php endif; ?>
         </a>
+        <?php if ($key === $section && ($sub = admin_subnav($key))): ?>
+          <div class="subnav">
+            <?php foreach ($sub as [$sName, $sQ, $sOn]): ?>
+              <a href="<?= $e(admin_url($key, $sQ)) ?>"<?= $sOn ? ' class="on" aria-current="page"' : '' ?>><?= $e($sName) ?></a>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
       <?php endforeach; ?>
       <a class="only-phone" href="/" target="_blank" rel="noopener"><i aria-hidden="true">↗</i>Открыть сайт</a>
     </nav>

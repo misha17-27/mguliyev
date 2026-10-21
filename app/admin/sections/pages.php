@@ -344,7 +344,9 @@ if ($cur === null):
         <?php foreach (admin_pages() as $i => $p):
           $keys    = admin_page_keys($p['prefix']);
           $hasText = $keys !== [] || $p['section'] !== null;
-          $hasSeo  = !empty($seo[$p['key']][deflang()]['title']);
+          /* Заголовок для поиска и точка SEO — на языке, выбранном вверху. */
+          $seoT    = array_map(static fn($x) => is_array($x) ? (string)($x['title'] ?? '') : '', (array)($seo[$p['key']] ?? []));
+          $hasSeo  = ($seoT[admin_lang()] ?? '') !== '';
           $ed      = $edits['page:' . $p['key']] ?? null;
 
           /* Доля переведённого по каждому языку: у страницы без своих
@@ -360,8 +362,11 @@ if ($cur === null):
         ?>
         <tr>
           <td class="num"><?= admin_num($i) ?></td>
-          <td><b class="clamp" title="<?= $e($p['name']) ?>"><?= $e($p['name']) ?></b></td>
-          <td><span class="path" title="<?= $e($p['url']) ?>"><?= $e($p['url']) ?></span></td>
+          <td><b class="clamp" title="<?= $e($p['name']) ?>"><?= $e($p['name']) ?></b>
+              <?php if ($p['key'] !== 'common' && implode('', $seoT) !== ''): ?>
+                <span class="muted clamp" title="Заголовок в выдаче"><?= admin_in_lang($seoT, 80) ?></span>
+              <?php endif; ?></td>
+          <td><span class="path" title="<?= $e(admin_site_url($p['url'])) ?>"><?= $e(admin_site_url($p['url'])) ?></span></td>
           <?php /* Колонки «Добавил» нет намеренно: все страницы заведены
                    в репозитории, и во всех строках стояло бы одно и то же —
                    «разработчик». Ширина нужнее тем колонкам, где есть что читать. */ ?>
@@ -382,7 +387,7 @@ if ($cur === null):
             <a class="btn sm" href="<?= $e($p['prefix'] !== null
                 ? admin_url('pages', ['p' => $p['key']])
                 : admin_url($p['section'] ?? 'texts')) ?>">Изменить</a>
-            <a class="btn sm" href="<?= $e($p['url']) ?>" target="_blank" rel="noopener">Открыть ↗</a>
+            <a class="btn sm" href="<?= $e(admin_site_url($p['url'])) ?>" target="_blank" rel="noopener">Открыть ↗</a>
           </div></td>
         </tr>
         <?php endforeach; ?>

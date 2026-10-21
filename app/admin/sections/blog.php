@@ -246,16 +246,16 @@ if ($art === null):
         <?php foreach ($arts as $i => $a): ?>
         <tr>
           <td class="num"><?= admin_num($i) ?></td>
-          <td><b><?= $e(tr($a['title'], deflang())) ?></b><br>
-              <span class="muted"><?= $e(mb_strimwidth(tr($a['desc'], deflang()), 0, 64, '…', 'UTF-8')) ?></span></td>
-          <td><span class="path">/blog/<?= $e($a['slug']) ?>/</span></td>
-          <td><?= $e(tr($a['rubric'], deflang())) ?></td>
+          <td><b><?= admin_in_lang($a['title']) ?></b><br>
+              <span class="muted"><?= admin_in_lang($a['desc'], 64) ?></span></td>
+          <td><span class="path"><?= $e(admin_site_url('/blog/' . $a['slug'] . '/')) ?></span></td>
+          <td><?= admin_in_lang($a['rubric']) ?></td>
           <td><?= $e($a['date']) ?></td>
           <td><?= (int)$a['read'] ?>&nbsp;мин</td>
           <td class="dotcell"><?= admin_lang_dots($a['body'], 'текст статьи') ?></td>
           <td class="right"><div class="acts">
             <a class="btn sm" href="<?= $e(admin_url('blog', ['a' => $a['slug']])) ?>">Изменить</a>
-            <a class="btn sm" href="/blog/<?= $e($a['slug']) ?>/" target="_blank" rel="noopener">Открыть</a>
+            <a class="btn sm" href="<?= $e(admin_site_url('/blog/' . $a['slug'] . '/')) ?>" target="_blank" rel="noopener">Открыть ↗</a>
           </div></td>
         </tr>
         <?php endforeach; ?>
