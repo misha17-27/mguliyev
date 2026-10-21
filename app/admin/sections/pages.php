@@ -95,18 +95,42 @@ function admin_key_of_page(string $k, $prefix): bool
     return false;
 }
 
+/* Строки словаря из файлов разработчика, без правок панели: с ними
+   сравнивается ввод, чтобы в хранилище попадали только отличия. */
+$repoOf = static function (): array {
+    $repo = [];
+    foreach (langs() as $l) {
+        $p = __DIR__ . '/../../lang/' . $l . '.php';
+        $d = is_file($p) ? (array) require $p : [];
+        foreach ($d as $k => $v) if (is_string($v)) $repo[$k][$l] = $v;
+    }
+    return $repo;
+};
+
+/* Сравнение без учёта пробелов и переносов. Строки в словаре перенесены
+   как код («…сейчас.\n        Этого…»), а форма отдаёт их иначе: поле
+   ввода переносы выбрасывает, очистка срезает пробел по краям. Строгое
+   сравнение считало нетронутую строку правкой и навсегда замораживало
+   её в хранилище. Сравниваем только пробелы ASCII: неразрывный пробел
+   редактор ставит нарочно, и это правка. */
+$norm = static fn(string $s): string => preg_replace('~[ \t\n\r]+~', ' ', clean_text($s, true)) ?? '';
+
+/* Правленое значение получает края оригинала: у азербайджанской web.t45
+   пробел в начале стоит сразу после ссылки, и без него на странице
+   выходит «marketinqbölməsində». Очистка формы этот пробел срезает. */
+$edges = static function (string $v, string $orig): string {
+    if ($v === '' || $orig === '') return $v;
+    preg_match('~^[ \t\n\r]*~', $orig, $a);
+    preg_match('~[ \t\n\r]*\z~', $orig, $b);
+    return (preg_match('~^\s~u', $v) ? '' : $a[0]) . $v . (preg_match('~\s\z~u', $v) ? '' : $b[0]);
+};
+
+/* Отпечаток значения, которое форма показала. По нему после отказа
+   видно, какие поля человек правил, а какие пришли нетронутыми. */
+$fp = static fn(string $s): string => substr(md5($norm($s)), 0, 8);
+
 /* ------------------------------------------------------------ сохранение */
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-    /* Форма собирает файл целиком, поэтому вкладка, открытая час
-       назад, вернула бы всё к состоянию часовой давности — и панель
-       сказала бы «Сохранено». Метка версии это ловит. */
-    if (admin_stale('texts.json')) {
-        admin_flash('«Тексты страниц» правили из другого места, пока эта страница была '
-            . 'открыта. Чтобы не затереть ту правку, сохранение отменено: '
-            . 'обновите страницу и внесите изменения заново.', 'err');
-        admin_go(admin_url('pages'));
-    }
-
     $key  = post_one($_POST['page'] ?? '');
     $page = null;
     foreach (admin_pages() as $p) if ($p['key'] === $key) { $page = $p; break; }
@@ -115,81 +139,163 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         admin_go(admin_url('pages'));
     }
 
-    $changed = 0;
+    /* Язык правки — из формы: с ним черновик вернётся на тот же экран,
+       даже если в другой вкладке тем временем переключили язык. */
+    $L = post_one($_POST['lang'] ?? '');
+    if (!in_array($L, langs(), true)) $L = admin_lang();
+    $back = admin_url('pages', ['p' => $key, 'lang' => $L]);
+
+    $tIn   = (array)($_POST['t'] ?? []);
+    $seoIn = (array)($_POST['seo'] ?? []);
+
+    /* Черновик — только то, что человек правил: поля, которые отличаются
+       от показанного формой. Вернуть все поля значило бы следующим
+       сохранением вернуть и старые значения поверх той правки, ради
+       которой сохранение отменили. Отпечатка нет — берём всё. */
+    $shown = is_string($_POST['_shown'] ?? null) ? json_decode($_POST['_shown'], true) : null;
+    $shown = is_array($shown) ? $shown : null;
+    $keep  = static function (bool $withT, bool $withSeo) use ($tIn, $seoIn, $shown, $fp, $key, $L): int {
+        $d = ['t' => [], 'seo' => []];
+        if ($withT) {
+            foreach ($tIn as $k => $byLang) {
+                if (!is_array($byLang) || !is_string($byLang[$L] ?? null)) continue;
+                $v = post_one($byLang[$L], true);
+                if ($shown !== null && ($shown['t.' . $k] ?? null) === $fp($v)) continue;
+                $d['t'][(string)$k] = $v;
+            }
+        }
+        if ($withSeo) {
+            foreach (['title', 'description'] as $f) {
+                if (!is_array($seoIn[$f] ?? null) || !is_string($seoIn[$f][$L] ?? null)) continue;
+                $v = post_one($seoIn[$f][$L]);
+                if ($shown !== null && ($shown['seo.' . $f] ?? null) === $fp($v)) continue;
+                $d['seo'][$f] = $v;
+            }
+        }
+        $n = count($d['t']) + count($d['seo']);
+        if ($n) admin_draft_keep('pages:' . $key . ':' . $L, $d);
+        return $n;
+    };
+
+    /* Вкладка, открытая час назад, вернула бы страницу к состоянию часовой
+       давности — и панель сказала бы «Сохранено». Метка версии это ловит.
+       Меток две: форма пишет и тексты, и заголовки для поиска, а заголовки
+       правит ещё и раздел «Заголовки для поиска», не трогая текстов. */
+    $staleT = admin_stale('texts.json');
+    $wasSeo = is_string($_POST['_ver_seo'] ?? null) ? $_POST['_ver_seo'] : '';
+    $staleS = $wasSeo !== '' && $wasSeo !== Store::stamp('seo.json');
+    if ($staleT || $staleS) {
+        $n = $keep(true, true);
+        admin_flash(($staleT && $staleS ? '«Тексты страниц» и «Заголовки для поиска»'
+                : ($staleT ? '«Тексты страниц»' : '«Заголовки для поиска»'))
+            . ' правили из другого места, пока эта страница была открыта. Чтобы не '
+            . 'затереть ту правку, сохранение отменено. '
+            . ($n ? 'Ваши правки (' . $n . ') возвращены в форму поверх свежей версии — '
+                  . 'проверьте их и сохраните ещё раз.'
+                  : 'Своих правок в форме не было — открыта свежая версия.'), 'err');
+        admin_go($back);
+    }
+
+    /* Обе записи — под блокировкой: файл перечитывается внутри неё, и
+       меняются только поля этой страницы. Иначе два сохранения, попавшие
+       в одно мгновение, читали бы одно состояние, и второе стёрло бы первое.
+       Ничего не изменилось — файл не переписываем: лишняя запись сдвинула
+       бы метку версии и сделала устаревшими формы в других вкладках.
+       Store::update тогда отвечает false, поэтому «записано» — это либо
+       удачная запись, либо проход без изменений. */
 
     /* --- заголовки для поиска --- */
-    $base  = require __DIR__ . '/../../data/seo.php';
-    $store = Store::read('seo.json') ?? [];
-    $in    = (array)($_POST['seo'] ?? []);
-    foreach (langs() as $l) {
-        foreach (['title', 'description'] as $f) {
-            /* Языка нет в форме — его не трогаем. Форма показывает один
-               язык, и «нет значит пусто» стёрло бы два других. */
-            if (!isset($in[$f]) || !is_array($in[$f]) || !array_key_exists($l, $in[$f])) continue;
-            $v    = post_one($in[$f][$l]);
-            $orig = $base[$key][$l][$f] ?? '';
-            /* В хранилище пишем только отличия от файлов разработчика:
-               иначе оно заморозит нынешний текст, и правка в репозитории
-               до сайта уже не дойдёт. */
-            if ($v === '' || $v === $orig) {
-                if (isset($store[$key][$l][$f])) { unset($store[$key][$l][$f]); $changed++; }
-            } elseif (($store[$key][$l][$f] ?? null) !== $v) {
-                $store[$key][$l][$f] = $v;
-                $changed++;
+    $changedS = 0;
+    $ranS     = false;
+    $okSeo    = true;
+    if ($seoIn) {
+        $seoRepo = require __DIR__ . '/../../data/seo.php';
+        $okSeo = Store::update('seo.json', static function (array $store) use ($seoIn, $seoRepo, $key, $norm, &$changedS, &$ranS) {
+            $ranS = true;
+            foreach (langs() as $l) {
+                foreach (['title', 'description'] as $f) {
+                    /* Языка нет в форме — его не трогаем. Форма показывает один
+                       язык, и «нет значит пусто» стёрло бы два других. */
+                    if (!isset($seoIn[$f]) || !is_array($seoIn[$f]) || !array_key_exists($l, $seoIn[$f])) continue;
+                    $v    = post_one($seoIn[$f][$l]);
+                    $orig = $seoRepo[$key][$l][$f] ?? '';
+                    /* В хранилище пишем только отличия от файлов разработчика:
+                       иначе оно заморозит нынешний текст, и правка в репозитории
+                       до сайта уже не дойдёт. */
+                    if ($v === '' || $norm($v) === $norm($orig)) {
+                        if (isset($store[$key][$l][$f])) { unset($store[$key][$l][$f]); $changedS++; }
+                    } elseif (($store[$key][$l][$f] ?? null) !== $v) {
+                        $store[$key][$l][$f] = $v;
+                        $changedS++;
+                    }
+                }
+                if (isset($store[$key][$l]) && !$store[$key][$l]) unset($store[$key][$l]);
             }
-        }
-        if (isset($store[$key][$l]) && !$store[$key][$l]) unset($store[$key][$l]);
+            if (isset($store[$key]) && !$store[$key]) unset($store[$key]);
+            return $changedS ? $store : null;
+        }) || ($ranS && $changedS === 0);
     }
-    if (isset($store[$key]) && !$store[$key]) unset($store[$key]);
-    $okSeo = Store::write('seo.json', $store);
-    Store::forget('seo.json');
 
     /* --- строки страницы --- */
-    $repo = [];
-    foreach (langs() as $l) {
-        $p2 = __DIR__ . '/../../lang/' . $l . '.php';
-        $d  = is_file($p2) ? (array) require $p2 : [];
-        foreach ($d as $k => $v) if (is_string($v)) $repo[$k][$l] = $v;
-    }
-    $all   = texts_canon();
-    $tstore = Store::read('texts.json') ?? [];
-    foreach ((array)($_POST['t'] ?? []) as $k => $byLang) {
-        /* Правим только существующие ключи и только те, что принадлежат
-           этой странице: новая строка должна появляться из кода. */
-        if (!isset($all[$k]) || !is_array($byLang)) continue;
-        if (!admin_key_of_page($k, $page['prefix'])) continue;
+    $repo     = $repoOf();
+    $all      = texts_canon();
+    $prefix   = $page['prefix'];
+    $changedT = 0;
+    $ranT     = false;
+    $okTexts  = !$tIn || Store::update('texts.json', static function (array $tstore) use ($tIn, $all, $repo, $prefix, $norm, $edges, &$changedT, &$ranT) {
+        $ranT = true;
+        foreach ($tIn as $k => $byLang) {
+            /* Правим только существующие ключи и только те, что принадлежат
+               этой странице: новая строка должна появляться из кода. */
+            $k = (string)$k;
+            if (!isset($all[$k]) || !is_array($byLang)) continue;
+            if (!admin_key_of_page($k, $prefix)) continue;
 
-        foreach (langs() as $l) {
-            if (!array_key_exists($l, $byLang)) continue;
-            $v    = post_one($byLang[$l], true);
-            $orig = $repo[$k][$l] ?? '';
-            if ($v === $orig || ($v === '' && $orig === '')) {
-                if (isset($tstore[$k][$l])) { unset($tstore[$k][$l]); $changed++; }
-            } elseif (($tstore[$k][$l] ?? null) !== $v) {
-                $tstore[$k][$l] = $v;
-                $changed++;
+            foreach (langs() as $l) {
+                if (!array_key_exists($l, $byLang)) continue;
+                $v    = post_one($byLang[$l], true);
+                $orig = $repo[$k][$l] ?? '';
+                if ($norm($v) === $norm($orig)) {
+                    if (isset($tstore[$k][$l])) { unset($tstore[$k][$l]); $changedT++; }
+                    continue;
+                }
+                $v = $edges($v, $orig);
+                if (($tstore[$k][$l] ?? null) !== $v) {
+                    $tstore[$k][$l] = $v;
+                    $changedT++;
+                }
             }
+            if (isset($tstore[$k]) && !$tstore[$k]) unset($tstore[$k]);
         }
-        if (isset($tstore[$k]) && !$tstore[$k]) unset($tstore[$k]);
-    }
-    $okTexts = Store::write('texts.json', $tstore);
-    Store::forget('texts.json');
+        return $changedT ? $tstore : null;
+    }) || ($ranT && $changedT === 0);
 
-    admin_note_edit('page:' . $key);
+    /* Отметка «правилась» — только если что-то действительно записалось. */
+    if (($okSeo && $changedS) || ($okTexts && $changedT)) admin_note_edit('page:' . $key);
+
+    /* Отказ записи важнее всего остального: «Сохранено» при несохранённом —
+       это когда редактор узнаёт о потере через неделю и уже ничего
+       не помнит. Несохранённое возвращается в форму: просить «скопируйте
+       правки со страницы» после перехода на страницу, собранную заново
+       из хранилища, бессмысленно — правок там уже нет. */
+    if (!$okSeo || !$okTexts) {
+        $n = $keep(!$okTexts, !$okSeo);
+        admin_flash((!$okSeo && !$okTexts
+                ? 'НЕ СОХРАНЕНО: ни текст страницы, ни заголовки для поиска записать не удалось.'
+                : (!$okSeo
+                    ? 'Текст страницы сохранён, а заголовки для поиска — НЕТ: записать их не удалось.'
+                    : 'Заголовки для поиска сохранены, а текст страницы — НЕТ: записать его не удалось.'))
+            . ' Проверьте место на диске и права на папку ' . Store::dir() . '.'
+            . ($n ? ' Несохранённые правки (' . $n . ') возвращены в форму — сохраните её ещё раз, '
+                  . 'когда причина будет устранена.' : ''), 'err');
+        admin_go($back);
+    }
 
     /* Проверяем до сообщения об успехе: «сохранено» при обрезанной форме —
        худшее, что панель может сказать. */
     $cut = admin_form_truncated(admin_count_fields($_POST['t'] ?? []));
-
-    /* Отказ записи важнее всего остального: «Сохранено» при несохранённом —
-       это когда редактор узнаёт о потере через неделю и уже ничего
-       не помнит. */
-    if (!$okSeo || !$okTexts) {
-        admin_flash('НЕ СОХРАНЕНО: ' . (!$okSeo && !$okTexts ? 'ни заголовки, ни текст'
-            : (!$okSeo ? 'заголовки для поиска' : 'текст страницы'))
-            . ' записать не удалось. Проверьте место на диске и права на папку '
-            . Store::dir() . '. Правки НЕ приняты — не закрывайте страницу, скопируйте их.', 'err');
-    } elseif ($cut !== null) {
+    $changed = $changedS + $changedT;
+    if ($cut !== null) {
         admin_flash($cut, 'err');
     } else {
         admin_flash($changed ? 'Сохранено. Изменено значений: ' . $changed . '.' : 'Изменений не было.');
@@ -275,24 +381,50 @@ if ($cur === null):
   </div>
 
 <?php else:
-  $keys = admin_page_keys($cur['prefix']);
-  $m    = $seo[$cur['key']] ?? [];
-  $LIM  = ['title' => 60, 'description' => 158];
+  $keys   = admin_page_keys($cur['prefix']);
+  $m      = $seo[$cur['key']] ?? [];
+  $LIM    = ['title' => 60, 'description' => 158];
+  $L      = admin_lang();
+  $DEF    = deflang();
+  $repo   = $repoOf();
+  $withSeo = $cur['key'] !== 'common';
+
+  /* Отпечаток сохранённого — до черновика: правкой считается то, что
+     отличается от хранилища, а не от вписанного в прошлый раз. */
+  $shown = [];
+  foreach ($keys as $k => $byLang) $shown['t.' . $k] = $fp((string)($byLang[$L] ?? ''));
+  if ($withSeo) {
+      foreach (['title', 'description'] as $f) $shown['seo.' . $f] = $fp((string)($m[$L][$f] ?? ''));
+  }
+
+  /* Вписанное перед отказом сохранения — поверх сохранённого. */
+  $draft = admin_draft_take('pages:' . $cur['key'] . ':' . $L);
+  if ($draft !== null) {
+      foreach ((array)($draft['t'] ?? []) as $k => $v) {
+          if (isset($keys[$k]) && is_string($v)) $keys[$k][$L] = $v;
+      }
+      foreach ((array)($draft['seo'] ?? []) as $f => $v) {
+          if (($f === 'title' || $f === 'description') && is_string($v)) $m[$L][$f] = $v;
+      }
+  }
 ?>
   <p style="margin:0 0 16px"><a class="btn ghost sm" href="<?= $e(admin_url('pages')) ?>">← Все страницы</a></p>
 
   <form method="post" action="<?= $e(admin_url('pages')) ?>" data-guard="1">
     <input type="hidden" name="_csrf" value="<?= $e(csrf_token()) ?>">
     <?= admin_ver_field('texts.json') ?>
+    <?php if ($withSeo): /* Вторая метка: форма пишет и заголовки для поиска. */ ?>
+      <input type="hidden" name="_ver_seo" value="<?= $e(Store::stamp('seo.json')) ?>">
+    <?php endif; ?>
     <input type="hidden" name="page" value="<?= $e($cur['key']) ?>">
+    <input type="hidden" name="lang" value="<?= $e($L) ?>">
     <?php /* Сколько полей словаря отправляем. Поле стоит ПЕРВЫМ: PHP
              отбрасывает последние, значит объявление доедет в любом случае.
              Язык теперь один — тот, что выбран вверху. */ ?>
     <input type="hidden" name="_fields" value="<?= count($keys) ?>">
+    <input type="hidden" name="_shown" value="<?= $e(json_encode($shown)) ?>">
 
     <?php
-    $L   = admin_lang();
-    $DEF = deflang();
     $isT = $L !== $DEF;                       // правим перевод, а не оригинал
     $ph  = $isT ? ' placeholder="пусто — на сайте будет русский текст"' : '';
     /* Высота поля по объёму русского текста: короткая строка не сидит
@@ -313,7 +445,7 @@ if ($cur === null):
       <?php endif; ?>
     </div>
 
-    <?php if ($cur['key'] !== 'common'): ?>
+    <?php if ($withSeo): ?>
     <div class="panel">
       <h3>SEO</h3>
       <p class="muted">Это человек видит в выдаче Google раньше самой страницы.
@@ -349,7 +481,14 @@ if ($cur === null):
           $hay = mb_strtolower($k . ' ' . implode(' ', $byLang));
           $src = (string)($byLang[$DEF] ?? '');
           $val = (string)($byLang[$L] ?? '');
+          /* Перенос строки на любом языке — только поле в несколько строк:
+             обычное поле ввода переносы молча выбрасывает. Смотрим и в файл
+             разработчика: у строки, уже замороженной в хранилище без
+             переноса, он остался только там. */
           $long = mb_strlen($src) > 90 || mb_strlen($val) > 90;
+          foreach (langs() as $l) {
+              if (strpos(($byLang[$l] ?? '') . ($repo[$k][$l] ?? ''), "\n") !== false) $long = true;
+          }
         ?>
           <div class="field" data-text-row="<?= $e($hay) ?>">
             <div class="fkey"><?= $e($k) ?></div>

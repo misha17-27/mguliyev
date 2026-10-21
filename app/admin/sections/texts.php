@@ -50,6 +50,24 @@ foreach (langs() as $l) {
     foreach ($d as $k => $v) if (is_string($v)) $repo[$k][$l] = $v;
 }
 
+/* Сравнение с файлом разработчика — без учёта пробелов и переносов.
+   Строки в словаре перенесены как код («…сейчас.\n        Этого…»), а форма
+   отдаёт их иначе: поле ввода переносы выбрасывает, очистка срезает пробел
+   по краям. Строгое сравнение считало нетронутую строку правкой и навсегда
+   замораживало её в хранилище. Сравниваем только пробелы ASCII:
+   неразрывный пробел редактор ставит нарочно, и это правка. */
+$norm = static fn(string $s): string => preg_replace('~[ \t\n\r]+~', ' ', clean_text($s, true)) ?? '';
+
+/* Правленое значение получает края оригинала: у азербайджанской web.t45
+   пробел в начале стоит сразу после ссылки, и без него на странице
+   выходит «marketinqbölməsində». Очистка формы этот пробел срезает. */
+$edges = static function (string $v, string $orig): string {
+    if ($v === '' || $orig === '') return $v;
+    preg_match('~^[ \t\n\r]*~', $orig, $a);
+    preg_match('~[ \t\n\r]*\z~', $orig, $b);
+    return (preg_match('~^\s~u', $v) ? '' : $a[0]) . $v . (preg_match('~\s\z~u', $v) ? '' : $b[0]);
+};
+
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     if (admin_stale('texts.json')) {
         admin_flash('Строки правили из другого места, пока эта страница была открыта. '
@@ -62,7 +80,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $changed = 0;
 
     /* Читаем и пишем под блокировкой: тот же файл правит раздел «Страницы». */
-    $ok = Store::update('texts.json', static function (array $store) use ($in, $all, $repo, &$changed) {
+    $ok = Store::update('texts.json', static function (array $store) use ($in, $all, $repo, $norm, $edges, &$changed) {
 
     foreach ($in as $k => $byLang) {
         /* Правим только существующие ключи: новый ключ в словаре — это
@@ -74,9 +92,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $v    = post_one($byLang[$l], true);
             $orig = $repo[$k][$l] ?? '';
 
-            if ($v === $orig || ($v === '' && $orig === '')) {
+            if ($norm($v) === $norm($orig)) {
                 if (isset($store[$k][$l])) { unset($store[$k][$l]); $changed++; }
-            } elseif (($store[$k][$l] ?? null) !== $v) {
+                continue;
+            }
+            $v = $edges($v, $orig);
+            if (($store[$k][$l] ?? null) !== $v) {
                 $store[$k][$l] = $v;
                 $changed++;
             }
@@ -153,7 +174,14 @@ admin_head('texts');
   <?php foreach ($rows as $k => $byLang):
       $hay = mb_strtolower($k . ' ' . implode(' ', $byLang));
       $own = !empty($store[$k]);
+      /* Перенос строки на любом языке — только поле в несколько строк:
+         обычное поле ввода переносы молча выбрасывает. Смотрим и в файл
+         разработчика: у строки, уже замороженной в хранилище без переноса,
+         он остался только там. */
       $long = mb_strlen($byLang[deflang()] ?? '') > 90;
+      foreach (langs() as $l) {
+          if (strpos(($byLang[$l] ?? '') . ($repo[$k][$l] ?? ''), "\n") !== false) $long = true;
+      }
   ?>
     <div class="item" data-text-row="<?= $e($hay) ?>">
       <div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:4px">

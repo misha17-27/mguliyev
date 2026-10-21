@@ -50,33 +50,39 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         admin_go(admin_url('seo'));
     }
 
-    $in    = (array)($_POST['seo'] ?? []);
-    $out   = [];
-    /* Прежние правки — чтобы языки, которых нет в форме, остались как были. */
-    $store = Store::read('seo.json') ?? [];
+    $in = (array)($_POST['seo'] ?? []);
+    $n  = 0;
 
-    foreach ($seo as $page => $byLang) {
-        $got = is_array($in[$page] ?? null) ? $in[$page] : [];
-        foreach (langs() as $l) {
-            foreach (['title', 'description'] as $f) {
-                /* Языка нет в форме — оставляем как было, а не стираем. */
-                if (!isset($got[$f]) || !is_array($got[$f]) || !array_key_exists($l, $got[$f])) {
-                    if (isset($store[$page][$l][$f])) $out[$page][$l][$f] = $store[$page][$l][$f];
-                    continue;
+    /* Читаем и пишем под блокировкой: тот же файл правит раздел «Страницы».
+       Прежние правки читаются внутри неё — чтобы языки, которых нет в
+       форме, остались как были, а не такими, какими были при загрузке. */
+    $ok = Store::update('seo.json', static function (array $store) use ($in, $seo, $base, &$n) {
+        $out = [];
+        /* Страницы и из файлов разработчика, и из хранилища: запись,
+           появившаяся после загрузки этой страницы, не должна пропасть. */
+        foreach (array_keys($seo + $store) as $page) {
+            $got = is_array($in[$page] ?? null) ? $in[$page] : [];
+            foreach (langs() as $l) {
+                foreach (['title', 'description'] as $f) {
+                    /* Языка нет в форме — оставляем как было, а не стираем. */
+                    if (!isset($got[$f]) || !is_array($got[$f]) || !array_key_exists($l, $got[$f])) {
+                        if (isset($store[$page][$l][$f])) $out[$page][$l][$f] = $store[$page][$l][$f];
+                        continue;
+                    }
+                    $v = post_one($got[$f][$l]);
+                    /* Пишем только то, что отличается от файла разработчика.
+                       Иначе хранилище замораживает нынешние тексты, и правка
+                       в репозитории до сайта уже не доходит. */
+                    $orig = $base[$page][$l][$f] ?? '';
+                    if ($v !== '' && $v !== $orig) $out[$page][$l][$f] = $v;
                 }
-                $v = post_one($got[$f][$l]);
-                /* Пишем только то, что отличается от файла разработчика.
-                   Иначе хранилище замораживает нынешние тексты, и правка
-                   в репозитории до сайта уже не доходит. */
-                $orig = $base[$page][$l][$f] ?? '';
-                if ($v !== '' && $v !== $orig) $out[$page][$l][$f] = $v;
             }
         }
-    }
-
-    if (Store::write('seo.json', $out)) {
-        $n = 0;
         foreach ($out as $p) foreach ($p as $l) $n += count($l);
+        return $out;
+    });
+
+    if ($ok) {
         admin_flash($n
             ? 'Сохранено. Своих значений: ' . $n . '. Остальное берётся из файлов разработчика.'
             : 'Сохранено. Своих значений нет — всё совпадает с файлами разработчика.');
