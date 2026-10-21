@@ -143,11 +143,21 @@ function admin_head(string $section): void
       <h1><?= $e($title) ?></h1>
       <div class="bar-r">
         <div class="langsw" role="group" aria-label="Язык, который правим">
-          <?php foreach (langs() as $l):
+          <?php
+          /* Переключение языка оставляет на той же записи: экраны правки
+             говорят «язык переключается вверху», и переход к списку раздела
+             выбрасывал редактора из статьи или проекта, который он переводит. */
+          $keepQ = [];
+          foreach ($_GET as $qk => $qv) {
+              if ($qk === 'section' || $qk === 'lang' || !is_string($qv)
+                  || !preg_match('~^[a-z_]{1,20}$~', (string)$qk)) continue;
+              $keepQ[$qk] = $qv;
+          }
+          foreach (langs() as $l):
               $cls = $l === $lang ? 'on' : (($fill[$l] ?? 100) < 100 ? 'part' : '');
               $pc  = (int)($fill[$l] ?? 100);
           ?>
-            <a href="<?= $e(admin_url($section, ['lang' => $l])) ?>"<?= $cls ? ' class="' . $cls . '"' : '' ?>
+            <a href="<?= $e(admin_url($section, $keepQ + ['lang' => $l])) ?>"<?= $cls ? ' class="' . $cls . '"' : '' ?>
                title="<?= $e(strtoupper($l) . ': заполнено ' . $pc . '%') ?>"><?= $e(strtoupper($l)) ?></a>
           <?php endforeach; ?>
         </div>

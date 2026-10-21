@@ -178,6 +178,32 @@ function admin_flash(string $text, string $kind = 'ok'): void
     $_SESSION['flash'] = ['text' => $text, 'kind' => $kind];
 }
 
+/** Черновик формы: то, что человек вписал, когда сохранение не удалось.
+
+    Без него любая ошибка — устаревшая вкладка, пустое обязательное поле,
+    занятый адрес — уводила на страницу, заново собранную из хранилища,
+    и всё вписанное пропадало. Предупреждение о несохранённых правках при
+    этом молчит: оно снимается в момент отправки формы.
+
+    Ключ — экран, на который вернётся человек (раздел и запись, язык).
+    Черновик живёт до первой отрисовки этого экрана. Держим не больше
+    пяти: брошенные черновики не должны копиться в сессии. */
+function admin_draft_keep(string $key, array $data): void
+{
+    $all = (array)($_SESSION['drafts'] ?? []);
+    unset($all[$key]);
+    $all[$key] = $data;
+    $_SESSION['drafts'] = array_slice($all, -5, null, true);
+}
+
+/** Забрать черновик экрана (один раз). Нет — null. */
+function admin_draft_take(string $key): ?array
+{
+    $d = $_SESSION['drafts'][$key] ?? null;
+    unset($_SESSION['drafts'][$key]);
+    return is_array($d) ? $d : null;
+}
+
 function admin_take_flash(): ?array
 {
     $f = $_SESSION['flash'] ?? null;
