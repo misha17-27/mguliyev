@@ -40,7 +40,8 @@ return [
     'blog.count_p'         => '{n} article|{n} articles',
     'blog.read_full'       => '{n} min read',
     'blog.read'            => '{n} min',
-    'blog.ru_only'           => 'Articles are published in Russian for now. The rest of the site is available in three languages.',
+    'blog.ru_only'           => 'Some articles are available in Russian only for now. The rest of the site is available in three languages.',
+    'blog.nf' => 'Article not found',
 
     'price.missing' => 'Not included:',
 

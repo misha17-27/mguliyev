@@ -1,9 +1,7 @@
 <?php
-/* Рендер одной статьи. Страница задаёт $slug до подключения. */
-$all = articles();
-$art = null;
-foreach ($all as $a) { if ($a['slug'] === $slug) { $art = $a; break; } }
-if (!$art) { http_response_code(404); echo '<main class="sec"><div class="wrap"><h1 class="disp h2">Статья не найдена</h1></div></main>'; return; }
+/* Рендер одной статьи. Подключает app/partials/article_page.php:
+   он уже нашёл статью ($art) и ответил 404, если её нет. */
+if (empty($art)) return;
 ?>
 <main id="top">
 <article class="sec art">

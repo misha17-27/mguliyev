@@ -40,7 +40,8 @@ return [
     'blog.count_p'         => '{n} məqalə',
     'blog.read_full'       => '{n} dəq oxunuş',
     'blog.read'            => '{n} dəq',
-    'blog.ru_only'           => 'Məqalələr hələlik yalnız rus dilində çıxır. Saytın digər bölmələri üç dildə mövcuddur.',
+    'blog.ru_only'           => 'Bəzi məqalələr hələlik yalnız rus dilindədir. Saytın digər bölmələri üç dildə mövcuddur.',
+    'blog.nf' => 'Məqalə tapılmadı',
 
     'price.missing' => 'Nə yoxdur:',
 

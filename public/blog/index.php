@@ -4,6 +4,13 @@ $page = 'blog';
 $current = 'blog';
 include __DIR__ . '/../../app/partials/head.php';
 $arts = articles();
+
+/* Сколько статей не переведено на текущий язык: они показываются
+   по-русски, и об этом надо сказать. Переведены все — пометки нет. */
+$untranslated = 0;
+foreach (articles_canon() as $c) {
+    if (empty($c['body'][lang()])) $untranslated++;
+}
 ?>
 <main id="top">
 <section class="sec">
@@ -13,7 +20,7 @@ $arts = articles();
       <p class="lb"><?= tp(count($arts), 'blog.count_p') ?></p>
     </div>
     <p class="sub"><?= t('blog.t2') ?></p>
-    <?php if (lang() !== 'ru'): ?>
+    <?php if ($untranslated > 0): ?>
       <p class="note" style="margin-top:14px"><?= t('blog.ru_only') ?></p>
     <?php endif; ?>
     <div class="posts" style="margin-top:clamp(28px,4vw,52px)">
