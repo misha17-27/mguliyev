@@ -73,13 +73,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         admin_flash('Строки правили из другого места, пока эта страница была открыта. '
             . 'Чтобы не затереть ту правку, сохранение отменено: обновите страницу '
             . 'и внесите изменения заново.', 'err');
-        admin_go(admin_url('texts', ['g' => (string)($_POST['g'] ?? 'nav')]));
+        admin_go(admin_url('texts', ['g' => (is_string($_POST['g'] ?? null) ? $_POST['g'] : 'nav')]));
     }
 
     $in = (array)($_POST['t'] ?? []);
     $changed = 0;
 
     /* Читаем и пишем под блокировкой: тот же файл правит раздел «Страницы». */
+    /* Без изменений файл не переписываем: метка версии сдвинулась бы,
+       и другие открытые вкладки получили бы ложное «правили из другого
+       места», а вписанное в них — отказ. */
     $ok = Store::update('texts.json', static function (array $store) use ($in, $all, $repo, $norm, $edges, &$changed) {
 
     foreach ($in as $k => $byLang) {
@@ -104,8 +107,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         }
         if (isset($store[$k]) && !$store[$k]) unset($store[$k]);
     }
-    return $store;
-    });
+    return $changed ? $store : null;
+    }) || $changed === 0;
 
     /* Проверяем до сообщения об успехе: «сохранено» при обрезанной форме —
        худшее, что панель может сказать. */
@@ -122,13 +125,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     } else {
         admin_flash('Не удалось сохранить.', 'err');
     }
-    admin_go(admin_url('texts', ['g' => (string)($_POST['g'] ?? 'nav')]));
+    admin_go(admin_url('texts', ['g' => (is_string($_POST['g'] ?? null) ? $_POST['g'] : 'nav')]));
 }
 
 /* Какой раздел открыт. Если пришли со сводки с конкретным ключом —
    открываем тот раздел, где он лежит, и подставляем его в поиск. */
 $q = post_one($_GET['q'] ?? '');
-$g = (string)($_GET['g'] ?? '');
+$g = is_string($_GET['g'] ?? null) ? $_GET['g'] : '';   // g[]=… в адресе давало предупреждение PHP
 if ($q !== '' && isset($all[$q])) {
     $gq = explode('.', $q)[0];
     $g = isset($GROUPS[$gq]) ? $gq : 'other';

@@ -437,6 +437,9 @@ if ($cur === null):
     <?php
     $isT = $L !== $DEF;                       // правим перевод, а не оригинал
     $ph  = $isT ? ' placeholder="пусто — на сайте будет русский текст"' : '';
+    /* У SEO пустой перевод значит другое: берётся перевод из файлов сайта
+       (data/seo.php), а русский — только если там его нет. */
+    $phSeo = $isT ? ' placeholder="пусто — перевод из файлов сайта, а если его нет — русский"' : '';
     /* Высота поля по объёму русского текста: короткая строка не сидит
        в огромном поле, длинная не прокручивается в крошечном. */
     $rowsFor = static fn(string $t): int => max(2, min(12, (int)ceil(mb_strlen($t) / 120) + 1));
@@ -463,13 +466,13 @@ if ($cur === null):
 
       <label>Заголовок в выдаче и на вкладке <span class="hint">до <?= $LIM['title'] ?> знаков</span></label>
       <input type="text" data-max="<?= $LIM['title'] ?>" name="seo[title][<?= $e($L) ?>]"
-             value="<?= $e($m[$L]['title'] ?? '') ?>"<?= $ph ?>>
+             value="<?= $e($m[$L]['title'] ?? '') ?>"<?= $phSeo ?>>
       <?php if ($isT && !empty($m[$DEF]['title'])): ?>
         <div class="src"><b><?= $e(strtoupper($DEF)) ?>:</b> <?= $e($m[$DEF]['title']) ?></div>
       <?php endif; ?>
 
       <label>Описание под заголовком <span class="hint">до <?= $LIM['description'] ?> знаков</span></label>
-      <textarea rows="3" data-max="<?= $LIM['description'] ?>" name="seo[description][<?= $e($L) ?>]"<?= $ph ?>><?= $e($m[$L]['description'] ?? '') ?></textarea>
+      <textarea rows="3" data-max="<?= $LIM['description'] ?>" name="seo[description][<?= $e($L) ?>]"<?= $phSeo ?>><?= $e($m[$L]['description'] ?? '') ?></textarea>
       <?php if ($isT && !empty($m[$DEF]['description'])): ?>
         <div class="src"><b><?= $e(strtoupper($DEF)) ?>:</b> <?= $e($m[$DEF]['description']) ?></div>
       <?php endif; ?>

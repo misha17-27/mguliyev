@@ -50,41 +50,48 @@ function admin_upload_cap(): int
    хранит (см. ниже, у страницы входа). */
 const ADMIN_SECRET_FIELDS = ['current', 'password', 'password2', 'pass', 'secret'];
 
-/** Ключ отложенной формы — экран, куда она шла: раздел, запись, язык. */
-function admin_resume_key(string $section, array $q, string $lang): string
-{
-    unset($q['resume']);
-    return $section . '?' . http_build_query($q) . '|' . $lang;
-}
+/* Отложенные формы. Форма, отправленная в истёкшую сессию, лежит в файле
+   сессии на диске до входа. Пределы — чтобы этим нельзя было забивать
+   диск: число форм, их общий размер и срок. */
+const ADMIN_RESUME_MAX   = 5;
+const ADMIN_RESUME_BYTES = 524288;      // 512 КБ на все отложенные формы вместе
+const ADMIN_RESUME_TTL   = 86400;       // сутки
 
-/** Отложенные формы, ещё не разобранные: ключ => {section, q, lang, post, secret}. */
-function admin_resume_all(): array
+/** Отложенные формы: номер => {uid, at, section, q, lang, fields, secret}.
+    С $uid — только формы этого редактора: форму из чужой сессии не
+    показываем и не отправляем. Старше суток — не показываем вовсе. */
+function admin_resume_all(?string $uid = null): array
 {
     $out = [];
-    foreach ((array)($_SESSION['resume'] ?? []) as $k => $r) {
-        if (is_array($r) && is_string($r['section'] ?? null) && is_array($r['post'] ?? null)) $out[$k] = $r;
+    foreach ((array)($_SESSION['resume'] ?? []) as $id => $r) {
+        if (!is_array($r) || !is_string($r['section'] ?? null) || !is_array($r['fields'] ?? null)) continue;
+        if ((int)($r['at'] ?? 0) < time() - ADMIN_RESUME_TTL) continue;
+        if ($uid !== null && !hash_equals((string)($r['uid'] ?? ''), $uid)) continue;
+        $out[(string)$id] = $r;
     }
     return $out;
 }
 
-/** Отложить форму до входа. У каждого экрана своя ячейка: две вкладки,
-    отправленные в истёкшую сессию одна за другой, делили одну, и вторая
-    молча стирала первую — хотя обеим обещали, что вписанное не пропало.
-    Не больше пяти, как черновики. Вернёт название раздела, чью форму
-    пришлось вытеснить, или ''. */
-function admin_resume_keep(array $r): string
+/** Отложить форму до входа. Вернёт её номер, или null, если она одна
+    больше предела. Самые давние формы сверх предела вытесняются. */
+function admin_resume_keep(array $r): ?string
 {
+    if (strlen(serialize($r)) > ADMIN_RESUME_BYTES) return null;
     $all = admin_resume_all();
-    $key = admin_resume_key($r['section'], $r['q'], $r['lang']);
-    unset($all[$key]);
-    $all[$key] = $r;
-    $lost = '';
-    if (count($all) > 5) {
-        $old  = reset($all);
-        $lost = admin_sections()[$old['section']][0] ?? $old['section'];
+    /* Буква впереди: номер из одних цифр PHP превратил бы в числовой ключ. */
+    $id = 'r' . bin2hex(random_bytes(6));
+    $all[$id] = $r;
+    while (count($all) > ADMIN_RESUME_MAX || strlen(serialize($all)) > ADMIN_RESUME_BYTES) {
+        array_shift($all);
     }
-    $_SESSION['resume'] = array_slice($all, -5, null, true);
-    return $lost;
+    $_SESSION['resume'] = $all;
+    return $id;
+}
+
+/** Убрать отложенную форму. */
+function admin_resume_forget(string $id): void
+{
+    unset($_SESSION['resume'][$id]);
 }
 
 /** Поля формы плоским списком: ['t[web.t45][az]' => '…']. Так их можно
@@ -184,16 +191,27 @@ if (!admin_user()) {
        Теперь отправленное откладывается в сессию, а после входа панель
        возвращает на тот же раздел и показывает его с кнопкой «Отправить
        ещё раз». Само оно НЕ сохраняется: ключ формы проверить уже нечем,
-       и чужая страница могла бы так подсунуть свои поля. По той же причине
-       откладывается только запрос со своего адреса и со своей cookie
-       сессии — с чужого сайта браузер её не пришлёт (SameSite=Lax). */
+       и чужая страница могла бы так подсунуть свои поля.
+
+       Откладывается только форма из браузера, где истёк вход редактора
+       (admin_boot() оставляет в сессии отметку, чей это был вход, —
+       см. admin_expired()), со своего адреса и в пределах размера. Иначе любой посетитель мог бы
+       складывать в файлы сессий что угодно, а после входа редактор увидел
+       бы это как «свои» правки. С чужого сайта cookie сессии не придёт
+       вовсе (SameSite=Lax). */
     if ($isPost && $section !== 'login') {
-        if (!origin_ok(I18n::$cfg['site_url'] ?? '')) {
-            http_response_code(403);
-            exit('Запрос пришёл с другого адреса.');
+        $uid = admin_expired();
+        if ($tooBig) {
+            admin_flash($tooBigMsg . ' Вдобавок истекла сессия — войдите заново.', 'err');
+            admin_go(admin_url('login'));
         }
+        if ($uid === '' || !in_array($section, $known, true) || !origin_ok(I18n::$cfg['site_url'] ?? '')) {
+            admin_flash('Сессия истекла, и отправленное не сохранено. Войдите заново и повторите.', 'warn');
+            admin_go(admin_url('login'));
+        }
+
         $post = $_POST;
-        unset($post['_csrf']);
+        unset($post['_csrf'], $post['_resume']);
         /* Пароли и секретные ключи не откладываем: файл сессии лежит на
            диске открытым текстом, а экран отложенной формы показывает поля
            как есть. Запоминаем только, какие из них были вписаны, — их
@@ -204,44 +222,45 @@ if (!admin_user()) {
             if (isset($post[$k]) && is_string($post[$k]) && $post[$k] !== '') $secret[] = $k;
             unset($post[$k]);
         }
-        $typed = false;
+        /* Поля — плоским списком в том порядке, в каком пришли: порядок
+           строк формы — это порядок пакетов и услуг на сайте. */
+        $fields = [];
+        $typed  = false;
+        foreach (admin_flat_fields($post) as $name => $v) {
+            $fields[] = [(string)$name, $v];
+            if (!admin_service_field((string)$name) && trim($v) !== '') $typed = true;
+        }
         /* Учётную запись не откладываем вовсе: кроме паролей в ней только
            почта, а без текущего пароля её форма всё равно не пройдёт. */
-        if ($section !== 'account') {
-            foreach (admin_flat_fields($post) as $name => $v) {
-                if (admin_service_field($name)) continue;
-                if (trim($v) !== '') { $typed = true; break; }
-            }
-        }
+        if ($section === 'account') $typed = false;
         $hadFile = false;
         foreach ($_FILES as $fv) {
             if (is_array($fv) && ($fv['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) $hadFile = true;
         }
 
-        if ($tooBig) {
-            admin_flash($tooBigMsg . ' Вдобавок истекла сессия — войдите заново.', 'err');
-        } elseif (!in_array($section, $known, true) || !isset($_COOKIE[session_name()])) {
-            admin_flash('Сессия истекла, и отправленное не сохранено. Войдите заново и повторите.', 'warn');
-        } else {
-            /* Первый экран после входа — этот раздел. */
-            $_SESSION['resume_land'] = ['section' => $section, 'q' => $q, 'lang' => admin_lang()];
-            $lost = $typed ? admin_resume_keep([
-                'section' => $section,
-                'q'       => $q,
-                'lang'    => admin_lang(),
-                'post'    => $post,
-                'secret'  => $secret,
-            ]) : '';
-            admin_flash('Сессия истекла, и правки не сохранились. '
-                . ($typed
-                    ? 'Но вписанное не пропало: войдите заново — панель откроет тот же раздел '
-                      . 'и покажет отправленное, его останется проверить и отправить ещё раз.'
-                    : 'Войдите заново — панель откроет тот же раздел.')
-                . ($secret ? ' Пароли и секретные ключи в сессии не храним — их придётся вписать заново.' : '')
-                . ($hadFile ? ' Файл придётся выбрать заново: файлы в сессии не хранятся.' : '')
-                . ($lost !== '' ? ' Самая давняя из отложенных форм (раздел «' . $lost . '») вытеснена: '
-                                  . 'больше пяти панель не держит.' : ''), 'warn');
-        }
+        $id = $typed ? admin_resume_keep([
+            'uid'     => $uid,
+            'at'      => time(),
+            'section' => $section,
+            'q'       => $q,
+            'lang'    => admin_lang(),
+            'fields'  => $fields,
+            'secret'  => $secret,
+        ]) : null;
+
+        /* Первый экран после входа — этот раздел, а если форма отложена, —
+           она сама. */
+        $_SESSION['resume_land'] = ['section' => $section, 'q' => $q + ($id !== null ? ['resume' => $id] : []),
+                                    'lang' => admin_lang()];
+        admin_flash('Сессия истекла, и правки не сохранились. '
+            . ($id !== null
+                ? 'Но вписанное не пропало: войдите заново — панель покажет отправленное, '
+                  . 'его останется проверить и отправить ещё раз.'
+                : ($typed
+                    ? 'Отложить их до входа не вышло: форма слишком большая. Войдите заново и внесите правки снова.'
+                    : 'Войдите заново — панель откроет тот же раздел.'))
+            . ($id !== null && $secret ? ' Пароли и секретные ключи в сессии не храним — их придётся вписать заново.' : '')
+            . ($hadFile ? ' Файл придётся выбрать заново: файлы в сессии не хранятся.' : ''), 'warn');
         admin_go(admin_url('login'));
     }
     require __DIR__ . '/../../app/admin/sections/login.php';
@@ -266,10 +285,13 @@ if ($tooBig) {
 
 admin_check_post();
 
-/* Отложенное при истёкшей сессии (см. выше, у страницы входа). Первый
-   экран после входа — тот раздел, где сессия кончилась, и там вместо
-   раздела отправленное: «Отправить ещё раз» или «Открыть без них».
-   Отправка формы на тот же экран — значит, решение принято. */
+/* Отложенное при истёкшей сессии (см. выше, у страницы входа).
+
+   Экран отложенной формы открывается только по её номеру (?resume=…):
+   после входа панель ведёт на последнюю, остальные — ссылками с неё.
+   Другие записи раздела открываются как обычно — раньше отложенная форма
+   перехватывала любую статью раздела. «Отправить ещё раз» и «Не нужно» —
+   кнопки формы с её ключом, поэтому чужая ссылка их не нажмёт. */
 $land = $_SESSION['resume_land'] ?? null;
 if (is_array($land) && !$isPost) {
     unset($_SESSION['resume_land']);
@@ -278,28 +300,30 @@ if (is_array($land) && !$isPost) {
         admin_go(admin_url($land['section'], (array)($land['q'] ?? [])));
     }
 }
-if ($pending = admin_resume_all()) {
-    $key = admin_resume_key($section, $q, admin_lang());
-    if ($isPost) {
-        unset($_SESSION['resume'][$key]);
-    } elseif (($q['resume'] ?? '') === 'drop') {
-        unset($_SESSION['resume'][$key], $q['resume']);
+
+$mine = admin_resume_all((string)($_SESSION['uid'] ?? ''));
+if ($isPost) {
+    $rid = is_string($_POST['_resume'] ?? null) ? $_POST['_resume'] : '';
+    if ($rid !== '') admin_resume_forget($rid);
+    $drop = is_string($_POST['_resume_drop'] ?? null) ? $_POST['_resume_drop'] : '';
+    if ($drop !== '') {
+        admin_resume_forget($drop);
+        unset($q['resume']);
+        admin_flash('Отложенные правки убраны.');
         admin_go(admin_url($section, $q));
-    } else {
-        /* Свой экран, а если открыт раздел без записи — последняя
-           отложенная форма этого раздела на текущем языке. На другом
-           языке её не показываем: отправка ушла бы не в тот язык. */
-        $mine = $pending[$key] ?? null;
-        if (!$mine) {
-            foreach (array_reverse($pending) as $r) {
-                if ($r['section'] === $section && ($r['lang'] ?? '') === admin_lang()) { $mine = $r; break; }
-            }
-        }
-        if ($mine) {
-            admin_resume_page($mine, $pending);
-            exit;
-        }
     }
+} elseif (is_string($_GET['resume'] ?? null)) {
+    $rid = $_GET['resume'];
+    unset($q['resume']);
+    if (!isset($mine[$rid])) {
+        admin_flash('Этих отложенных правок уже нет — их отправили или убрали.', 'warn');
+        admin_go(admin_url($section, $q));
+    }
+    /* Язык — тот, на котором форму заполняли: иначе подписи и переводы
+       на экране раздела после отправки разошлись бы с отправленным. */
+    admin_set_lang((string)($mine[$rid]['lang'] ?? ''));
+    admin_resume_page($rid, $mine[$rid], $mine);
+    exit;
 }
 
 $file = __DIR__ . '/../../app/admin/sections/' . $section . '.php';
@@ -309,28 +333,31 @@ if (!is_file($file)) {
 }
 require $file;
 
-/** Экран отложенной формы. Поля, где что-то вписано, видны и выделяются
-    для копирования, служебные (ключ версии, число полей) идут скрытыми —
-    повторная отправка повторяет исходную в точности, и проверка
-    устаревшей вкладки в разделе срабатывает так же, как сработала бы тогда. */
-function admin_resume_page(array $r, array $pending): void
+/** Экран отложенной формы. Поля идут в том порядке, в каком были
+    отправлены: заполненные — видимыми для проверки и копирования,
+    служебные и пустые — скрытыми. Повторная отправка повторяет исходную
+    в точности, и проверка устаревшей вкладки в разделе срабатывает так же,
+    как сработала бы тогда. */
+function admin_resume_page(string $id, array $r, array $pending): void
 {
-    $shown = $hidden = [];
-    foreach (admin_flat_fields((array)$r['post']) as $name => $v) {
-        if (!admin_service_field($name) && trim($v) !== '') $shown[$name] = $v; else $hidden[$name] = $v;
-    }
     $q = (array)$r['q'];
     unset($q['resume']);
+    $shownN = 0;
+    foreach ((array)$r['fields'] as $f) {
+        if (is_array($f) && !admin_service_field((string)$f[0]) && trim((string)$f[1]) !== '') $shownN++;
+    }
     /* Прочие отложенные формы — ссылками: после входа панель ведёт только
        на последнюю, и про остальные иначе не узнать. */
     $others = [];
     $titles = admin_sections();
     foreach ($pending as $k => $o) {
-        if ($k === admin_resume_key($r['section'], $q, (string)($r['lang'] ?? ''))) continue;
+        if ($k === $id) continue;
+        $oq = (array)$o['q'];
+        unset($oq['resume']);
         $others[] = [
-            'href'  => admin_url($o['section'], (array)$o['q'] + ['lang' => (string)($o['lang'] ?? '')]),
+            'href'  => admin_url($o['section'], $oq + ['resume' => $k]),
             'label' => '«' . ($titles[$o['section']][0] ?? $o['section']) . '»'
-                     . ($o['q'] ? ' — ' . implode(', ', array_map('strval', (array)$o['q'])) : '')
+                     . ($oq ? ' — ' . implode(', ', array_map('strval', $oq)) : '')
                      . ' (' . strtoupper((string)($o['lang'] ?? '')) . ')',
         ];
     }
@@ -338,25 +365,28 @@ function admin_resume_page(array $r, array $pending): void
     admin_head($r['section']);
     ?>
 <div class="flash warn" role="status">Сессия истекла, пока заполнялась форма, и она не сохранилась.
-  Ниже — всё, что было отправлено. Проверьте и отправьте ещё раз — или откройте раздел без этих правок.</div>
+  Ниже — всё, что было отправлено. Проверьте и отправьте ещё раз — или уберите эти правки.</div>
 
-<form method="post" action="<?= e(admin_url($r['section'], (array)$r['q'])) ?>">
+<form method="post" action="<?= e(admin_url($r['section'], $q)) ?>">
   <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-  <?php foreach ($hidden as $name => $v): ?>
-    <input type="hidden" name="<?= e($name) ?>" value="<?= e($v) ?>">
-  <?php endforeach; ?>
+  <input type="hidden" name="_resume" value="<?= e($id) ?>">
   <div class="panel">
     <h3>Отправленное</h3>
-    <details<?= count($shown) <= 30 ? ' open' : '' ?>>
-      <summary class="muted">Заполненные поля — <?= count($shown) ?></summary>
-      <?php $i = 0; foreach ($shown as $name => $v): $i++;
+    <details<?= $shownN <= 30 ? ' open' : '' ?>>
+      <summary class="muted">Заполненные поля — <?= $shownN ?></summary>
+      <?php $i = 0; foreach ((array)$r['fields'] as $f):
+        if (!is_array($f)) continue;
+        $name = (string)$f[0]; $v = (string)$f[1];
+        if (admin_service_field($name) || trim($v) === ''): ?>
+        <input type="hidden" name="<?= e($name) ?>" value="<?= e($v) ?>">
+      <?php else: $i++;
         $rows = min(14, max(2, substr_count($v, "\n") + 1 + intdiv(mb_strlen($v), 90))); ?>
         <label for="rs<?= $i ?>" class="mono"><?= e($name) ?></label>
         <?php /* Перевод строки сразу после тега: первый браузер съедает,
                  и текст, начинающийся с пустой строки, не теряет её. */ ?>
         <textarea id="rs<?= $i ?>" name="<?= e($name) ?>" rows="<?= $rows ?>" readonly>
 <?= e($v) ?></textarea>
-      <?php endforeach; ?>
+      <?php endif; endforeach; ?>
     </details>
     <?php /* Вписанные пароли и ключи в сессии не хранились — спрашиваем здесь.
              Пустое поле в почте и капче значит «оставить прежний». */
@@ -367,14 +397,20 @@ function admin_resume_page(array $r, array $pending): void
     <?php endforeach; ?>
     <div class="btnrow">
       <button class="btn" type="submit">Отправить ещё раз</button>
-      <a class="btn ghost" href="<?= e(admin_url($r['section'], $q + ['resume' => 'drop'])) ?>">Открыть раздел без этих правок</a>
     </div>
-    <?php if ($others): ?>
-      <p class="muted">Отложены и другие формы:
-        <?php foreach ($others as $k => $o): ?><?= $k ? ', ' : '' ?><a href="<?= e($o['href']) ?>"><?= e($o['label']) ?></a><?php endforeach; ?>.</p>
-    <?php endif; ?>
   </div>
 </form>
+
+<form method="post" action="<?= e(admin_url($r['section'], $q)) ?>" style="margin-top:12px">
+  <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+  <input type="hidden" name="_resume_drop" value="<?= e($id) ?>">
+  <button class="btn ghost" type="submit">Убрать эти правки и открыть раздел</button>
+</form>
+
+<?php if ($others): ?>
+  <p class="muted" style="margin-top:16px">Отложены и другие формы:
+    <?php foreach ($others as $k => $o): ?><?= $k ? ', ' : '' ?><a href="<?= e($o['href']) ?>"><?= e($o['label']) ?></a><?php endforeach; ?>.</p>
+<?php endif; ?>
     <?php
     admin_foot();
 }

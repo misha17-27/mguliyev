@@ -14,29 +14,29 @@ $e    = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUT
 $base = require __DIR__ . '/../../data/seo.php';
 $seo  = seo_canon();
 
-/* Понятные названия страниц: ключ 'uslugi/veb-sayty' ничего не говорит
-   тому, кто правит тексты, а «Услуги → Веб-сайты» говорит. */
-function seo_page_title(string $page): string
+/* Понятные названия и настоящие адреса страниц. Ключи — те же, что
+   в data/seo.php и в $page файлов страниц: «price», «about», «contacts»,
+   у направлений — плоский адрес («veb-sayty»). Раньше таблица ждала
+   «tseny», «o-studii», «uslugi/veb-sayty», и семь страниц из одиннадцати
+   показывались голым ключом с несуществующим адресом вроде /price/. */
+function seo_page_info(string $page): array
 {
     static $map = null;
     if ($map === null) {
         $map = [
-            'home'      => 'Главная',
-            'uslugi'    => 'Услуги — список',
-            'portfolio' => 'Портфолио',
-            'tseny'     => 'Цены',
-            'o-studii'  => 'О студии',
-            'kontakty'  => 'Контакты',
-            'blog'      => 'Блог — список',
+            'home'      => ['Главная',          '/'],
+            'uslugi'    => ['Услуги — список',  '/uslugi/'],
+            'portfolio' => ['Портфолио',        '/portfolio/'],
+            'price'     => ['Цены',             '/tseny/'],
+            'about'     => ['О студии',         '/o-studii/'],
+            'contacts'  => ['Контакты',         '/kontakty/'],
+            'blog'      => ['Блог — список',    '/blog/'],
         ];
         foreach (catalog_canon() as $slug => $c) {
-            $map['uslugi/' . $slug] = 'Услуги → ' . tr($c['title'], deflang());
-        }
-        foreach (articles_canon() as $a) {
-            $map['blog/' . $a['slug']] = 'Блог → ' . tr($a['title'], deflang());
+            $map[$slug] = ['Услуги → ' . tr($c['title'], deflang()), '/uslugi/' . $slug . '/'];
         }
     }
-    return $map[$page] ?? $page;
+    return $map[$page] ?? [$page, ''];
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
@@ -56,7 +56,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     /* Читаем и пишем под блокировкой: тот же файл правит раздел «Страницы».
        Прежние правки читаются внутри неё — чтобы языки, которых нет в
        форме, остались как были, а не такими, какими были при загрузке. */
-    $ok = Store::update('seo.json', static function (array $store) use ($in, $seo, $base, &$n) {
+    $same = false;
+    $ok = Store::update('seo.json', static function (array $store) use ($in, $seo, $base, &$n, &$same) {
         $out = [];
         /* Страницы и из файлов разработчика, и из хранилища: запись,
            появившаяся после загрузки этой страницы, не должна пропасть. */
@@ -79,8 +80,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             }
         }
         foreach ($out as $p) foreach ($p as $l) $n += count($l);
+        /* Без изменений файл не переписываем — см. texts.php. */
+        if ($out == $store) { $same = true; return null; }
         return $out;
-    });
+    }) || $same;
 
     if ($ok) {
         admin_flash($n
@@ -100,7 +103,8 @@ admin_head('seo');
 
 <div class="note">
   Показаны все три языка сразу: заголовок и его перевод должны решать одну
-  задачу, а не быть дословным переводом. Пусто — страница возьмёт русский вариант.
+  задачу, а не быть дословным переводом. Пусто — страница возьмёт значение
+  из файлов сайта, а если там его нет — русский вариант.
   Числа под полями — сколько знаков поместится в выдаче: длиннее не ошибка,
   но хвост не покажут, поэтому главное ставьте в начало.
 </div>
@@ -113,10 +117,11 @@ admin_head('seo');
       $own = !empty($store[$page]);
   ?>
     <div class="panel">
-      <h3><?= $e(seo_page_title($page)) ?>
+      <?php [$pTitle, $pUrl] = seo_page_info($page); ?>
+      <h3><?= $e($pTitle) ?>
         <?php if ($own): ?><span class="pill">правлено в панели</span><?php endif; ?>
       </h3>
-      <p class="muted mono">/<?= $e($page === 'home' ? '' : $page . '/') ?></p>
+      <?php if ($pUrl !== ''): ?><p class="muted mono"><?= $e($pUrl) ?></p><?php endif; ?>
 
       <?php foreach (['title' => 'Заголовок в выдаче', 'description' => 'Описание под заголовком'] as $f => $label): ?>
         <label><?= $e($label) ?>

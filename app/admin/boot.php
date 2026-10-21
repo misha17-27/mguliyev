@@ -71,10 +71,12 @@ function admin_boot(): void
                не пропадёт, а вторая истёкшая сессия стёрла бы их молча. */
             $lang   = $_SESSION['lang'] ?? null;
             $resume = $_SESSION['resume'] ?? null;
+            $was    = (string)$_SESSION['uid'];
             admin_logout();
             admin_flash('Сессия истекла. Войдите заново.', 'warn');
             if (is_string($lang)) $_SESSION['lang'] = $lang;
             if (is_array($resume)) $_SESSION['resume'] = $resume;
+            $_SESSION['expired'] = ['uid' => $was, 'at' => $now];
         }
     }
     $_SESSION['seen'] = $now;
@@ -113,6 +115,18 @@ function admin_uid(array $auth): string
     return substr(hash('sha256', $auth['email'] . '|' . $auth['hash']), 0, 32);
 }
 
+/** Чей вход истёк в этом браузере: uid или ''. Отметку ставит admin_boot(),
+    когда истекает сессия вошедшего редактора, и снимает новый вход.
+    Отложить форму до входа можно только при ней — см. public/admin/index.php:
+    иначе любой посетитель складывал бы в файлы сессий что угодно. Все
+    вкладки этого браузера после истечения откладываются, а не одна первая. */
+function admin_expired(): string
+{
+    $m = $_SESSION['expired'] ?? null;
+    if (!is_array($m) || (int)($m['at'] ?? 0) < time() - ADMIN_SESSION_MAX) return '';
+    return (string)($m['uid'] ?? '');
+}
+
 function admin_login(array $auth): void
 {
     session_regenerate_id(true);               // прежний номер сессии больше не годен
@@ -120,6 +134,7 @@ function admin_login(array $auth): void
     $_SESSION['born'] = time();
     $_SESSION['seen'] = time();
     $_SESSION['lang'] = I18n::$cfg['default_lang'] ?? 'ru';
+    unset($_SESSION['expired']);               // вход снова есть — откладывать нечего
     unset($_SESSION['csrf']);                  // новый ключ для новой сессии
     csrf_token();
 }

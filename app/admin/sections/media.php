@@ -48,13 +48,16 @@ const MEDIA_MP4_BRANDS = ['isom', 'iso2', 'iso4', 'iso5', 'iso6', 'mp41', 'mp42'
                           'avc1', 'dash', 'M4V ', 'M4VH', 'M4VP', 'MSNV'];
 /* Марки снимков AVIF и HEIC в том же контейнере. */
 const MEDIA_STILL_BRANDS = ['avif', 'avis', 'heic', 'heix', 'hevc', 'hevx', 'mif1', 'msf1'];
+/* Звук в том же контейнере. Он объявляет совместимость с isom и mp42,
+   поэтому отсеивается по основной марке — раньше совместимых. */
+const MEDIA_AUDIO_BRANDS = ['M4A ', 'M4B ', 'M4P ', 'F4A ', 'F4B '];
 
-/** Первые 12 байт файла: по ним виден формат. */
+/** Первые 64 байта файла: по ним виден формат, а у MP4 — и список марок. */
 function media_head(string $path): string
 {
     $fh = @fopen($path, 'rb');
     if (!$fh) return '';
-    $head = (string)fread($fh, 12);
+    $head = (string)fread($fh, 64);          // хватает на заголовок ftyp со списком марок
     fclose($fh);
     return $head;
 }
@@ -63,6 +66,27 @@ function media_head(string $path): string
 function media_brand(string $head): string
 {
     return strlen($head) >= 12 && substr($head, 4, 4) === 'ftyp' ? substr($head, 8, 4) : '';
+}
+
+/** Видео MP4: основная марка из списка — или, если основная своя
+    (камеры пишут XAVC, телефоны — свои), совместимая из списка.
+    Звук и снимки отсеиваются по основной марке. */
+function media_is_mp4(string $head): bool
+{
+    $major = media_brand($head);
+    if ($major === '' || $major === 'qt  ' || in_array($major, MEDIA_STILL_BRANDS, true)
+        || in_array($major, MEDIA_AUDIO_BRANDS, true)) {
+        return false;
+    }
+    if (in_array($major, MEDIA_MP4_BRANDS, true)) return true;
+    /* Совместимые марки — после основной и номера версии (с байта 16)
+       до конца блока ftyp, по четыре байта. */
+    $size = (int)(unpack('N', substr($head, 0, 4))[1] ?? 0);
+    $end  = min($size > 0 ? $size : strlen($head), strlen($head));
+    for ($i = 16; $i + 4 <= $end; $i += 4) {
+        if (in_array(substr($head, $i, 4), MEDIA_MP4_BRANDS, true)) return true;
+    }
+    return false;
 }
 
 /** Видео по содержимому файла.
@@ -76,7 +100,7 @@ function media_brand(string $head): string
     байта EBML. Проверяем именно их, а не расширение: расширение пишет отправитель. */
 function media_video_ext(string $head): ?string
 {
-    if (in_array(media_brand($head), MEDIA_MP4_BRANDS, true)) return 'mp4';
+    if (media_is_mp4($head)) return 'mp4';
     if (substr($head, 0, 4) === "\x1A\x45\xDF\xA3") return 'webm';
     return null;
 }
@@ -145,7 +169,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     } elseif (in_array($brand, MEDIA_STILL_BRANDS, true)) {
         admin_flash('Это снимок AVIF или HEIC, а панель принимает JPEG, PNG, WebP или GIF. '
                   . 'Сохраните снимок в одном из них.', 'err');
-    } elseif ($brand !== '' && !in_array($brand, MEDIA_MP4_BRANDS, true)) {
+    } elseif ($brand !== '' && !media_is_mp4($head)) {
         /* Тот же контейнер, но не видео: звук M4A и прочее. Картинкой он тоже быть не может. */
         admin_flash($NOT_MEDIA, 'err');
     } elseif (($vext = media_video_ext($head)) !== null && (int)$f['size'] > $MAX_VIDEO) {

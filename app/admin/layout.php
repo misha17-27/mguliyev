@@ -149,7 +149,7 @@ function admin_head(string $section): void
              выбрасывал редактора из статьи или проекта, который он переводит. */
           $keepQ = [];
           foreach ($_GET as $qk => $qv) {
-              if ($qk === 'section' || $qk === 'lang' || !is_string($qv)
+              if ($qk === 'section' || $qk === 'lang' || $qk === 'resume' || !is_string($qv)
                   || !preg_match('~^[a-z_]{1,20}$~', (string)$qk)) continue;
               $keepQ[$qk] = $qv;
           }
