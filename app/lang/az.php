@@ -340,7 +340,7 @@ return [
     // -- price
     'price.t1'       => 'Bakıda sayt qiymətləri',
     'price.t2'       => 'başlanğıc məbləğlər',
-    'price.t3'       => '«-dən» o deməkdir ki, daha ucuzu olmur, daha bahası isə olur: səhifə çoxdursa, dil çoxdursa, ya da inteqrasiya lazımdırsa. Dəqiq rəqəmi brifdən sonra deyirik — beş səhifəlik sayt və əlli səhifəlik sayt fərqli işdir, məbləği hansının sizinki olduğu bəlli olanda demək daha dürüstdür.',
+    'price.t3'       => '«Başlanğıc» o deməkdir ki, daha ucuzu olmur, daha bahası isə olur: səhifə çoxdursa, dil çoxdursa, ya da inteqrasiya lazımdırsa. Dəqiq rəqəmi brifdən sonra deyirik — beş səhifəlik sayt və əlli səhifəlik sayt fərqli işdir, məbləği hansının sizinki olduğu bəlli olanda demək daha dürüstdür.',
     'price.t4'       => 'Hər paketə daxildir',
     'price.t5'       => 'Texniki dəstəyin ilk ayı — ödənişsiz.',
     'price.t6'       => 'Öz domeninizdə korporativ poçtun qoşulması — ödənişsiz.',
@@ -354,7 +354,7 @@ return [
     'price.t14'      => 'Paketdən kənar dizayn: loqo, brendbuk, kataloq.',
     'price.t15'      => 'Ödəniş necə olur',
     'price.t16'      => 'Birdəfəlik işlər — işin əvvəlində 50% və təhvildə 50%. Abunə xidmətləri — Reels abunəliyi, dəstək, SEO, SMM — aylıq, ya da bir dəfəyə bütün il üçün.',
-    'price.t17'      => 'Qiymət niyə «-dən»dir, dəqiq rəqəm deyil?',
+    'price.t17'      => 'Qiymət niyə «başlanğıc»dır, dəqiq rəqəm deyil?',
     'price.t18'      => 'Çünki məbləğ həcmdən asılıdır. Beş səhifə, yoxsa əlli, bir dil, yoxsa üç, mətnləriniz və fotolarınız var, yoxsa yox, saytda ödəniş lazımdır, yoxsa yox — bu «hə»lərin hər biri pula başa gəlir. Brifdən sonra işlərin tərkibi və konkret məbləğ göstərilmiş təklif alırsınız.',
     'price.t19'      => 'Paket olmadan bir xidmət götürmək olar?',
     'price.t20'      => 'Bəli. Loqo, hazır sayt üçün SEO, yalnız poçt, yalnız çəkiliş — bu normal işdir və biz onunla birlikdə qalanını zorla satmırıq.',

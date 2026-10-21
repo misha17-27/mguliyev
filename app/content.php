@@ -840,13 +840,15 @@ function schema_graph(array $ctx): array
     $tel = (string)substr(tel_href(), 4);                    // tel:+994… -> +994…
     if ($tel !== '') $org['telephone'] = $tel;
     if (s('email') !== '') $org['email'] = s('email');
-    /* Адрес — только вписанный в панели. С ним студия становится местной
-       организацией: без улицы поисковик такую разметку не принимает. */
+    /* Город — тот, что и так написан в подвале. Улица — только вписанная
+       в панели: с ней студия становится местной организацией, а без неё
+       поисковик такую разметку не принимает. */
+    $org['address'] = ['@type' => 'PostalAddress',
+                       'addressLocality' => trim(explode(',', t_raw('footer.city'))[0]),
+                       'addressCountry' => 'AZ'];
     if (has_s('address')) {
-        $org['@type']   = 'ProfessionalService';
-        $org['address'] = ['@type' => 'PostalAddress', 'streetAddress' => s('address'),
-                           'addressLocality' => trim(explode(',', t_raw('footer.city'))[0]),
-                           'addressCountry' => 'AZ'];
+        $org['@type'] = 'ProfessionalService';
+        $org['address']['streetAddress'] = s('address');
     }
     $same = array_values(array_filter([su('instagram'), su('facebook'), su('tiktok')],
                          static fn($u) => strpos($u, 'http') === 0));

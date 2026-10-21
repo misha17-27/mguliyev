@@ -94,7 +94,8 @@ if ($ogDim): ?>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@600;700;800&amp;family=Cormorant+Garamond:ital,wght@1,500;1,600&amp;family=Golos+Text:wght@400;500;600&amp;display=swap">
 <?php /* В Golos Text у ğ/Ğ нет бреве, а ə/Ə нет вовсе. Эти четыре буквы
          берём из Onest — близкого по рисунку гротеска. text= урезает шрифт
-         до них, поэтому весь остальной текст остаётся в Golos (см. style.css).
+         до них; G и g Google оставляет в наборе как основу ğ/Ğ, поэтому на
+         /az/ они тоже из Onest, остальной текст — Golos (см. style.css).
          Отдельной ссылкой: text= в общей ссылке урезал бы и остальные шрифты. */
       if (I18n::$lang === 'az'): ?>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&amp;text=%C4%9E%C4%9F%C6%8F%C9%99&amp;display=swap">
