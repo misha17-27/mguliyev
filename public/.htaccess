@@ -5,6 +5,9 @@
 # и браузер отказывается его проигрывать.
 AddType video/mp4 .mp4
 AddType video/webm .webm
+# Уменьшенные копии картинок (tools/make-images.php): по типу им ставится
+# срок кеша ниже, а с октет-потоком ExpiresByType не сработал бы.
+AddType image/webp .webp
 
 # ---------------------------------------------------------------------------
 # БЕЗОПАСНОСТЬ
@@ -173,13 +176,18 @@ RewriteRule ^(az|en)/(.*/)?$ $2index.php     [E=SITE_LANG:$1,L]
 RewriteRule ^(az|en)/(.+)$   $2              [E=SITE_LANG:$1,L]
 
 # Картинки и ролики меняются вместе с именем файла, их можно держать в кеше
-# долго. Стили и скрипты — коротко: они версий в имени не имеют.
+# долго. Стили и скрипты — тоже: в адресе у них версия по времени файла
+# (asset_url() в app/content.php), и после выкладки адрес другой. Раньше
+# версии не было, срок стоял день, и край Cloudflare каждый день ходил
+# за ними на сервер. Адрес без версии на год ставить нельзя: правка стилей
+# не дошла бы до тех, у кого старая копия.
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType image/jpeg      "access plus 1 year"
   ExpiresByType image/png       "access plus 1 year"
+  ExpiresByType image/webp      "access plus 1 year"
   ExpiresByType image/svg+xml   "access plus 1 year"
   ExpiresByType video/mp4       "access plus 1 year"
-  ExpiresByType text/css        "access plus 1 day"
-  ExpiresByType text/javascript "access plus 1 day"
+  ExpiresByType text/css        "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
 </IfModule>

@@ -668,6 +668,39 @@ function group_cover(string $slug): string
     return $seen[$slug] ? $rel : '/images/placeholder/work-' . (crc32($slug) % 6 + 1) . '.svg';
 }
 
+/* Ширина карточки в сетке .works (style.css): одна колонка до 480px,
+   две до 900, дальше три в контейнере до 1232px. */
+const COVER_SIZES = '(max-width:480px) 92vw, (max-width:900px) 46vw, (max-width:1320px) 30vw, 400px';
+
+/** Атрибуты srcset и sizes из уменьшенных WebP-копий обложки (их делает
+    tools/make-images.php). Обложка 1200×750 в сетке видна на ~376 CSS px —
+    телефон тянул втрое больше нужного. Копий нет — пустая строка, остаётся
+    один src: у загруженных из панели картинок и у SVG-подложек их не бывает,
+    и ссылка на них дала бы 404. */
+function cover_srcset(string $src, string $sizes = COVER_SIZES): string
+{
+    $base = preg_replace('~\.jpe?g$~i', '', $src);
+    $root = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/\\');
+    if ($base === $src || $root === '') return '';
+    $out = [];
+    foreach ([480, 800, 1200] as $w) {
+        if (!is_file($root . $base . '-' . $w . '.webp')) return '';
+        $out[] = $base . '-' . $w . '.webp ' . $w . 'w';
+    }
+    return ' srcset="' . htmlspecialchars(implode(', ', $out), ENT_QUOTES) . '"'
+         . ' sizes="' . htmlspecialchars($sizes, ENT_QUOTES) . '"';
+}
+
+/** Адрес стиля или скрипта с версией по времени файла. Меняется файл —
+    меняется адрес, поэтому их можно кешировать на год (public/.htaccess):
+    ни Cloudflare, ни браузер не отдадут старую копию после выкладки. */
+function asset_url(string $rel): string
+{
+    $root = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/\\');
+    $t = $root !== '' && is_file($root . $rel) ? filemtime($root . $rel) : false;
+    return $t ? $rel . '?v=' . $t : $rel;   // нет файла — без версии, а не «?v=»
+}
+
 /** Заголовок и описание для поиска — свои, если заданы в панели,
     иначе собранные из того, что о странице известно. Собираются из
     строк словаря, поэтому на каждом языке — своя фраза, а не перевод

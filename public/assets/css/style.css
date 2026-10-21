@@ -204,7 +204,7 @@ body.menu-open .tl{opacity:0;transform:translateY(100%);pointer-events:none}
    текст и кнопки идут сразу за заголовком, рамка — после них. */
 @media(max-width:900px){.hgrid{grid-template-columns:1fr}.hero h1{font-size:clamp(3rem,12.4vw,9.4rem)}.phone{width:clamp(196px,22vw,258px);justify-self:start}
   .hero > .wrap{display:flex;flex-direction:column}.hgrid{display:contents}.hero-foot{order:1}.phone{order:2;margin-top:32px}}
-.screen{position:relative;height:100%;border-radius:20px;overflow:hidden;background:var(--off-3)}
+.screen{position:relative;height:100%;border-radius:20px;overflow:hidden;background:var(--off-3);container-type:size}
 .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px 18px 26px;opacity:0;animation:reel 13.5s infinite;overflow:hidden}
 .slide:nth-child(2){background:linear-gradient(165deg,#4B2AD6,#0A0A0A 78%);animation-delay:0s}
 .slide:nth-child(3){background:linear-gradient(165deg,#FF6B4A,#0A0A0A 78%);animation-delay:4.5s}
@@ -213,17 +213,22 @@ body.menu-open .tl{opacity:0;transform:translateY(100%);pointer-events:none}
 .slide b,.slide small{position:relative;z-index:2}
 .slide b{font-family:var(--f-disp);font-weight:800;font-size:1.85rem;text-transform:uppercase;line-height:1.08;display:block}
 .slide small{font-size:.7rem;color:rgba(242,239,233,.76);margin-top:8px;display:block;line-height:1.35}
-/* Скриншот реального сайта прокручивается внутри рамки, пока слайд на экране */
-.slide .media{animation:pan 13.5s linear infinite}
+/* Скриншот реального сайта прокручивается внутри рамки, пока слайд на экране.
+   Сдвигом (transform), а не object-position: тот перерисовывал картинку
+   на каждом кадре главным потоком, и он был занят почти всё время — даже
+   когда человек уже внизу, у формы. Картинка — в полную высоту, сдвиг
+   -72% своей высоты + 72% высоты экрана (cqh) — та же точка, что 50% 72%. */
+.slide .media{height:auto;bottom:auto;animation:pan 13.5s linear infinite}
 .slide:nth-child(3) .media{animation-delay:4.5s}
 .slide:nth-child(4) .media{animation-delay:9s}
-@keyframes pan{0%{object-position:50% 0%}31%{object-position:50% 72%}31.01%,100%{object-position:50% 0%}}
+@keyframes pan{0%{transform:translateY(0)}31%{transform:translateY(calc(-72% + 72cqh))}31.01%,100%{transform:translateY(0)}}
 .bars{position:absolute;top:12px;left:14px;right:14px;display:flex;gap:4px;z-index:3}
 .bars i{flex:1;height:2px;background:rgba(242,239,233,.25);border-radius:2px;overflow:hidden}
-.bars i::after{content:"";display:block;height:100%;width:0;background:var(--bone);animation:fill 13.5s infinite}
+/* Полоса растёт через scaleX, а не width: width перевёрстывал на каждом кадре */
+.bars i::after{content:"";display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:var(--bone);animation:fill 13.5s infinite}
 .bars i:nth-child(2)::after{animation-delay:4.5s}
 .bars i:nth-child(3)::after{animation-delay:9s}
-@keyframes fill{0%{width:0}33.3%{width:100%}33.4%,100%{width:0}}
+@keyframes fill{0%{transform:scaleX(0)}33.3%{transform:scaleX(1)}33.4%,100%{transform:scaleX(0)}}
 /* Пауза ролика и бегущей строки — в углу экрана под полосами, как в историях */
 .hero-pp{position:absolute;top:28px;right:15px;z-index:4;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:rgba(0,0,0,.5);color:var(--bone);display:grid;place-items:center;cursor:pointer}
 .hero-pp::before{content:"";width:9px;height:10px;border-left:2px solid currentColor;border-right:2px solid currentColor}
@@ -523,6 +528,8 @@ footer.site{border-top:1px solid var(--line);padding-block:clamp(34px,4vw,56px) 
   .js .rv{opacity:1 !important;transform:none !important}
   .mq-t,.slide,.slide .media,.bars i::after,.tl.on .tl-rec i{animation:none}
   .slide:nth-child(2){opacity:1}
+  /* неподвижный кадр — середина снимка, как было при object-position:center */
+  .slide .media{transform:translateY(calc(-50% + 50cqh))}
   .js .hero h1 .ln{clip-path:none !important;animation:none !important}
   .rl{transform:none !important}
   html{scroll-behavior:auto}
@@ -532,6 +539,7 @@ footer.site{border-top:1px solid var(--line);padding-block:clamp(34px,4vw,56px) 
    первый слайд и неподвижная строка, без полупрозрачного кадра посреди смены. */
 .still .mq-t,.still .slide,.still .slide .media,.still .bars i::after{animation:none}
 .still .slide:nth-child(2){opacity:1}
+.still .slide .media{transform:translateY(calc(-50% + 50cqh))}
 /* ---- Статья журнала. Мера ограничена: длинная строка в вебе не читается. ---- */
 .art-meta{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:clamp(22px,3vw,34px)}
 .art-lead{font-family:var(--f-ser);font-style:italic;font-weight:500;font-size:clamp(1.2rem,2.2vw,1.6rem);line-height:1.38;color:var(--bone);max-width:44ch}

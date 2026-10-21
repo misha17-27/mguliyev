@@ -15,18 +15,23 @@ include __DIR__ . '/../app/partials/head.php';
       <div class="phone">
         <div class="screen">
           <div class="bars" aria-hidden="true"><i></i><i></i><i></i></div>
+          <?php /* Первый кадр — самая крупная картинка первого экрана: ему высокий
+                   приоритет, а невидимым до 4,5 и 9 с — низкий, иначе все три
+                   делили канал поровну. srcset — копии в WebP под ширину экрана
+                   «телефона» (tools/make-images.php), JPEG остаётся запасным.
+                   Без <picture>: app.js вешает .has-img на родителя картинки. */ ?>
           <div class="slide">
-            <img class="media" src="/images/home/reel-1.jpg" data-ph="/images/placeholder/reel-1.svg" alt="<?= t('home.t150') ?>" width="608" height="2400">
+            <img class="media" src="/images/home/reel-1.jpg" srcset="/images/home/reel-1-360.webp 360w, /images/home/reel-1-540.webp 540w" sizes="(max-width:900px) 182px, 242px" fetchpriority="high" data-ph="/images/placeholder/reel-1.svg" alt="<?= t('home.t150') ?>" width="608" height="2400">
             <span class="scrim"></span>
             <b>SOCAR<br>Midstream</b><small><?= t('home.t5') ?></small>
           </div>
           <div class="slide">
-            <img class="media" src="/images/home/reel-2.jpg" data-ph="/images/placeholder/reel-2.svg" alt="<?= t('home.t151') ?>" width="640" height="2400">
+            <img class="media" src="/images/home/reel-2.jpg" srcset="/images/home/reel-2-360.webp 360w, /images/home/reel-2-540.webp 540w" sizes="(max-width:900px) 182px, 242px" fetchpriority="low" data-ph="/images/placeholder/reel-2.svg" alt="<?= t('home.t151') ?>" width="640" height="2400">
             <span class="scrim"></span>
             <b>YMK<br>Watercolor</b><small><?= t('home.t6') ?></small>
           </div>
           <div class="slide">
-            <img class="media" src="/images/home/reel-3.jpg" data-ph="/images/placeholder/reel-3.svg" alt="<?= t('home.t152') ?>" width="640" height="2202">
+            <img class="media" src="/images/home/reel-3.jpg" srcset="/images/home/reel-3-360.webp 360w, /images/home/reel-3-540.webp 540w" sizes="(max-width:900px) 182px, 242px" fetchpriority="low" data-ph="/images/placeholder/reel-3.svg" alt="<?= t('home.t152') ?>" width="640" height="2202">
             <span class="scrim"></span>
             <b>Elson<br>Group</b><small><?= t('home.t7') ?></small>
           </div>
@@ -106,32 +111,32 @@ include __DIR__ . '/../app/partials/head.php';
              с подписью диктор читал их дважды. */ ?>
     <div class="works rv">
       <a class="work" href="https://elson-group.com" target="_blank" rel="noopener">
-        <div class="cover w1"><img class="media" src="/images/works/elson-group.com.jpg" data-ph="/images/placeholder/work-1.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t37') ?></b></div>
+        <div class="cover w1"><img class="media" src="/images/works/elson-group.com.jpg"<?= cover_srcset('/images/works/elson-group.com.jpg') ?> data-ph="/images/placeholder/work-1.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t37') ?></b></div>
         <h3>Elson Group</h3>
         <div class="wmeta"><span><?= t('home.t38') ?></span><b>elson-group.com</b></div>
       </a>
       <a class="work" href="https://lynkco.az" target="_blank" rel="noopener">
-        <div class="cover w2"><img class="media" src="/images/home/work-2.jpg" data-ph="/images/placeholder/work-2.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t39') ?></b></div>
+        <div class="cover w2"><img class="media" src="/images/home/work-2.jpg"<?= cover_srcset('/images/home/work-2.jpg') ?> data-ph="/images/placeholder/work-2.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t39') ?></b></div>
         <h3><?= t('home.t40') ?></h3>
         <div class="wmeta"><span><?= t('home.t41') ?></span><b>lynkco.az</b></div>
       </a>
       <a class="work" href="https://marshal.az" target="_blank" rel="noopener">
-        <div class="cover w3"><img class="media" src="/images/home/work-3.jpg" data-ph="/images/placeholder/work-3.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t42') ?></b></div>
+        <div class="cover w3"><img class="media" src="/images/home/work-3.jpg"<?= cover_srcset('/images/home/work-3.jpg') ?> data-ph="/images/placeholder/work-3.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t42') ?></b></div>
         <h3><?= t('home.t43') ?></h3>
         <div class="wmeta"><span><?= t('home.t44') ?></span><b>marshal.az</b></div>
       </a>
       <a class="work" href="https://grandmoto.az" target="_blank" rel="noopener">
-        <div class="cover w4"><img class="media" src="/images/home/work-4.jpg" data-ph="/images/placeholder/work-4.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t45') ?></b></div>
+        <div class="cover w4"><img class="media" src="/images/home/work-4.jpg"<?= cover_srcset('/images/home/work-4.jpg') ?> data-ph="/images/placeholder/work-4.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t45') ?></b></div>
         <h3>Grandmoto</h3>
         <div class="wmeta"><span><?= t('home.t46') ?></span><b>grandmoto.az</b></div>
       </a>
       <a class="work" href="https://store.az" target="_blank" rel="noopener">
-        <div class="cover w5"><img class="media" src="/images/home/work-5.jpg" data-ph="/images/placeholder/work-5.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t47') ?></b></div>
+        <div class="cover w5"><img class="media" src="/images/home/work-5.jpg"<?= cover_srcset('/images/home/work-5.jpg') ?> data-ph="/images/placeholder/work-5.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t47') ?></b></div>
         <h3>Store.az</h3>
         <div class="wmeta"><span><?= t('home.t48') ?></span><b>store.az</b></div>
       </a>
       <a class="work" href="https://ymkwatercolor.com" target="_blank" rel="noopener">
-        <div class="cover w6"><img class="media" src="/images/works/ymkwatercolor.com.jpg" data-ph="/images/placeholder/work-6.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t49') ?></b></div>
+        <div class="cover w6"><img class="media" src="/images/works/ymkwatercolor.com.jpg"<?= cover_srcset('/images/works/ymkwatercolor.com.jpg') ?> data-ph="/images/placeholder/work-6.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t49') ?></b></div>
         <h3>YMK Watercolor</h3>
         <div class="wmeta"><span><?= t('home.t50') ?></span><b>ymkwatercolor.com</b></div>
       </a>
@@ -148,7 +153,9 @@ include __DIR__ . '/../app/partials/head.php';
     <div class="vf rv">
       <figure class="vf-mon">
         <div class="vf-scr" id="vfScr" role="tabpanel" aria-label="<?= t('home.t159') ?>">
-          <img class="vf-shot" id="vfShot" src="/images/demo/shot-1.svg" alt="" width="1080" height="1920">
+          <?php /* lazy: блок далеко ниже первого экрана. Постеры роликов — WebP,
+                   и ставит их скрипт только текущему ролику (app.js, showVideo). */ ?>
+          <img class="vf-shot" id="vfShot" src="/images/demo/shot-1.svg" alt="" width="1080" height="1920" loading="lazy">
           <?php /* aria-hidden — на подписях, а не на всей строке: скрипт кладёт сюда
                    кнопку паузы, и внутри скрытого от диктора блока она была бы безымянной. */ ?>
           <div class="vf-osd" data-pause="<?= t('home.demo_pause') ?>"><span class="vf-stby" aria-hidden="true"><i></i><em id="vfState">stby</em></span><span aria-hidden="true">9:16</span></div>
@@ -171,10 +178,10 @@ include __DIR__ . '/../app/partials/head.php';
       <div class="vf-side">
         <p class="lb"><?= t('home.t60') ?></p>
         <ul class="vf-list" id="vfList" role="tablist" aria-label="<?= t('home.t160') ?>">
-          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="true" aria-controls="vfScr" data-img="/images/demo/shot-1.svg" data-vid="/images/demo/shot-1.mp4" data-poster="/images/demo/shot-1-poster.jpg" data-sub="<?= t('home.sub1') ?>"><i>01</i><b><?= t('home.t61') ?></b><span><?= t('home.t62') ?></span></button></li>
-          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-2.svg" data-vid="/images/demo/shot-2.mp4" data-poster="/images/demo/shot-2-poster.jpg" data-sub="<?= t('home.sub2') ?>"><i>02</i><b><?= t('home.t63') ?></b><span><?= t('home.t64') ?></span></button></li>
-          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-3.svg" data-vid="/images/demo/shot-3.mp4" data-poster="/images/demo/shot-3-poster.jpg" data-sub="<?= t('home.sub3') ?>"><i>03</i><b><?= t('home.t65') ?></b><span><?= t('home.t66') ?></span></button></li>
-          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-4.svg" data-vid="/images/demo/shot-4.mp4" data-poster="/images/demo/shot-4-poster.jpg" data-sub="<?= t('home.sub4') ?>"><i>04</i><b><?= t('home.t67') ?></b><span><?= t('home.t68') ?></span></button></li>
+          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="true" aria-controls="vfScr" data-img="/images/demo/shot-1.svg" data-vid="/images/demo/shot-1.mp4" data-poster="/images/demo/shot-1-poster.webp" data-sub="<?= t('home.sub1') ?>"><i>01</i><b><?= t('home.t61') ?></b><span><?= t('home.t62') ?></span></button></li>
+          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-2.svg" data-vid="/images/demo/shot-2.mp4" data-poster="/images/demo/shot-2-poster.webp" data-sub="<?= t('home.sub2') ?>"><i>02</i><b><?= t('home.t63') ?></b><span><?= t('home.t64') ?></span></button></li>
+          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-3.svg" data-vid="/images/demo/shot-3.mp4" data-poster="/images/demo/shot-3-poster.webp" data-sub="<?= t('home.sub3') ?>"><i>03</i><b><?= t('home.t65') ?></b><span><?= t('home.t66') ?></span></button></li>
+          <li role="presentation"><button type="button" class="vfr" role="tab" aria-selected="false" aria-controls="vfScr" data-img="/images/demo/shot-4.svg" data-vid="/images/demo/shot-4.mp4" data-poster="/images/demo/shot-4-poster.webp" data-sub="<?= t('home.sub4') ?>"><i>04</i><b><?= t('home.t67') ?></b><span><?= t('home.t68') ?></span></button></li>
         </ul>
         <div>
           <p class="lb" style="margin-bottom:12px"><?= t('home.t69') ?></p>

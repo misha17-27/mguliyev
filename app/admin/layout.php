@@ -19,7 +19,9 @@ function admin_assets(): void
     ?>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@600;700&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/admin/assets/admin.css?v=4">
+<?php /* Версия по времени файла: стили и скрипты теперь кешируются на год
+         (public/.htaccess), и номер, поднятый вручную, легко забыть. */ ?>
+<link rel="stylesheet" href="<?= htmlspecialchars(asset_url('/admin/assets/admin.css'), ENT_QUOTES) ?>">
 <link rel="icon" href="/admin/assets/favicon.ico?v=4" sizes="32x32">
 <link rel="icon" href="/admin/assets/favicon.svg?v=4" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/admin/assets/apple-touch-icon.png?v=4">
@@ -253,7 +255,7 @@ function admin_foot(): void
     </div>
   </main>
 </div>
-<script src="/admin/assets/admin.js?v=1"></script>
+<script src="<?= htmlspecialchars(asset_url('/admin/assets/admin.js'), ENT_QUOTES) ?>"></script>
 </body>
 </html>
 <?php

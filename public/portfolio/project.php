@@ -93,9 +93,12 @@ $more = array_slice($more, 0, 6);
 
     <?php /* Подпись — только у настоящего снимка сайта (то же условие, что
              в project_cover()). Отраслевая подложка — фон, а не сайт заказчика. */ ?>
+    <?php /* Обложка — LCP страницы, отсюда fetchpriority. Ширина — во весь
+             контейнер (до 1232px), а не карточка сетки: свой sizes. */
+          $cover = project_cover($w, $g); ?>
     <div class="cover" style="border-radius:16px;overflow:hidden;margin-top:clamp(8px,1.4vw,18px)">
-      <img class="media" src="<?= e(project_cover($w, $g)) ?>" alt="<?= !empty($w['image']) ? e($name . ' — ' . $w['domain']) : '' ?>"
-           width="1200" height="750" style="display:block;width:100%;height:auto">
+      <img class="media" src="<?= e($cover) ?>"<?= cover_srcset($cover, '(max-width:1320px) 92vw, 1232px') ?> alt="<?= !empty($w['image']) ? e($name . ' — ' . $w['domain']) : '' ?>"
+           fetchpriority="high" width="1200" height="750" style="display:block;width:100%;height:auto">
     </div>
 
     <dl style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px 32px;margin:clamp(24px,3vw,40px) 0 0">
@@ -136,7 +139,7 @@ $more = array_slice($more, 0, 6);
             <a class="work<?= $xd ? ' work-dead' : '' ?>" href="<?= e(portfolio_url($g['slug'], project_slug($x['domain']))) ?>">
               <?php /* alt пустой: название и домен уже в тексте ссылки */ ?>
               <div class="cover">
-                <img class="media" src="<?= e(project_cover($x, $g)) ?>" alt=""
+                <img class="media" src="<?= e(project_cover($x, $g)) ?>"<?= cover_srcset(project_cover($x, $g)) ?> alt=""
                      loading="lazy" width="1200" height="750">
                 <?php if ($xd): ?><span class="work-badge"><?= t('portfolio.t4') ?></span><?php endif; ?>
               </div>

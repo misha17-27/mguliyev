@@ -117,17 +117,22 @@ $unit = static fn(int $n): string => plural($n, 'units.project');
     </nav>
 
     <div class="works" id="wgrid" style="margin-top:clamp(24px,3vw,38px)">
-      <?php foreach ($items as [$g, $w]):
+      <?php $i = 0; foreach ($items as [$g, $w]):
         $isDead = !empty($w['archived']);
         $name   = tr($w['desc']);
+        $cover  = project_cover($w, $g);
+        /* Первая карточка — LCP страницы: с loading="lazy" её запрос ждал
+           вёрстки. Ей высокий приоритет, первому ряду на компьютере — обычную
+           загрузку, остальным — ленивую. */
+        $load   = $i === 0 ? 'fetchpriority="high"' : ($i > 2 ? 'loading="lazy"' : '');
       ?>
       <a class="work<?= $isDead ? ' work-dead' : '' ?>" href="<?= e(portfolio_url($g['slug'], project_slug($w['domain']))) ?>">
         <?php /* alt пустой: название и домен уже есть в тексте ссылки, и диктор
                  читал их дважды. А у трети карточек вместо снимка отраслевая
                  подложка — подпись выдавала её за сайт заказчика. */ ?>
         <div class="cover">
-          <img class="media" src="<?= e(project_cover($w, $g)) ?>" alt=""
-               loading="lazy" width="1200" height="750">
+          <img class="media" src="<?= e($cover) ?>"<?= cover_srcset($cover) ?> alt=""
+               <?= $load ?> width="1200" height="750">
           <?php if ($isDead): ?><span class="work-badge"><?= t('portfolio.t4') ?></span><?php endif; ?>
         </div>
         <?php /* h2: над карточками на этой странице только h1. Домен — lang="en":
@@ -135,7 +140,7 @@ $unit = static fn(int $n): string => plural($n, 'units.project');
         <h2><?= e($name) ?></h2>
         <div class="wmeta"><span><?= e(tr($g['name'])) ?></span><b lang="en"><?= e($w['domain']) ?></b></div>
       </a>
-      <?php endforeach; ?>
+      <?php $i++; endforeach; ?>
     </div>
 
     <?php if ($cat === null): ?>

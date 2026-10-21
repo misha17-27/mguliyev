@@ -6,6 +6,9 @@ document.documentElement.classList.add("js");
 document.querySelectorAll("img.media").forEach(function (img) {
   function ok() { img.hidden = false; img.parentElement.classList.add("has-img"); }
   function fail() {
+    /* Не пришла копия из srcset — сначала исходный JPEG из src: без srcset
+       браузер берёт его сам. Иначе он так и выбирал бы битую копию. */
+    if (img.hasAttribute("srcset")) { img.removeAttribute("srcset"); return; }
     var ph = img.getAttribute("data-ph");
     if (ph && img.getAttribute("data-fallback") !== "1") {
       img.setAttribute("data-fallback", "1");
@@ -242,7 +245,6 @@ if (vfList && vfNow) {
       v.muted = true; v.loop = true; v.playsInline = true;
       v.preload = "none";
       v.setAttribute("aria-hidden", "true");
-      var ps = b.getAttribute("data-poster"); if (ps) v.poster = ps;
       v.src = u;
       v.addEventListener("error", dropVideos, { once: true });
       /* Сразу за статичным макетом: тогда ролик кроет его, но остаётся
@@ -258,7 +260,16 @@ if (vfList && vfNow) {
 
   function showVideo() {
     if (!vids) return;
-    vids.forEach(function (v, i) { if (v) v.classList.toggle("on", i === cur); });
+    vids.forEach(function (v, i) {
+      if (!v) return;
+      /* Постер — только тому ролику, что на экране: остальные три скрыты,
+         а браузер скачивал постеры всем четырём сразу. */
+      if (i === cur && !v.getAttribute("poster")) {
+        var ps = tabs[i].getAttribute("data-poster");
+        if (ps) v.poster = ps;
+      }
+      v.classList.toggle("on", i === cur);
+    });
     playCur();
   }
 
@@ -461,6 +472,42 @@ if (leadForm) {
      удачного или нет, просим виджет выдать новый токен. */
   var hasCaptcha = !!leadForm.querySelector(".cf-turnstile");
 
+  /* Скрипт капчи — только когда до формы осталось меньше 800px или в неё
+     зашли с клавиатуры. В шапке каждой страницы он грузился зря, а на
+     главной виджет сразу тянул сотни килобайт ради формы в самом низу.
+     Отрисовка неявная: api.js сам находит .cf-turnstile, встроенного
+     скрипта по-прежнему нет. Без JS ничего не меняется: виджет и раньше
+     без него не работал, об этом говорит <noscript> у формы. */
+  var capDone = !hasCaptcha || !!window.turnstile ||
+    !!document.querySelector('script[src^="https://challenges.cloudflare.com/turnstile/"]');
+  var capIo = null;
+  function loadCaptcha() {
+    if (capDone) return;
+    capDone = true;
+    if (capIo) capIo.disconnect();
+    leadForm.removeEventListener("focusin", loadCaptcha);
+    var s = document.createElement("script");
+    s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    s.async = true;
+    document.head.appendChild(s);
+  }
+  if (!capDone) {
+    leadForm.addEventListener("focusin", loadCaptcha);
+    if ("IntersectionObserver" in window) {
+      capIo = new IntersectionObserver(function (es) {
+        if (es.some(function (e) { return e.isIntersecting; })) loadCaptcha();
+      }, { rootMargin: "800px 0px" });
+      capIo.observe(leadForm);
+    } else {
+      loadCaptcha();
+    }
+  }
+  /* Токен, который виджет кладёт в форму; пусто — проверка ещё идёт. */
+  function capToken() {
+    var f = leadForm.querySelector('[name="cf-turnstile-response"]');
+    return f ? f.value : "";
+  }
+
   function resetCaptcha() {
     if (!hasCaptcha) return;
     if (window.turnstile && typeof window.turnstile.reset === "function") {
@@ -476,35 +523,48 @@ if (leadForm) {
     var btn = leadForm.querySelector('button[type="submit"]');
     if (btn) btn.disabled = true;
     st.textContent = "…";
-    fetch(leadForm.action, {
-      method: "POST",
-      body: new FormData(leadForm),
-      headers: { "X-Requested-With": "fetch" }
-    })
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        st.textContent = d.message || "";
-        if (d.ok) leadForm.reset();
-        resetCaptcha();
+    /* Нажали раньше, чем виджет выдал токен (скрипт капчи теперь грузится
+       у формы, а проверка идёт секунду-другую): заявка ушла бы без токена,
+       получила отказ, а повтор в ту же минуту — ещё и «слишком часто».
+       Ждём токен до 15 с; не дождались — отправляем, ответит сервер. */
+    var waited = 0;
+    (function send() {
+      if (hasCaptcha && !capToken() && waited < 15000) {
+        loadCaptcha();
+        waited += 250;
+        setTimeout(send, 250);
+        return;
+      }
+      fetch(leadForm.action, {
+        method: "POST",
+        body: new FormData(leadForm),
+        headers: { "X-Requested-With": "fetch" }
       })
-      .catch(function () {
-        /* Сеть не ответила. Без капчи отправляем обычным способом, чтобы
-           заявка не потерялась из-за одной неудачной попытки.
-
-           А с капчей так нельзя: токен уже ушёл в неудавшемся запросе и
-           мог сгореть на сервере, поэтому повторная отправка тем же полем
-           гарантированно получит отказ. Вместо этого обновляем виджет и
-           просим человека нажать ещё раз — его текст в полях при этом
-           остаётся на месте. */
-        if (hasCaptcha) {
-          st.textContent = leadForm.getAttribute("data-retry") ||
-            "Не получилось отправить. Нажмите ещё раз.";
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          st.textContent = d.message || "";
+          if (d.ok) leadForm.reset();
           resetCaptcha();
-        } else {
-          leadForm.submit();
-        }
-      })
-      .then(function () { if (btn) btn.disabled = false; });
+        })
+        .catch(function () {
+          /* Сеть не ответила. Без капчи отправляем обычным способом, чтобы
+             заявка не потерялась из-за одной неудачной попытки.
+
+             А с капчей так нельзя: токен уже ушёл в неудавшемся запросе и
+             мог сгореть на сервере, поэтому повторная отправка тем же полем
+             гарантированно получит отказ. Вместо этого обновляем виджет и
+             просим человека нажать ещё раз — его текст в полях при этом
+             остаётся на месте. */
+          if (hasCaptcha) {
+            st.textContent = leadForm.getAttribute("data-retry") ||
+              "Не получилось отправить. Нажмите ещё раз.";
+            resetCaptcha();
+          } else {
+            leadForm.submit();
+          }
+        })
+        .then(function () { if (btn) btn.disabled = false; });
+    })();
   });
 }
 
