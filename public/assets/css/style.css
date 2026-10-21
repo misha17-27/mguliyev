@@ -3,13 +3,26 @@
      якорей и прилипание плитки «О студии» — держим в одном месте. */
   --nav-h:113px;
   --black:#000; --off:#0A0A0A; --off-2:#121211; --off-3:#191817;
-  --bone:#F2EFE9; --grey:#918D86; --dim:#5A5752;
+  /* --dim — самый тёмный тон, который держит 4.5:1 на всех фонах палитры,
+     вплоть до --off-3. Прежний #5A5752 давал 2.5–2.9:1, и мелкие подписи не читались. */
+  --bone:#F2EFE9; --grey:#918D86; --dim:#85817A;
   --line:rgba(242,239,233,.13); --line-2:rgba(242,239,233,.06);
-  --duo-a:#4B2AD6; --duo-b:#FF6B4A;
+  /* Граница поля формы — 3:1 к фону, как требует WCAG 1.4.11:
+     с --line пустое поле на тёмном фоне было не видно. */
+  --line-field:rgba(242,239,233,.4);
+  /* --duo-a на чёрном даёт 2.6:1 — для полос и точек годится, для текста нет.
+     Текстовый вариант — тот же оттенок, только светлее, до 4.6:1. */
+  --duo-a:#4B2AD6; --duo-a-text:#7A61E0; --duo-b:#FF6B4A;
   --f-disp:"Alumni Sans","Alumni FB Narrow","Alumni FB Wide",sans-serif;
   --f-ser:"Cormorant Garamond","Georgia",serif;
   --f-body:"Golos Text","Segoe UI",system-ui,sans-serif;
 }
+/* В Golos Text у ğ/Ğ нет бреве (глиф собран из одной g), а ə/Ə нет вовсе —
+   на /az/ «məbləği» читалось как «məbləgi». На азербайджанских страницах
+   head.php подгружает Onest, урезанный параметром text= до этих букв
+   (Google добавляет к ним G, g и знак бреве). Onest стоит первым, но знает
+   только эти знаки — весь остальной текст по-прежнему набран Golos. */
+:root:lang(az){--f-body:"Onest","Golos Text","Segoe UI",system-ui,sans-serif}
 /* Пока Alumni Sans грузится, текст рисуется подменой. Haettenschweiler и Arial Narrow
    есть только в Windows и macOS — на Android и iOS их нет, и без выравнивания метрик
    заголовок первого экрана рисуется почти вдвое крупнее, а потом схлопывается (CLS).
@@ -34,7 +47,11 @@ img{max-width:100%;display:block}
 .ser{font-family:var(--f-ser);font-style:italic;font-weight:600;text-transform:none;letter-spacing:-.01em;line-height:1.08}
 .lb{font-family:var(--f-body);font-weight:500;font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--dim);margin:0}
 .sub{color:var(--grey);font-size:1rem;max-width:58ch}
-.duo-text{background:linear-gradient(96deg,var(--duo-a),var(--duo-b));-webkit-background-clip:text;background-clip:text;color:transparent}
+/* Ссылка внутри текста отличалась от него только цветом (1.17:1 к серому
+   тексту) — подчёркиваем, чтобы её было видно и без различения цвета. */
+.sub a,details p a{color:var(--duo-b);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.sub a:hover,details p a:hover{text-decoration-thickness:2px}
+.duo-text{background:linear-gradient(96deg,var(--duo-a-text),var(--duo-b));-webkit-background-clip:text;background-clip:text;color:transparent}
 .h2{font-size:clamp(2.1rem,5vw,3.6rem)}
 .shead{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap;margin-bottom:clamp(24px,3.2vw,44px)}
 
@@ -132,14 +149,19 @@ body.menu-open .tl{opacity:0;transform:translateY(100%);pointer-events:none}
 .menu a{transition:color .25s}
 .menu a:hover{color:var(--bone)}
 .nav-right{display:flex;align-items:center;gap:14px}
-.lang{display:flex;gap:1px;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
-.lang a,.lang span{padding:5px 7px;transition:color .25s}
+/* Языки стояли вплотную (1px) мишенями 30×27 — промах по пальцу переключал
+   не на тот язык. Шире зазор, крупнее мишень; в шапке — по высоте строки. */
+.lang{display:flex;gap:4px;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.lang a,.lang span{padding:5px 9px;transition:color .25s}
+.nav .lang a,.nav .lang span{padding-block:13.5px}
+/* На 320px шапке не хватает ширины: возвращаем прежние поля и сжимаем зазор у бургера */
+@media(max-width:359px){.nav-right{gap:6px}.nav .lang a,.nav .lang span{padding-inline:7px}}
 .lang [aria-current="true"]{color:var(--bone)}
 .lang a:hover{color:var(--duo-b)}
 .pill{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:999px;padding:9px 17px;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;transition:border-color .3s,color .3s}
 .pill:hover{border-color:var(--duo-b);color:var(--bone)}
 .pill i{font-style:normal;width:7px;height:7px;border-radius:50%;background:linear-gradient(120deg,var(--duo-a),var(--duo-b));flex:none}
-.burger{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:50%;background:none;cursor:pointer;padding:0;place-items:center;gap:5px;flex-direction:column}
+.burger{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:50%;background:none;cursor:pointer;padding:0;place-items:center;justify-content:center;gap:5px;flex-direction:column}
 .burger span{display:block;width:15px;height:1.5px;background:var(--bone);transition:transform .3s}
 .burger[aria-expanded="true"] span:first-child{transform:translateY(3.25px) rotate(45deg)}
 .burger[aria-expanded="true"] span:last-child{transform:translateY(-3.25px) rotate(-45deg)}
@@ -153,6 +175,9 @@ body.menu-open .tl{opacity:0;transform:translateY(100%);pointer-events:none}
 .drawer > nav a{font-family:var(--f-disp);font-weight:800;font-size:min(8.4vw,6.2vh);text-transform:uppercase;line-height:1.12;padding-block:clamp(5px,1.1vh,12px);border-bottom:1px solid var(--line)}
 .drawer > nav a:hover{color:var(--duo-b)}
 .drawer-foot{display:flex;flex-direction:column;gap:12px;font-size:.9rem;color:var(--grey)}
+/* Телефон, почта и языки в шторке были высотой 23–27px — добираем до пальца. */
+.drawer-foot .lang a,.drawer-foot .lang span{padding:12px 10px}
+.drawer-foot > a{padding-block:10px}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:var(--f-body);font-weight:500;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:16px 28px;border-radius:999px;background:var(--bone);color:var(--black);border:1px solid var(--bone);cursor:pointer;transition:background .3s,color .3s,border-color .3s}
 .btn:hover{background:transparent;color:var(--bone)}
@@ -173,8 +198,12 @@ body.menu-open .tl{opacity:0;transform:translateY(100%);pointer-events:none}
 /* 9:16 */
 .phone{width:clamp(180px,19vw,258px);aspect-ratio:9/16;border-radius:26px;border:1px solid var(--line);padding:7px;background:var(--off-2);position:relative;justify-self:end}
 /* Ниже 900 первый экран в одну колонку — колонка заголовка снова во всю ширину,
-   поэтому возвращаем прежний коэффициент и прежнюю ширину рамки. */
-@media(max-width:900px){.hgrid{grid-template-columns:1fr}.hero h1{font-size:clamp(3rem,12.4vw,9.4rem)}.phone{width:clamp(196px,22vw,258px);justify-self:start}}
+   поэтому возвращаем прежний коэффициент и прежнюю ширину рамки.
+   Рамка с роликом высотой ~350px стояла между заголовком и кнопками, и на
+   телефоне «Оставить заявку» уезжала за первый экран. В одной колонке
+   текст и кнопки идут сразу за заголовком, рамка — после них. */
+@media(max-width:900px){.hgrid{grid-template-columns:1fr}.hero h1{font-size:clamp(3rem,12.4vw,9.4rem)}.phone{width:clamp(196px,22vw,258px);justify-self:start}
+  .hero > .wrap{display:flex;flex-direction:column}.hgrid{display:contents}.hero-foot{order:1}.phone{order:2;margin-top:32px}}
 .screen{position:relative;height:100%;border-radius:20px;overflow:hidden;background:var(--off-3)}
 .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px 18px 26px;opacity:0;animation:reel 13.5s infinite;overflow:hidden}
 .slide:nth-child(2){background:linear-gradient(165deg,#4B2AD6,#0A0A0A 78%);animation-delay:0s}
@@ -215,7 +244,7 @@ body.menu-open .tl{opacity:0;transform:translateY(100%);pointer-events:none}
 .row:hover{padding-left:clamp(12px,1.6vw,26px)}
 .row:hover::before{opacity:1}
 .rname{font-family:var(--f-disp);font-weight:800;font-size:clamp(1.9rem,5vw,3.5rem);text-transform:uppercase;line-height:1.08;position:relative;transition:color .35s}
-.row:hover .rname{background:linear-gradient(96deg,var(--duo-a),var(--duo-b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.row:hover .rname{background:linear-gradient(96deg,var(--duo-a-text),var(--duo-b));-webkit-background-clip:text;background-clip:text;color:transparent}
 .rdesc{color:var(--grey);font-size:.9rem;position:relative;max-width:58ch}
 .rmeta{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);white-space:nowrap;position:relative;display:flex;align-items:center;gap:14px}
 .rmeta::after{content:"\2192";font-size:1.15rem;letter-spacing:0;transition:transform .35s,color .35s}
@@ -240,7 +269,8 @@ body.menu-open .tl{opacity:0;transform:translateY(100%);pointer-events:none}
 .w4{background:linear-gradient(152deg,#9A2B8C,#0A0A0A 84%)}
 .w5{background:linear-gradient(152deg,#2B5FBF,#0A0A0A 84%)}
 .w6{background:linear-gradient(152deg,#B5581F,#0A0A0A 84%)}
-.work h3{font-family:var(--f-body);font-weight:500;font-size:1rem;margin:0;line-height:1.35}
+/* h2 — в сетке /portfolio/, где над карточками только h1; h3 — где над ними есть h2 */
+.work h2,.work h3{font-family:var(--f-body);font-weight:500;font-size:1rem;margin:0;line-height:1.35}
 .wmeta{display:flex;justify-content:space-between;gap:14px;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-top:1px solid var(--line);padding-top:11px;line-height:1.4}
 .wmeta b{color:var(--duo-b);font-weight:500}
 
@@ -316,7 +346,7 @@ body.menu-open .tl{opacity:0;transform:translateY(100%);pointer-events:none}
 .vfr b{font-family:var(--f-disp);font-weight:800;text-transform:uppercase;font-size:clamp(1.05rem,2vw,1.32rem);line-height:1.12;letter-spacing:.01em}
 .vfr span{font-size:.84rem;color:var(--grey);max-width:52ch}
 .vfr[aria-selected="true"] i{color:var(--duo-b)}
-.vfr[aria-selected="true"] b{background:linear-gradient(96deg,var(--duo-a),var(--duo-b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.vfr[aria-selected="true"] b{background:linear-gradient(96deg,var(--duo-a-text),var(--duo-b));-webkit-background-clip:text;background-clip:text;color:transparent}
 @media(hover:hover){.vfr:hover{padding-left:12px}}
 .vf-get i{font-size:.7rem}
 @media(max-width:900px){.vf{grid-template-columns:1fr;gap:24px}.vf-mon{width:min(224px,56%)}}
@@ -373,10 +403,18 @@ body.menu-open .tl{opacity:0;transform:translateY(100%);pointer-events:none}
 .pr{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.6fr) auto;gap:clamp(14px,3vw,40px);align-items:baseline;padding-block:clamp(20px,2.4vw,30px);border-bottom:1px solid var(--line);transition:padding-left .4s}
 .pr:hover{padding-left:clamp(10px,1.4vw,22px)}
 @media(max-width:720px){.pr{grid-template-columns:1fr;gap:8px}}
-.pr h3{font-family:var(--f-disp);font-weight:800;font-size:clamp(1.7rem,3.6vw,2.5rem);text-transform:uppercase;margin:0;letter-spacing:.01em;line-height:1.1}
+/* h2 — на /tseny/, где пакеты идут сразу под h1; h3 — на главной, под h2 раздела */
+.pr h2,.pr h3{font-family:var(--f-disp);font-weight:800;font-size:clamp(1.7rem,3.6vw,2.5rem);text-transform:uppercase;margin:0;letter-spacing:.01em;line-height:1.1}
 .pr p{color:var(--grey);font-size:.88rem;max-width:48ch}
-.pr .amt{font-family:var(--f-disp);font-weight:800;font-size:clamp(1.8rem,3.8vw,2.6rem);white-space:nowrap;font-variant-numeric:tabular-nums;line-height:1.1}
+/* Без табличных цифр: в Alumni Sans tnum растягивает и пробел до ширины цифры,
+   и «₼1 190» читалось как два числа. Столбец сумм держит выключка вправо:
+   подпись бывает шире суммы («başlanğıc» над ₼700). */
+.pr .amt{font-family:var(--f-disp);font-weight:800;font-size:clamp(1.8rem,3.8vw,2.6rem);white-space:nowrap;line-height:1.1;text-align:right}
 .pr .amt small{font-family:var(--f-body);font-weight:400;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);display:block;margin-top:5px;text-align:right;line-height:1.4}
+/* В одну колонку сумма не растягивается на всю ширину: иначе «от» прижималось
+   к правому краю, в 250px от цены, и ₼700 читалось как точная сумма.
+   Сама сумма — по левому краю, вровень с названием пакета. */
+@media(max-width:720px){.pr .amt{justify-self:start;text-align:left}}
 
 /* блог */
 .posts{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,26px)}
@@ -384,8 +422,9 @@ body.menu-open .tl{opacity:0;transform:translateY(100%);pointer-events:none}
 .post{display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--line);padding-top:18px;transition:border-color .35s}
 .post:hover{border-color:var(--duo-b)}
 .post .pm{display:flex;justify-content:space-between;gap:12px;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);line-height:1.4}
-.post h3{font-family:var(--f-disp);font-weight:800;text-transform:uppercase;font-size:clamp(1.3rem,2.4vw,1.7rem);line-height:1.12;margin:0;letter-spacing:.01em;transition:color .3s}
-.post:hover h3{color:var(--duo-b)}
+/* h2 — в списке /blog/ сразу под h1; h3 — на главной, под h2 раздела */
+.post h2,.post h3{font-family:var(--f-disp);font-weight:800;text-transform:uppercase;font-size:clamp(1.3rem,2.4vw,1.7rem);line-height:1.12;margin:0;letter-spacing:.01em;transition:color .3s}
+.post:hover h2,.post:hover h3{color:var(--duo-b)}
 .post p{font-size:.86rem;color:var(--grey);max-width:62ch}
 
 /* faq */
@@ -400,16 +439,25 @@ details p{padding-bottom:22px;color:var(--grey);font-size:.92rem;max-width:74ch}
 
 /* contact */
 .mailto{display:block;font-family:var(--f-disp);font-weight:800;font-size:clamp(1.8rem,8vw,5.6rem);text-transform:uppercase;line-height:1.08;word-break:break-word;letter-spacing:.01em;transition:color .35s}
-.mailto:hover{background:linear-gradient(96deg,var(--duo-a),var(--duo-b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.mailto:hover{background:linear-gradient(96deg,var(--duo-a-text),var(--duo-b));-webkit-background-clip:text;background-clip:text;color:transparent}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:clamp(16px,2.4vw,32px);margin-top:clamp(30px,4vw,54px);padding-top:28px;border-top:1px solid var(--line)}
 .cg em{display:block;font-style:normal;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;line-height:1.4}
+/* balance — на блоке, не на span: строки выравниваются по блоку. Иначе часы
+   на AZ/EN рвались посреди «10:00–» / «19:00», теперь переносятся целиком. */
+.cg{text-wrap:balance}
 .cg a,.cg span{font-size:.96rem}
+/* Телефон и почта были высотой 18px. Поля добавляют мишень, отрицательные
+   поля возвращают строку на место — вёрстка не сдвигается. */
+.cg a{display:inline-block;padding-block:12px;margin-block:-12px}
 .cg a:hover{color:var(--duo-b)}
 form{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:clamp(30px,4vw,50px)}
 @media(max-width:560px){form{grid-template-columns:1fr}}
 .full{grid-column:1/-1}
-label{display:block;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;line-height:1.4}
-input,select,textarea{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line);color:var(--bone);font-family:var(--f-body);font-size:1rem;padding:11px 2px;border-radius:0;transition:border-color .3s}
+label{display:block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--grey);margin-bottom:8px;line-height:1.4}
+/* Обязательные имя и телефон отмечены звёздочкой. Вторая запись content
+   прячет её от диктора — «обязательно» он и так читает из required. */
+label[for=fn]::after,label[for=fp]::after{content:" *";content:" *" / "";color:var(--duo-b)}
+input,select,textarea{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line-field);color:var(--bone);font-family:var(--f-body);font-size:1rem;padding:11px 2px;border-radius:0;transition:border-color .3s}
 input:focus,select:focus,textarea:focus{border-bottom-color:var(--duo-b)}
 input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--duo-b);outline-offset:3px}
 select option{background:var(--off-2);color:var(--bone)}
@@ -424,6 +472,9 @@ footer.site{border-top:1px solid var(--line);padding-block:clamp(34px,4vw,56px) 
 @media(max-width:560px){.fcols{grid-template-columns:1fr}}
 .fcol h2{font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:0 0 14px;font-weight:500}
 .fcol ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;font-size:.9rem;color:var(--grey)}
+/* Ссылки подвала были высотой 17px. Тот же приём, что у .cg a, но поля
+   в 4px: при шаге строк 32px соседние мишени не наезжают друг на друга. */
+.fcol li a{display:inline-block;padding-block:4px;margin-block:-4px}
 .fcol a:hover{color:var(--bone)}
 .fbot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:clamp(30px,3.6vw,46px);padding-top:22px;border-top:1px solid var(--line);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
 
@@ -446,8 +497,10 @@ footer.site{border-top:1px solid var(--line);padding-block:clamp(34px,4vw,56px) 
    подвал в строку и поджимаем. */
 @media(max-height:620px){
   .drawer{padding-bottom:16px}
-  .drawer-foot{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px 18px;font-size:.78rem}
+  /* 16px, а не 18: зазор между языками стал шире, и на 568×320 строка иначе переносилась */
+  .drawer-foot{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px 16px;font-size:.78rem}
   .drawer-foot .lang a,.drawer-foot .lang span{padding:3px 6px}
+  .drawer-foot > a{padding-block:2px}
 }
 /* Совсем низкий экран (в том числе зум 400%): шапка и нижняя панель забирали
    43% высоты. Шапку отпускаем, панель убираем — навигация остаётся в шторке. */
@@ -491,8 +544,13 @@ footer.site{border-top:1px solid var(--line);padding-block:clamp(34px,4vw,56px) 
 
 /* ---- Внутренние страницы ---- */
 .plain{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px;color:var(--grey);font-size:.92rem;line-height:1.6;max-width:56ch}
-.plain li{display:grid;grid-template-columns:auto 1fr;gap:11px}
-.plain li::before{content:"—";color:var(--duo-b);opacity:.7}
+/* Тире — отдельным слоем, а не ячейкой сетки: в сетке <b> и .note становились
+   своими ячейками, и текст сжимался в узкую колонку по слову в строке.
+   22px — прежний отступ (тире 10.75px + зазор 11px). */
+.plain li{position:relative;padding-left:22px}
+.plain li::before{content:"—";position:absolute;left:0;top:0;color:var(--duo-b);opacity:.7}
+/* Цена или пометка к пункту — строкой под ним */
+.plain li .note{display:block;margin-top:2px}
 /* ---- Портфолио карточками ---- */
 /* Сетка плоская: при заходе видны все проекты. Отрасли сверху — не якоря,
    а фильтр: 36 карточек это шесть экранов, и листать их ради одной отрасли долго. */
@@ -513,7 +571,10 @@ footer.site{border-top:1px solid var(--line);padding-block:clamp(34px,4vw,56px) 
 .wf-anim .work:not([hidden]){animation:wfIn .32s ease both}
 @keyframes wfIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.wf-anim .work:not([hidden]){animation:none}}
-/* Архивная карточка: работа была, ссылки нет — домен не открывается. */
-.work-dead{opacity:.55;cursor:default}
+/* Архивная карточка: работа была, ссылки нет — домен не открывается.
+   Гасим только снимок: прозрачность всей карточки роняла её текст до 1.6:1,
+   а архив и так отмечен плашкой. */
+.work-dead{cursor:default}
+.work-dead .media{opacity:.55}
 .work-dead:hover .cover{transform:none}
 .work-badge{position:absolute;z-index:3;top:12px;left:12px;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--bone);background:rgba(0,0,0,.72);border:1px solid var(--line);border-radius:999px;padding:5px 11px;backdrop-filter:blur(4px)}

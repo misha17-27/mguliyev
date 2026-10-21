@@ -27,7 +27,8 @@ foreach (articles_canon() as $c) {
       <?php foreach ($arts as $a): ?>
       <article class="post">
         <div class="pm"><span><?= htmlspecialchars($a['rubric']) ?></span><span><?= date_h((string)$a['date']) ?> · <?= tn('blog.read', ['n' => (int)$a['read']]) ?></span></div>
-        <h3><a href="<?= u('/blog/' . $a['slug'] . '/') ?>"><?= htmlspecialchars($a['title']) ?></a></h3>
+        <?php /* h2: на этой странице над статьями только h1 */ ?>
+        <h2><a href="<?= u('/blog/' . $a['slug'] . '/') ?>"><?= htmlspecialchars($a['title']) ?></a></h2>
         <p><?= htmlspecialchars($a['desc']) ?></p>
       </article>
       <?php endforeach; ?>

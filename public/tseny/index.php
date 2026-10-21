@@ -18,7 +18,8 @@ $packs = packs();
     <div class="plist" style="margin-top:clamp(30px,4vw,54px)">
       <?php foreach ($packs as $p): ?>
       <div class="pr">
-        <h3><?= e($p[1]) ?></h3>
+        <?php /* h2: пакеты стоят сразу под h1 — h3 давал пропуск уровня */ ?>
+        <h2><?= e($p[1]) ?></h2>
         <p><?= e($p[4]) ?></p>
         <span class="amt"><?= e($p[2]) ?><small><?= e($p[3]) ?></small></span>
       </div>

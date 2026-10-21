@@ -102,34 +102,36 @@ include __DIR__ . '/../app/partials/head.php';
       <?php $wc = works_count(); /* число проектов — из данных портфолио, не из текста */ ?>
       <p class="lb"><?= tn('home.t36', ['n' => $wc['n'], 'u' => plural($wc['n'], 'units.project')]) ?></p>
     </div>
+    <?php /* alt у обложек пустой: название и домен уже в тексте ссылки,
+             с подписью диктор читал их дважды. */ ?>
     <div class="works rv">
       <a class="work" href="https://elson-group.com" target="_blank" rel="noopener">
-        <div class="cover w1"><img class="media" src="/images/works/elson-group.com.jpg" data-ph="/images/placeholder/work-1.svg" alt="<?= t('home.t153') ?>" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t37') ?></b></div>
+        <div class="cover w1"><img class="media" src="/images/works/elson-group.com.jpg" data-ph="/images/placeholder/work-1.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t37') ?></b></div>
         <h3>Elson Group</h3>
         <div class="wmeta"><span><?= t('home.t38') ?></span><b>elson-group.com</b></div>
       </a>
       <a class="work" href="https://lynkco.az" target="_blank" rel="noopener">
-        <div class="cover w2"><img class="media" src="/images/home/work-2.jpg" data-ph="/images/placeholder/work-2.svg" alt="<?= t('home.t154') ?>" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t39') ?></b></div>
+        <div class="cover w2"><img class="media" src="/images/home/work-2.jpg" data-ph="/images/placeholder/work-2.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t39') ?></b></div>
         <h3><?= t('home.t40') ?></h3>
         <div class="wmeta"><span><?= t('home.t41') ?></span><b>lynkco.az</b></div>
       </a>
       <a class="work" href="https://marshal.az" target="_blank" rel="noopener">
-        <div class="cover w3"><img class="media" src="/images/home/work-3.jpg" data-ph="/images/placeholder/work-3.svg" alt="<?= t('home.t155') ?>" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t42') ?></b></div>
+        <div class="cover w3"><img class="media" src="/images/home/work-3.jpg" data-ph="/images/placeholder/work-3.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t42') ?></b></div>
         <h3><?= t('home.t43') ?></h3>
         <div class="wmeta"><span><?= t('home.t44') ?></span><b>marshal.az</b></div>
       </a>
       <a class="work" href="https://grandmoto.az" target="_blank" rel="noopener">
-        <div class="cover w4"><img class="media" src="/images/home/work-4.jpg" data-ph="/images/placeholder/work-4.svg" alt="<?= t('home.t156') ?>" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t45') ?></b></div>
+        <div class="cover w4"><img class="media" src="/images/home/work-4.jpg" data-ph="/images/placeholder/work-4.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t45') ?></b></div>
         <h3>Grandmoto</h3>
         <div class="wmeta"><span><?= t('home.t46') ?></span><b>grandmoto.az</b></div>
       </a>
       <a class="work" href="https://store.az" target="_blank" rel="noopener">
-        <div class="cover w5"><img class="media" src="/images/home/work-5.jpg" data-ph="/images/placeholder/work-5.svg" alt="<?= t('home.t157') ?>" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t47') ?></b></div>
+        <div class="cover w5"><img class="media" src="/images/home/work-5.jpg" data-ph="/images/placeholder/work-5.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t47') ?></b></div>
         <h3>Store.az</h3>
         <div class="wmeta"><span><?= t('home.t48') ?></span><b>store.az</b></div>
       </a>
       <a class="work" href="https://ymkwatercolor.com" target="_blank" rel="noopener">
-        <div class="cover w6"><img class="media" src="/images/works/ymkwatercolor.com.jpg" data-ph="/images/placeholder/work-6.svg" alt="<?= t('home.t158') ?>" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t49') ?></b></div>
+        <div class="cover w6"><img class="media" src="/images/works/ymkwatercolor.com.jpg" data-ph="/images/placeholder/work-6.svg" alt="" loading="lazy" width="1200" height="750"><b class="ph-only"><?= t('home.t49') ?></b></div>
         <h3>YMK Watercolor</h3>
         <div class="wmeta"><span><?= t('home.t50') ?></span><b>ymkwatercolor.com</b></div>
       </a>
@@ -289,7 +291,8 @@ include __DIR__ . '/../app/partials/head.php';
 <section class="sec" id="contact" style="background:var(--off);border-top:1px solid var(--line)">
   <div class="wrap">
     <h2 class="lb rv" id="lead-h" style="margin-bottom:clamp(18px,2.4vw,32px)"><?= t('home.t131') ?></h2>
-    <a class="mailto rv" href="mailto:<?= e(s('email')) ?>"><?= e(sv('email')) ?></a>
+    <?php /* lang="en": адрес набран заглавными, и на /az/ i превращалась в İ */ ?>
+    <a class="mailto rv" lang="en" href="mailto:<?= e(s('email')) ?>"><?= e(sv('email')) ?></a>
     <div class="cgrid rv">
       <div class="cg"><em><?= t('home.t132') ?></em><a href="<?= e(tel_href()) ?>"><?= e(sv('phone')) ?></a></div>
       <?php /* Ссылка появляется, только когда адрес профиля задан: ссылка

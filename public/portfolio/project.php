@@ -82,7 +82,8 @@ $more = array_slice($more, 0, 6);
 
     <div class="shead" style="margin-top:14px">
       <div>
-        <p class="lb" style="margin-bottom:10px"><?= e($w['domain']) ?></p>
+        <?php /* lang="en": заглавные на /az/ превращали i домена в İ */ ?>
+        <p class="lb" lang="en" style="margin-bottom:10px"><?= e($w['domain']) ?></p>
         <h1 class="disp h2"><?= e($name) ?></h1>
       </div>
       <?php if (!$isDead): ?>
@@ -90,8 +91,10 @@ $more = array_slice($more, 0, 6);
       <?php endif; ?>
     </div>
 
+    <?php /* Подпись — только у настоящего снимка сайта (то же условие, что
+             в project_cover()). Отраслевая подложка — фон, а не сайт заказчика. */ ?>
     <div class="cover" style="border-radius:16px;overflow:hidden;margin-top:clamp(8px,1.4vw,18px)">
-      <img class="media" src="<?= e(project_cover($w, $g)) ?>" alt="<?= e($name) ?> — <?= e($w['domain']) ?>"
+      <img class="media" src="<?= e(project_cover($w, $g)) ?>" alt="<?= !empty($w['image']) ? e($name . ' — ' . $w['domain']) : '' ?>"
            width="1200" height="750" style="display:block;width:100%;height:auto">
     </div>
 
@@ -131,13 +134,14 @@ $more = array_slice($more, 0, 6);
         <div class="works">
           <?php foreach ($more as $x): $xn = tr($x['desc']); $xd = !empty($x['archived']); ?>
             <a class="work<?= $xd ? ' work-dead' : '' ?>" href="<?= e(portfolio_url($g['slug'], project_slug($x['domain']))) ?>">
+              <?php /* alt пустой: название и домен уже в тексте ссылки */ ?>
               <div class="cover">
-                <img class="media" src="<?= e(project_cover($x, $g)) ?>" alt="<?= e($xn) ?> — <?= e($x['domain']) ?>"
+                <img class="media" src="<?= e(project_cover($x, $g)) ?>" alt=""
                      loading="lazy" width="1200" height="750">
                 <?php if ($xd): ?><span class="work-badge"><?= t('portfolio.t4') ?></span><?php endif; ?>
               </div>
               <h3><?= e($xn) ?></h3>
-              <div class="wmeta"><span><?= e($cname) ?></span><b><?= e($x['domain']) ?></b></div>
+              <div class="wmeta"><span><?= e($cname) ?></span><b lang="en"><?= e($x['domain']) ?></b></div>
             </a>
           <?php endforeach; ?>
         </div>

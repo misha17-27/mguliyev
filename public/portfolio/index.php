@@ -122,13 +122,18 @@ $unit = static fn(int $n): string => plural($n, 'units.project');
         $name   = tr($w['desc']);
       ?>
       <a class="work<?= $isDead ? ' work-dead' : '' ?>" href="<?= e(portfolio_url($g['slug'], project_slug($w['domain']))) ?>">
+        <?php /* alt пустой: название и домен уже есть в тексте ссылки, и диктор
+                 читал их дважды. А у трети карточек вместо снимка отраслевая
+                 подложка — подпись выдавала её за сайт заказчика. */ ?>
         <div class="cover">
-          <img class="media" src="<?= e(project_cover($w, $g)) ?>" alt="<?= e($name) ?> — <?= e($w['domain']) ?>"
+          <img class="media" src="<?= e(project_cover($w, $g)) ?>" alt=""
                loading="lazy" width="1200" height="750">
           <?php if ($isDead): ?><span class="work-badge"><?= t('portfolio.t4') ?></span><?php endif; ?>
         </div>
-        <h3><?= e($name) ?></h3>
-        <div class="wmeta"><span><?= e(tr($g['name'])) ?></span><b><?= e($w['domain']) ?></b></div>
+        <?php /* h2: над карточками на этой странице только h1. Домен — lang="en":
+                 иначе на /az/ заглавные превращали i в İ, и адрес не набрать. */ ?>
+        <h2><?= e($name) ?></h2>
+        <div class="wmeta"><span><?= e(tr($g['name'])) ?></span><b lang="en"><?= e($w['domain']) ?></b></div>
       </a>
       <?php endforeach; ?>
     </div>

@@ -14,7 +14,7 @@ $wc = works_count();   // число проектов и снимков — из
    обёртками, а не полями у текста. */
 $gap = 'margin-top:clamp(40px,5vw,68px)';
 $h2  = 'font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px';
-$lnk = 'color:var(--duo-b)';
+/* Ссылки внутри текста оформлены в style.css (.sub a, details p a): цвет и подчёркивание. */
 ?>
 <main id="top">
 <section class="sec">
@@ -70,7 +70,7 @@ $lnk = 'color:var(--duo-b)';
         <li><?= t('web.t22') ?></li>
         <li><?= t('web.t23') ?></li>
       </ul>
-      <p class="sub" style="margin-top:clamp(18px,2.2vw,24px);font-size:.9rem"><?= t('web.t24') ?> <a href="<?= u('/tseny/') ?>" style="<?= $lnk ?>"><?= t('web.t25') ?></a>.</p>
+      <p class="sub" style="margin-top:clamp(18px,2.2vw,24px);font-size:.9rem"><?= t('web.t24') ?> <a href="<?= u('/tseny/') ?>"><?= t('web.t25') ?></a>.</p>
     </div>
 
     <div style="<?= $gap ?>">
@@ -100,7 +100,7 @@ $lnk = 'color:var(--duo-b)';
           <p><?= t('web.t41') ?></p></details>
         <details><summary><?= t('web.t42') ?></summary>
           <p><?= t('web.t43') ?>
-            <a href="<?= u('/uslugi/marketing/') ?>" style="<?= $lnk ?>"><?= t('web.t44') ?></a><?= t('web.t45') ?></p></details>
+            <a href="<?= u('/uslugi/marketing/') ?>"><?= t('web.t44') ?></a><?= t('web.t45') ?></p></details>
         <details><summary><?= t('web.t46') ?></summary>
           <p><?= t('web.t47') ?></p></details>
         <details><summary><?= t('web.t48') ?></summary>

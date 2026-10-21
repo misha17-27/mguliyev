@@ -68,7 +68,7 @@ $wc = works_count();   // число проектов — из данных по
     <div style="margin-top:clamp(40px,5vw,68px)">
       <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px"><?= t('about.t22') ?></h2>
       <p class="sub"><?= t('about.t23') ?>
-        <a href="<?= u('/') ?>#process" style="color:var(--duo-b)"><?= t('about.t24') ?></a>.</p>
+        <a href="<?= u('/') ?>#process"><?= t('about.t24') ?></a>.</p>
     </div>
 
     <div style="margin-top:clamp(44px,5vw,72px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--line)">
