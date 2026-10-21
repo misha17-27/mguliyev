@@ -6,10 +6,10 @@
    (M, L, H, l, h, z), два подконтура: внешний и внутренний, между ними
    тонкая полоса — отсюда «двойные линии» знака.
 
-   На 16 пикселях такая полоса тоньше пикселя и превращается в серую
-   дымку. Поэтому для вкладки браузера (16–48 px и SVG) полосу утолщаем
-   обводкой того же цвета, а для иконок телефона и закладок (180–512 px)
-   знак остаётся как в логотипе.
+   Значок — точно как знак в логотипе, на всех размерах и одинаковый
+   для сайта и панели: так попросил заказчик. На 16 пикселях тонкие
+   двойные линии выглядят светлее, чем на большом рисунке, — это цена
+   точности; утолщённый вариант сливал их в сплошные полосы.
 
    Растр — средствами GD: рисуем вдевятеро крупнее и уменьшаем с
    пересчётом, иначе края без сглаживания. */
@@ -138,15 +138,15 @@ function svg(string $D, array $BOX, float $extra, float $pad, string $bg, string
         . '<rect width="512" height="512" fill="' . $bg . '"/>'
         . '<path transform="translate(' . round($ox, 2) . ',' . round($oy, 2) . ') scale(' . round($k, 4) . ')"'
         . ' d="' . $D . '" fill="' . $fg . '" fill-rule="evenodd"'
-        . ' stroke="' . $fg . '" stroke-width="' . $extra . '" stroke-linejoin="round"/>'
+        . ($extra > 0 ? ' stroke="' . $fg . '" stroke-width="' . $extra . '" stroke-linejoin="round"' : '') . '/>'
         . '</svg>';
 }
 
 /* Утолщение и поля по размерам: чем мельче, тем толще полоса. */
-$PLAN = [16 => [4, .06], 32 => [5, .07], 48 => [5, .07], 180 => [1, .09], 192 => [1, .09], 512 => [0, .09]];
+$PLAN = [16 => [0, .05], 32 => [0, .06], 48 => [0, .07], 180 => [0, .09], 192 => [0, .09], 512 => [0, .09]];
 $THEMES = [
     'site'  => ['dir' => $ROOT . '/public',              'bg' => '#FFFFFF', 'fg' => '#0A0A0A'],
-    'admin' => ['dir' => $ROOT . '/public/admin/assets', 'bg' => '#0A0A0A', 'fg' => '#FF6B4A'],
+    'admin' => ['dir' => $ROOT . '/public/admin/assets', 'bg' => '#FFFFFF', 'fg' => '#0A0A0A'],
 ];
 
 foreach ($THEMES as $who => $th) {
@@ -157,7 +157,7 @@ foreach ($THEMES as $who => $th) {
         $r[$s] = png($im);
         imagedestroy($im);
     }
-    file_put_contents($th['dir'] . '/favicon.svg', svg($D, $BOX, 5, .07, $th['bg'], $th['fg']));
+    file_put_contents($th['dir'] . '/favicon.svg', svg($D, $BOX, 0, .06, $th['bg'], $th['fg']));
     file_put_contents($th['dir'] . '/favicon.ico', ico([16 => $r[16], 32 => $r[32], 48 => $r[48]]));
     file_put_contents($th['dir'] . '/apple-touch-icon.png', $r[180]);
     if ($who === 'site') {

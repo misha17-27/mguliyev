@@ -49,9 +49,9 @@ $cur = static fn(string $k) => $current === $k ? ' aria-current="page"' : '';
          Пути без языкового префикса: файлы одни на все языки.
          .ico браузер просит сам, но объявляем его явно — иначе при
          заданном svg часть браузеров за ним вообще не идёт. */ ?>
-<link rel="icon" href="/favicon.ico?v=2" sizes="32x32">
-<link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
+<link rel="icon" href="/favicon.ico?v=3" sizes="32x32">
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=3">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0A0A0A">
 
