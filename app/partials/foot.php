@@ -30,7 +30,7 @@
     <div class="fbot">
       <span>© 2026 MGuliyev Studio</span>
       <span><?= t('footer.city') ?></span>
-      <span><?php if (su('privacy_url') !== ''): ?><a href="<?= e(su('privacy_url')) ?>"><?= t('footer.privacy') ?></a><?php else: ?><?= t('footer.privacy') ?> — <?= e(sv('privacy_url')) ?><?php endif; ?></span>
+      <?php if (su('privacy_url') !== ''): ?><span><a href="<?= e(su('privacy_url')) ?>"><?= t('footer.privacy') ?></a></span><?php endif; ?>
     </div>
   </div>
 </footer>
