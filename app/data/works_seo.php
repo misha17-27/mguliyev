@@ -107,11 +107,6 @@ return [
                 'az' => ['title' => 'Akvarel portretlər üçün sayt: ymkwatercolor.com | MGuliyev', 'description' => 'ymkwatercolor.com — sifarişlə akvarel portretlər. Bu layihənin saytını Bakıda MGuliyev Studio hazırlayıb. İşə baxın və öz biznesiniz üçün sayt sifariş edin.'],
                 'en' => ['title' => 'ymkwatercolor.com: website for custom watercolor portraits', 'description' => 'MGuliyev Studio, a web studio in Baku, developed ymkwatercolor.com for a business offering custom watercolor portraits. See the project and order a site.'],
             ],
-            'from-dubai.com' => [
-                'ru' => ['title' => 'Сайт продажи техники из Дубая — from-dubai.com', 'description' => 'Сайт from-dubai.com для компании, которая продаёт технику из Дубая. Разработан под ключ: структура, дизайн, разработка и запуск сайта выполнены студией.'],
-                'az' => ['title' => 'Dubaydan texnika: from-dubai.com saytı | MGuliyev Studio', 'description' => 'from-dubai.com Dubaydan texnika təklif edir. Saytını Bakıda yerləşən MGuliyev Studio veb-studiyası hazırlayıb. Bənzər sayt üçün bizə müraciət edin.'],
-                'en' => ['title' => 'from-dubai.com: web design for an electronics seller', 'description' => 'MGuliyev Studio in Baku developed the from-dubai.com website for a seller of electronics from Dubai. Look through the project and plan a site of your own.'],
-            ],
             'dutyfreegroup.az' => [
                 'ru' => ['title' => 'Сайт компании duty free — dutyfreegroup.az (архив)', 'description' => 'Сайт dutyfreegroup.az для компании из сферы duty free студия сделала под ключ. Сейчас сайт не открывается, проект сохранён в портфолио в разделе торговли.'],
                 'az' => ['title' => 'Duty free ticarəti: dutyfreegroup.az saytı | MGuliyev', 'description' => 'Duty free ticarəti üçün dutyfreegroup.az saytını Bakıdakı MGuliyev Studio hazırlayıb. Sayt hazırda açılmır, layihə portfolioda arxiv işləri sırasındadır.'],
@@ -141,20 +136,15 @@ return [
                 'az' => ['title' => 'bestsol.az: ağır texnika hissələri saytının hazırlanması', 'description' => 'bestsol.az ağır texnika üçün ehtiyat hissələri sahəsində çalışır. Şirkətin saytını Bakıda fəaliyyət göstərən MGuliyev Studio veb-studiyası hazırlayıb.'],
                 'en' => ['title' => 'bestsol.az: heavy machinery parts website | MGuliyev Studio', 'description' => 'Website development for bestsol.az, a company dealing in spare parts for heavy machinery. MGuliyev Studio, a web studio in Baku, designed and built it.'],
             ],
-            'avtobutik.az' => [
-                'ru' => ['title' => 'Лендинг для пригона авто из США — avtobutik.az', 'description' => 'Сайт о покупке машин на аукционах США: сравнение цены с местным рынком на примере Ford Fusion, форма запроса стоимости, порядок подбора автомобиля.'],
-                'az' => ['title' => 'avtobutik.az: ABŞ-dan avtomobil çatdırılması üçün sayt', 'description' => 'ABŞ-dan avtomobil seçimi və çatdırılması ilə məşğul olan avtobutik.az şirkəti üçün saytı Bakıdakı MGuliyev Studio veb-studiyası hazırlayıb.'],
-                'en' => ['title' => 'avtobutik.az — website for car sourcing from the USA', 'description' => 'MGuliyev Studio in Baku created the avtobutik.az website for a company that sources and delivers cars from the USA. View the project and order a website.'],
-            ],
             'avtoehtiyat.com' => [
                 'ru' => ['title' => 'Сайт объявлений об автозапчастях в Баку — avtoehtiyat.com', 'description' => 'Доска объявлений о запчастях: поиск по марке, модели и состоянию, разделы шин, масел и аккумуляторов, регистрация для частных продавцов и магазинов.'],
                 'az' => ['title' => 'avtoehtiyat.com: ehtiyat hissəsi elan saytının hazırlanması', 'description' => 'avtoehtiyat.com avtomobil ehtiyat hissələrinin satış elanları platformasıdır. Elan saytını Bakıdakı MGuliyev Studio hazırlayıb. Layihəyə portfolioda baxın.'],
                 'en' => ['title' => 'avtoehtiyat.com: car parts classifieds website development', 'description' => 'MGuliyev Studio, a Baku web studio, built avtoehtiyat.com, a classifieds website for car parts. See the work and order a website for your own project.'],
             ],
-            'avtok1ub.az' => [
-                'ru' => ['title' => 'Сайт автосервиса: замена масла и ремонт — avtok1ub.az', 'description' => 'Avtoklub — сеть автосервисов в Азербайджане, главная услуга — замена масла. Сайт под ключ: список работ, страница филиалов, онлайн-запись на сервис.'],
-                'az' => ['title' => 'avtok1ub.az — avtoservis saytının hazırlanması | MGuliyev', 'description' => 'Yağ dəyişimi və avtoservis xidməti göstərən avtok1ub.az üçün sayt hazırlanması. Layihə Bakıdakı MGuliyev Studio veb-studiyasının portfoliosundadır.'],
-                'en' => ['title' => 'avtok1ub.az — car service website by MGuliyev Studio', 'description' => 'Web design and development of avtok1ub.az, the site of a car service that does oil changes. Built by MGuliyev Studio in Baku. Need a website like this one?'],
+            'avtoklub.com' => [
+                'ru' => ['title' => 'Сайт автосервиса: замена масла и ремонт — avtoklub.com', 'description' => 'Avtoklub — сеть автосервисов в Азербайджане, главная услуга — замена масла. Сайт под ключ: список работ, страница филиалов, онлайн-запись на сервис.'],
+                'az' => ['title' => 'avtoklub.com — avtoservis saytının hazırlanması | MGuliyev', 'description' => 'Yağ dəyişimi və avtoservis xidməti göstərən Avtoklub üçün avtoklub.com saytının hazırlanması. Layihə Bakıdakı MGuliyev Studio veb-studiyasınındır.'],
+                'en' => ['title' => 'avtoklub.com — car service website by MGuliyev Studio', 'description' => 'Web design and development of avtoklub.com, the site of a car service chain that does oil changes. Built by MGuliyev Studio in Baku. Need a site like it?'],
             ],
             'carclub.az' => [
                 'ru' => ['title' => 'Сайт проката авто в Баку с русской версией — carclub.az', 'description' => 'Прокат машин в Баку: каталог с характеристиками авто, запрос через WhatsApp и форму. Сайт на русском, азербайджанском, английском и арабском.'],

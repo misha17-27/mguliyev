@@ -197,17 +197,6 @@ Studiya saytı açar təhvil hazırlayıb — struktur, dizayn, proqramlaşdırm
 
 The studio built the site on a turnkey basis: structure, design, development and launch. The store has portrait categories, a price filter and add-on services: adding a person, a frame and an upgraded frame. There is a reviews page with photos of finished work, an “About us” page with the artists and the team, contacts with a form and opening hours, an online chat and payment system logos in the footer.',
     ],
-    'from-dubai.com' => [
-        'ru' => 'from-dubai.com — сайт компании, которая продаёт технику из Дубая. В портфолио студии проект стоит в разделе «Магазины и торговля» рядом с сайтами магазинов электроники, книг, обуви и матрасов.
-
-Сайт сделан под ключ: студия продумала его структуру, подготовила дизайн, затем разработала и запустила проект. Все этапы выполнила MGuliyev Studio.',
-        'az' => 'from-dubai.com — Dubaydan texnika satan şirkətin saytıdır. Studiyanın portfoliosunda layihə «Mağazalar və ticarət» bölməsində elektronika, kitab, ayaqqabı və döşək mağazalarının saytları ilə yanaşı yer alır.
-
-Sayt açar təhvil hazırlanıb: studiya onun strukturunu düşünüb, dizaynını hazırlayıb, sonra layihəni proqramlaşdırıb və işə salıb. Bütün mərhələləri MGuliyev Studio yerinə yetirib.',
-        'en' => 'from-dubai.com is the website of a company that sells electronics from Dubai. In the studio’s portfolio, the project sits in the “Stores and retail” section alongside the websites of electronics, book, shoe and mattress stores.
-
-The site was built on a turnkey basis: the studio worked out its structure, prepared the design, then developed and launched the project. Every stage was done by MGuliyev Studio.',
-    ],
     'dutyfreegroup.az' => [
         'ru' => 'dutyfreegroup.az — сайт компании из сферы duty free, то есть торговли беспошлинными товарами. Проект относится к разделу «Магазины и торговля» портфолио студии.
 
@@ -252,17 +241,6 @@ Sayt açar təhvil hazırlanıb — strukturdan və dizayndan proqramlaşdırma 
 
 The site was built turnkey, from structure and design to development and launch. The catalog has four sections. The product page has a photo gallery, the OEM number, compatible pins and adapters, a “Send request” button and “Share” buttons. There is no cart: the buyer sends a request for a specific part. There is also a separate “Areas of activity” section, plus “Brands” (CAT, IVECO, Volvo, HOWO) and “Partners” pages. The contacts are in the footer, and there is a mobile version.',
     ],
-    'avtobutik.az' => [
-        'ru' => 'avtobutik.az — сайт компании, которая подбирает и привозит автомобили из США. Главная мысль страницы: машина из Америки может обойтись дешевле такой же, купленной в Азербайджане.
-
-Работа выполнена под ключ: структура, дизайн, разработка, запуск. На первом экране слайдер сравнивает цены на примере Ford Fusion 2014+. Ниже стоит форма «Узнать стоимость автомобиля» с полями имени, телефона, марки, модели и комментария. За ней идёт блок «Как подбирается автомобиль»: пожелания клиента, варианты с аукционов, отбор машин без серьёзных повреждений, депозит перед покупкой. В шапке указаны телефон и почта.',
-        'az' => 'avtobutik.az — ABŞ-dan avtomobil seçib gətirən şirkətin saytıdır. Səhifənin əsas fikri belədir: Amerikadan gətirilən avtomobil Azərbaycanda alınan eyni avtomobildən daha ucuz başa gələ bilər.
-
-İş açar təhvil görülüb: struktur, dizayn, proqramlaşdırma, işə salınma. Birinci ekranda slayder Ford Fusion 2014+ nümunəsində qiymətləri müqayisə edir. Aşağıda ad, telefon, marka, model və şərh xanaları olan «Avtomobilin qiymətini öyrənin» forması yerləşir. Ondan sonra «Avtomobil necə seçilir» bloku gəlir: müştərinin istəkləri, auksionlardan variantlar, ciddi zədəsi olmayan avtomobillərin seçilməsi, alışdan əvvəl depozit. Başlıqda telefon və e-poçt göstərilib.',
-        'en' => 'avtobutik.az is the website of a company that selects and imports cars from the US. The main idea of the page: a car from America can cost less than the same car bought in Azerbaijan.
-
-The work was done turnkey: structure, design, development, launch. The first screen has a slider that compares prices, using the Ford Fusion 2014+ as an example. Below it is a “Find out the car price” form with fields for name, phone, make, model and comment. It is followed by a “How a car is selected” block: the client\'s wishes, options from auctions, picking cars with no serious damage, and a deposit before the purchase. The header lists a phone number and an email address.',
-    ],
     'avtoehtiyat.com' => [
         'ru' => 'avtoehtiyat.com — площадка объявлений о продаже автозапчастей, в контактах указан Баку. Продают на ней частные лица и магазины. Покупатель ищет деталь сам или оставляет заявку, которую получают зарегистрированные магазины.
 
@@ -274,16 +252,16 @@ Layihə açar təhvil hazırlanıb: struktur, dizayn, proqramlaşdırma, işə s
 
 The project was built turnkey: structure, design, development, launch. The site now has search with filters by make, model and condition (new or used). Listings are divided into sections: parts, oils and fluids, tires and wheels, batteries, cars for parts. There is a catalog of stores, favorites and a “Post an ad” button. You can sign up as a private individual or as a store, and the part order form lets you enter a VIN.',
     ],
-    'avtok1ub.az' => [
+    'avtoklub.com' => [
         'ru' => 'Avtoklub — сеть автосервисов в Азербайджане. Главная услуга — замена масла. Кроме неё сервис меняет технические жидкости, ремонтирует трансмиссию, делает диагностику, обслуживает кондиционеры и аккумуляторы.
 
-Сайт разработан под ключ: структура, дизайн, разработка и запуск. Сейчас адрес avtok1ub.az ведёт на avtoklub.com. Там в меню есть разделы «Услуги», «Филиалы», «Сертификаты» и «Контакты», а также онлайн-запись на обслуживание и личный кабинет клиента. Сайт на азербайджанском языке.',
+Сайт разработан под ключ: структура, дизайн, разработка и запуск. В меню есть разделы «Услуги», «Филиалы», «Сертификаты» и «Контакты», а также онлайн-запись на обслуживание и личный кабинет клиента. Сайт на азербайджанском языке.',
         'az' => 'Avtoklub — Azərbaycanda avtoservislər şəbəkəsidir. Əsas xidmət yağ dəyişməsidir. Bundan əlavə servis texniki mayeləri dəyişir, transmissiyanı təmir edir, diaqnostika aparır, kondisionerlərə və akkumulyatorlara xidmət göstərir.
 
-Sayt açar təhvil hazırlanıb: struktur, dizayn, proqramlaşdırma və işə salınma. Hazırda avtok1ub.az ünvanı avtoklub.com saytına yönləndirir. Orada menyuda «Xidmətlər», «Filiallar», «Sertifikatlar» və «Əlaqə» bölmələri, həmçinin xidmətə onlayn rezervasiya və müştərinin şəxsi kabineti var. Sayt Azərbaycan dilindədir.',
+Sayt açar təhvil hazırlanıb: struktur, dizayn, proqramlaşdırma və işə salınma. Menyuda «Xidmətlər», «Filiallar», «Sertifikatlar» və «Əlaqə» bölmələri, həmçinin xidmətə onlayn rezervasiya və müştərinin şəxsi kabineti var. Sayt Azərbaycan dilindədir.',
         'en' => 'Avtoklub is a chain of auto service centers in Azerbaijan. Its main service is oil changes. Besides that, it changes vehicle fluids, repairs transmissions, runs diagnostics, and services air conditioners and batteries.
 
-The site was built turnkey: structure, design, development and launch. The avtok1ub.az address now redirects to avtoklub.com. There, the menu has the sections “Services”, “Branches”, “Certificates” and “Contacts”, plus online booking for service and a customer account. The site is in Azerbaijani.',
+The site was built turnkey: structure, design, development and launch. The menu has the sections “Services”, “Branches”, “Certificates” and “Contacts”, plus online booking for service and a customer account. The site is in Azerbaijani.',
     ],
     'carclub.az' => [
         'ru' => 'Carclub — прокат автомобилей в Баку: седаны, внедорожники и минивэны. Сайт carclub.az помогает выбрать машину и связаться с компанией по телефону, в WhatsApp или через форму заявки.

@@ -99,12 +99,16 @@ function works_canon(): array
         $slug = $g[2];
         $pr = [];
         foreach ($g[3] as $w) {
-            $pr[] = [
+            $rec = [
                 'domain'   => $w[0],
                 'desc'     => by_lang($w[1], $ovs, $slug, 'projects', $w[0]),
                 'image'    => $w[2] ?? null,
                 'archived' => !empty($w[3]),
             ];
+            /* Пятый элемент — прежние адреса страницы проекта (сменили
+               домен): по ним portfolio_find() ведёт на нынешний. */
+            if (!empty($w[4])) $rec['aliases'] = (array)$w[4];
+            $pr[] = $rec;
         }
         $out[] = [
             'slug'     => $slug,

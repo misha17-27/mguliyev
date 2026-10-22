@@ -45,9 +45,6 @@ return [
         '/images/works/gallery/armada.az/03.webp',
         '/images/works/gallery/armada.az/04.webp',
     ],
-    'avtobutik.az' => [
-        '/images/works/gallery/avtobutik.az/01.webp',
-    ],
     'azeco.az' => [
         '/images/works/gallery/azeco.az/01.webp',
         '/images/works/gallery/azeco.az/02.webp',

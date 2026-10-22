@@ -15,16 +15,16 @@
    отбирают друг у друга показы.
 
    В строках есть цифры: ₼700 / ₼1 190 / ₼1 800, сроки 10–25 дней и 3–6
-   месяцев, 55 проектов и 34 снимков. При изменении прайса или
+   месяцев, 53 проекта и 33 снимка. При изменении прайса или
    портфолио их надо поправить и здесь — иначе сниппет разойдётся со страницей. */
 return [
     'home' => [
         'ru' => ['title' => 'Веб-студия в Баку — MGuliyev Studio: сайты, SEO, поддержка',
-                 'description' => 'Сайты под ключ с 2017 года: от структуры и дизайна до запуска. 55 проектов в Азербайджане и за рубежом, срок 10–25 дней, пакеты от ₼700, SEO и поддержка.'],
+                 'description' => 'Сайты под ключ с 2017 года: от структуры и дизайна до запуска. 53 проекта в Азербайджане и за рубежом, срок 10–25 дней, пакеты от ₼700, SEO и поддержка.'],
         'az' => ['title' => 'Bakıda veb-studiya: açar təhvili sayt — MGuliyev Studio',
-                 'description' => 'Bakıda 2017-ci ildən sayt və internet mağazaları: portfolioda 55 layihə, müddət 10–25 gün, paketlər ₼700-dən. Dizayn, irəlilətmə və dəstək də var.'],
+                 'description' => 'Bakıda 2017-ci ildən sayt və internet mağazaları: portfolioda 53 layihə, müddət 10–25 gün, paketlər ₼700-dən. Dizayn, irəlilətmə və dəstək də var.'],
         'en' => ['title' => 'Baku Web Design Studio: Turnkey Websites — MGuliyev Studio',
-                 'description' => 'Websites and online stores in Baku since 2017: 55 projects in the portfolio, 10–25 days, packages from ₼700. Design, promotion and support too.'],
+                 'description' => 'Websites and online stores in Baku since 2017: 53 projects in the portfolio, 10–25 days, packages from ₼700. Design, promotion and support too.'],
     ],
     'uslugi' => [
         'ru' => ['title' => 'Услуги веб-студии: сайты, логотип, SEO и хостинг в Баку',
@@ -67,7 +67,7 @@ return [
                  'description' => 'Hosting for your site and email, SSL, weekly backups, the domain in your name, a mailbox in one day. The first month of support is free.'],
     ],
     'portfolio' => [
-        'ru' => ['title' => 'Портфолио и примеры сайтов: 55 работ студии из Баку',
+        'ru' => ['title' => 'Портфолио и примеры сайтов: 53 работы студии из Баку',
                  'description' => 'Сайты, сделанные под ключ для компаний Азербайджана и других стран: логистика, магазины, авто, стройка, промышленность, услуги. Примеры по отраслям.'],
         'az' => ['title' => 'Sayt hazırlanması: Bakıda veb-studiyanın işləri | MGuliyev',
                  'description' => 'MGuliyev Studio 2017-ci ildən Bakıda şirkətlər üçün sayt hazırlayır. Sahələr üzrə nümunələr: logistika, ticarət, avto, tikinti və əmlak, sənaye, xidmətlər.'],
