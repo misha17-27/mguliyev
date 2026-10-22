@@ -5,9 +5,8 @@
 return [
     'logistika' => [
         'name' => 'Logistics and transport',
-        'desc' => 'Containers, customs, warehousing, couriers, taxi and transfers.',
+        'desc' => 'Freight, customs, warehousing, couriers, taxi, moving and transfers.',
         'projects' => [
-            'itas.az'              => 'Container shipping',
             'caucasuscl.com'       => 'Customs clearance and logistics',
             'azshipping.az'        => 'Freight transport',
             'marshal.az'           => 'Taxi fleet, Uber partner',
@@ -68,6 +67,7 @@ return [
         'name' => 'Industry and B2B',
         'desc' => 'Oil and gas, agriculture, distribution, industrial components, medical equipment and consulting.',
         'projects' => [
+            'itas.az'              => 'Industrial materials and equipment supply',
             'socarmidstream.az'    => 'SOCAR oil and gas infrastructure',
             'elson-group.com'      => 'Agricultural holding, export of produce',
             'marsoverseas.az'      => 'Beverage distribution',

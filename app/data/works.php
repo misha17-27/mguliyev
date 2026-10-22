@@ -11,8 +11,7 @@
    намеренно вне сайта и на хостинг не выкладывается. */
 
 return [
-    ['Логистика и перевозки', 'Контейнеры, таможня, склад, курьеры, такси и трансферы.', 'logistika', [
-        ['itas.az',           'Контейнерные перевозки',             '/images/works/itas.az.jpg'],
+    ['Логистика и перевозки', 'Грузоперевозки, таможня, склад, курьеры, такси, переезды и трансферы.', 'logistika', [
         ['caucasuscl.com',    'Таможенное оформление и логистика',  '/images/works/caucasuscl.com.jpg'],
         ['azshipping.az',     'Грузоперевозки',                     '/images/works/azshipping.az.jpg'],
         ['marshal.az',        'Таксопарк, партнёр Uber',            '/images/home/work-3.jpg'],
@@ -68,6 +67,7 @@ return [
         ['enemay.com',        'Финансовый консалтинг и карьерный центр',   '/images/works/enemay.com.jpg', true],
         ['alfalat.com',       'Юридический и налоговый консалтинг',        '/images/works/alfalat.com.jpg', true],
         ['cenofex.ai',          'Консалтинг: автоматизация и внедрение ИИ',          null],
+        ['itas.az',           'Поставка промышленных материалов и оборудования', '/images/works/itas.az.jpg'],
     ]],
     ['Услуги и здоровье', 'Пилатес, химчистка, клининг, музыкальная школа, обучение, приём врача и общественный проект.', 'uslugi', [
         ['pilatesbaku.az', 'Студия пилатеса',                '/images/works/pilatesbaku.az.jpg'],

@@ -5,9 +5,8 @@
 return [
     'logistika' => [
         'name' => 'Logistika və daşımalar',
-        'desc' => 'Konteynerlər, gömrük, anbar, kuryerlər, taksi və transferlər.',
+        'desc' => 'Yükdaşıma, gömrük, anbar, kuryerlər, taksi, köçmə və transferlər.',
         'projects' => [
-            'itas.az'              => 'Konteyner daşımaları',
             'caucasuscl.com'       => 'Gömrük rəsmiləşdirilməsi və logistika',
             'azshipping.az'        => 'Yük daşımaları',
             'marshal.az'           => 'Taksi parkı, Uber tərəfdaşı',
@@ -68,6 +67,7 @@ return [
         'name' => 'Sənaye və B2B',
         'desc' => 'Neft-qaz, aqro, distribusiya, sənaye komponentləri, tibbi avadanlıq və konsaltinq.',
         'projects' => [
+            'itas.az'              => 'Sənaye materialları və avadanlıq təchizatı',
             'socarmidstream.az'    => 'SOCAR-ın neft-qaz infrastrukturu',
             'elson-group.com'      => 'Aqroholdinq, məhsul ixracı',
             'marsoverseas.az'      => 'İçkilərin distribusiyası',

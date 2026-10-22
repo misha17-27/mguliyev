@@ -116,41 +116,53 @@ function works_canon(): array
     return works_seo_fill($out);
 }
 
-/** Заголовки и описания для поиска из app/data/works_seo.php и галереи
-    из app/data/works_gallery.php — там, где своих нет. Берётся только то,
-    чего в записи нет совсем: значение, сохранённое в панели (даже пустое),
-    главнее файла. Так тексты и снимки доходят и до сайта, у которого
-    портфолио уже сохранено из панели. */
+/** Тексты, заголовки и описания для поиска и галереи проектов из файлов
+    репозитория: app/data/works_text.php, works_seo.php, works_gallery.php.
+
+    Значение из панели главнее файла, но ПУСТОЕ поле файл заполняет. Панель
+    сохраняет форму проекта целиком, и у проекта, который хоть раз сохранили,
+    текст и SEO лежат пустыми строками — с правилом «только отсутствующее»
+    написанные тексты до такого проекта не дошли бы никогда. Галерея —
+    наоборот, только если её нет совсем: пустой список в панели значит
+    «галерею убрали».
+
+    Тексты и SEO проекта ищутся по домену, а не по категории: проект
+    переносят из категории в категорию, а его тексты от этого не меняются. */
 function works_seo_fill(array $groups): array
 {
-    static $seo = null, $gal = null;
+    static $seo = null, $gal = null, $txt = null, $bySite = null;
     if ($seo === null) {
-        $f = __DIR__ . '/data/works_seo.php';
-        $seo = is_file($f) ? (array) require $f : [];
-        $f = __DIR__ . '/data/works_gallery.php';
-        $gal = is_file($f) ? (array) require $f : [];
-    }
-    if ($gal) {
-        foreach ($groups as &$g) {
-            foreach ($g['projects'] as &$w) {
-                if (!array_key_exists('gallery', $w) && isset($gal[$w['domain'] ?? ''])) {
-                    $w['gallery'] = (array)$gal[$w['domain']];
-                }
-            }
-            unset($w);
+        $load = static function (string $f): array {
+            $f = __DIR__ . '/data/' . $f;
+            return is_file($f) ? (array) require $f : [];
+        };
+        $seo = $load('works_seo.php');
+        $gal = $load('works_gallery.php');
+        $txt = $load('works_text.php');
+        $bySite = [];
+        foreach ($seo as $r) {
+            foreach ((array)($r['projects'] ?? []) as $dom => $v) $bySite[$dom] = (array)$v;
         }
-        unset($g);
     }
-    if (!$seo) return $groups;
+    /* Заполнить пустые поля title/description на каждом языке. */
+    $fillSeo = static function (array $have, array $file): array {
+        foreach ($file as $l => $v) {
+            if (!is_array($v)) continue;
+            foreach (['title', 'description'] as $f) {
+                if ((string)($have[$l][$f] ?? '') === '' && (string)($v[$f] ?? '') !== '') $have[$l][$f] = $v[$f];
+            }
+        }
+        return $have;
+    };
     foreach ($groups as &$g) {
         $r = $seo[$g['slug'] ?? ''] ?? null;
-        if (!is_array($r)) continue;
-        foreach ((array)($r['seo'] ?? []) as $l => $v) {
-            if (!isset($g['seo'][$l]) && is_array($v)) $g['seo'][$l] = $v;
-        }
+        if (is_array($r) && isset($r['seo'])) $g['seo'] = $fillSeo((array)($g['seo'] ?? []), (array)$r['seo']);
         foreach ($g['projects'] as &$w) {
-            foreach ((array)($r['projects'][$w['domain'] ?? ''] ?? []) as $l => $v) {
-                if (!isset($w['seo'][$l]) && is_array($v)) $w['seo'][$l] = $v;
+            $dom = (string)($w['domain'] ?? '');
+            if (!array_key_exists('gallery', $w) && isset($gal[$dom])) $w['gallery'] = (array)$gal[$dom];
+            if (isset($bySite[$dom])) $w['seo'] = $fillSeo((array)($w['seo'] ?? []), $bySite[$dom]);
+            foreach ((array)($txt[$dom] ?? []) as $l => $v) {
+                if (is_string($v) && $v !== '' && (string)($w['text'][$l] ?? '') === '') $w['text'][$l] = $v;
             }
         }
         unset($w);
