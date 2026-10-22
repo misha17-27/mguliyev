@@ -126,11 +126,17 @@ $more = array_slice($more, 0, 6);
       <p class="sub" style="margin-top:22px"><?= t('portfolio.archived') ?></p>
     <?php endif; ?>
 
-    <?php if ($text !== ''): ?>
+    <?php /* Строка о логотипе и брендбуке — только у проектов, где её
+             отметил владелец (галочка в панели). */
+          $brand = !empty($w['branding']); ?>
+    <?php if ($text !== '' || $brand): ?>
       <div style="margin-top:clamp(28px,3.4vw,48px);max-width:760px">
-        <?php foreach (preg_split('/\n\s*\n/u', $text) as $para): ?>
+        <?php if ($text !== ''): foreach (preg_split('/\n\s*\n/u', $text) as $para): ?>
           <p class="sub" style="margin:0 0 14px"><?= nl2br(e(trim($para))) ?></p>
-        <?php endforeach; ?>
+        <?php endforeach; endif; ?>
+        <?php if ($brand): ?>
+          <p class="sub" style="margin:0 0 14px"><?= t('portfolio.branding') ?></p>
+        <?php endif; ?>
       </div>
     <?php endif; ?>
 

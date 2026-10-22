@@ -76,6 +76,7 @@ return [
     'portfolio.archived'   => 'The website does not open at the moment, so there is no link to it. The work was done, and the project stays in the portfolio.',
     'portfolio.more'       => 'More in {cat}',
     'portfolio.gallery' => 'What the site looks like',
+    'portfolio.branding' => 'The studio also designed the company’s logo and brand book.',
     'portfolio.cta_h'      => 'Need a website for your company?',
     'portfolio.cta_p'      => 'Tell us what you do — we will suggest a structure and a timeline. We reply within 24 hours.',
     'portfolio.cta_btn'    => 'Discuss your project',

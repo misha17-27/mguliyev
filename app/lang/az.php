@@ -76,6 +76,7 @@ return [
     'portfolio.archived'   => 'Sayt hazırda açılmır, ona görə link yoxdur. İş görülüb və layihə portfolioda qalır.',
     'portfolio.more'       => '«{cat}» sahəsində daha çox',
     'portfolio.gallery' => 'Saytın görünüşü',
+    'portfolio.branding' => 'Studiya şirkət üçün loqo və brendbuk da hazırlayıb.',
     'portfolio.cta_h'      => 'Şirkətiniz üçün sayt lazımdır?',
     'portfolio.cta_p'      => 'Nə ilə məşğul olduğunuzu danışın — struktur və müddət təklif edəcəyik. 24 saat ərzində cavab veririk.',
     'portfolio.cta_btn'    => 'Layihəni müzakirə edək',

@@ -105,7 +105,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
        откроется снова с его текстом. Хранится до следующей отрисовки. */
     $keep = static function () use ($what, $gs, $ps, $L): void {
         $f = [];
-        foreach (['name', 'slug', 'desc', 'intro', 'domain', 'move_to', 'image', 'archived',
+        foreach (['name', 'slug', 'desc', 'intro', 'domain', 'move_to', 'image', 'archived', 'branding',
                   'text', 'seo_title', 'seo_desc', 'gallery'] as $k) {
             if (isset($_POST[$k]) && is_string($_POST[$k])) $f[$k] = post_one($_POST[$k], true);
         }
@@ -299,6 +299,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $w['domain']   = $dom;
             $w['image']    = $img;
             $w['archived'] = !empty($_POST['archived']);
+            /* Логотип и брендбук — только там, где их правда делала студия:
+               отмечает владелец, сама панель этого не решает. */
+            $w['branding'] = !empty($_POST['branding']);
             $w['updated']  = $today;
             $w['desc'][$L] = $desc;
             $w['text'][$L] = post_one($_POST['text'] ?? '', true);
@@ -457,6 +460,7 @@ if ($prj !== null || $ps === 'new'):
         $w['domain']   = $d['domain'] ?? $w['domain'];
         $w['image']    = ($d['image'] ?? '') !== '' ? $d['image'] : null;
         $w['archived'] = !empty($d['archived']);
+        $w['branding'] = !empty($d['branding']);
         $w['desc'][$L] = $d['desc'] ?? '';
         $w['text'][$L] = $d['text'] ?? '';
         $w['seo'][$L]  = ['title' => $d['seo_title'] ?? '', 'description' => $d['seo_desc'] ?? ''];
@@ -535,6 +539,10 @@ if ($prj !== null || $ps === 'new'):
       <label class="check">
         <input type="checkbox" name="archived" value="1"<?= !empty($w['archived']) ? ' checked' : '' ?>>
         Архив — сайт не открывается: ссылку не ставим, проект остаётся в портфолио
+      </label>
+      <label class="check">
+        <input type="checkbox" name="branding" value="1"<?= !empty($w['branding']) ? ' checked' : '' ?>>
+        Логотип и брендбук сделала студия — на странице проекта появится строка об этом (ru, az, en)
       </label>
     </div>
 
