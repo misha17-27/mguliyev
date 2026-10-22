@@ -85,6 +85,28 @@
     });
   });
 
+  /* ---- Галерея проекта: порядок снимков стрелками. Порядок полей
+         gallery_list[] в форме и есть порядок на сайте. «Удалить» гасит
+         снимок, чтобы было видно, что уйдёт при сохранении. ---- */
+  document.addEventListener("click", function (ev) {
+    var b = ev.target.closest ? ev.target.closest("[data-gal-move]") : null;
+    if (!b) return;
+    ev.preventDefault();
+    var item = b.closest(".gal-item"), grid = item.parentNode;
+    if (b.getAttribute("data-gal-move") === "-1") {
+      if (item.previousElementSibling) grid.insertBefore(item, item.previousElementSibling);
+    } else if (item.nextElementSibling) {
+      grid.insertBefore(item.nextElementSibling, item);
+    }
+    b.focus();
+    var form = item.closest("form");
+    if (form) form.dispatchEvent(new Event("change", { bubbles: true }));   // для предупреждения о несохранённом
+  });
+  document.addEventListener("change", function (ev) {
+    var t = ev.target;
+    if (t && t.matches && t.matches(".gal-del input")) t.closest(".gal-item").classList.toggle("off", t.checked);
+  });
+
   /* ---- Путь к файлу копируется кликом. Выделять мышью строку вроде
          /images/uploads/example.az.jpg и не захватить лишний пробел —
          занятие на три попытки. ---- */

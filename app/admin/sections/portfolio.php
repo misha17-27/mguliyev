@@ -55,6 +55,52 @@ function pf_locate(array $groups, string $g, ?string $p = null): array
     return [null, null];
 }
 
+/** Загруженный снимок для галереи проекта: проверка, уменьшение и WebP
+    в images/uploads/gallery/<адрес проекта>/. Вернёт [путь, ошибка].
+
+    Тип — по содержимому файла, а не по имени. Уменьшение — как у снимков
+    из репозитория (tools/make-gallery.php): до 1000 px по ширине, у очень
+    длинных — верх до 1600 px. Папка uploads — та, что деплой создаёт
+    пустой и не перезаписывает: файлы панели не пропадут при выкладке. */
+function pf_gallery_upload(array $f, string $slug): array
+{
+    $code = (int)($f['error'] ?? UPLOAD_ERR_NO_FILE);
+    if ($code === UPLOAD_ERR_NO_FILE) return [null, null];
+    $name = (string)($f['name'] ?? 'файл');
+    if ($code === UPLOAD_ERR_INI_SIZE || $code === UPLOAD_ERR_FORM_SIZE) {
+        return [null, '«' . $name . '» больше, чем принимает сервер'];
+    }
+    if ($code !== UPLOAD_ERR_OK || !is_uploaded_file((string)($f['tmp_name'] ?? ''))) {
+        return [null, '«' . $name . '» не дошёл целиком'];
+    }
+    $info = @getimagesize($f['tmp_name']);
+    $load = [IMAGETYPE_JPEG => 'imagecreatefromjpeg', IMAGETYPE_PNG => 'imagecreatefrompng',
+             IMAGETYPE_WEBP => 'imagecreatefromwebp'][$info[2] ?? 0] ?? null;
+    if ($load === null || !function_exists($load) || !function_exists('imagewebp')) {
+        return [null, '«' . $name . '» — не JPEG, PNG или WebP'];
+    }
+    [$w, $h] = [(int)$info[0], (int)$info[1]];
+    if ($w < 200 || $h < 120 || $w * $h > 60000000) {
+        return [null, '«' . $name . '»: размер ' . $w . '×' . $h . ' не подходит для галереи'];
+    }
+    @ini_set('memory_limit', '512M');          // полностраничный снимок — десятки мегабайт в памяти
+    $im = @$load($f['tmp_name']);
+    if (!$im) return [null, '«' . $name . '» не читается как картинка'];
+    $k  = min(1, 1000 / $w);
+    $nw = (int)round($w * $k);
+    $nh = (int)min(1600, round($h * $k));
+    $out = imagecreatetruecolor($nw, $nh);
+    imagefill($out, 0, 0, imagecolorallocate($out, 255, 255, 255));   // прозрачное в PNG — на белом
+    imagecopyresampled($out, $im, 0, 0, 0, 0, $nw, $nh, $w, (int)round($nh / $k));
+    $dir = ADMIN_WEBROOT . '/images/uploads/gallery/' . $slug;
+    if (!is_dir($dir) && !@mkdir($dir, 0755, true) && !is_dir($dir)) {
+        return [null, 'папка images/uploads/gallery недоступна на запись'];
+    }
+    $file = date('Ymd-His') . '-' . bin2hex(random_bytes(3)) . '.webp';
+    if (!@imagewebp($out, $dir . '/' . $file, 80)) return [null, '«' . $name . '» не записался на диск'];
+    return ['/images/uploads/gallery/' . $slug . '/' . $file, null];
+}
+
 /** Все адреса проектов, кроме одного: для проверки повторов. */
 function pf_slugs(array $groups, ?string $except = null): array
 {
@@ -106,8 +152,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $keep = static function () use ($what, $gs, $ps, $L): void {
         $f = [];
         foreach (['name', 'slug', 'desc', 'intro', 'domain', 'move_to', 'image', 'archived', 'branding',
-                  'text', 'seo_title', 'seo_desc', 'gallery'] as $k) {
+                  'text', 'seo_title', 'seo_desc'] as $k) {
             if (isset($_POST[$k]) && is_string($_POST[$k])) $f[$k] = post_one($_POST[$k], true);
+        }
+        /* Галерея: порядок и отметки «Удалить». Загруженные файлы в черновик
+           не попадут — их выбирают заново. */
+        foreach (['gallery_list', 'gallery_del'] as $k) {
+            if (is_array($_POST[$k] ?? null)) {
+                $f[$k] = array_values(array_filter(array_map(static fn($x) => is_string($x) ? post_image($x) : null,
+                    array_slice($_POST[$k], 0, 200))));
+            }
         }
         $_SESSION['pf_draft'] = ['do' => $what, 'g' => $gs, 'p' => $ps, 'lang' => $L, 'f' => $f];
     };
@@ -123,7 +177,23 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $msg = 'Сохранено.';
     $go  = $back;
 
-    $ok = Store::update('works.json', function (array $groups) use ($what, $gs, $ps, $L, &$err, &$msg, &$go) {
+    /* Новые снимки галереи — до записи и без замка: уменьшение большого
+       снимка занимает время. Не сохранится проект — загруженное удалим. */
+    $galNew = $galNotes = $galDrop = [];
+    if (($what === 'save-project' || $what === 'add-project') && isset($_POST['gallery_form'])
+        && is_array($_FILES['gallery_new']['name'] ?? null)) {
+        $up = $_FILES['gallery_new'];
+        $gslug = project_slug(post_domain($_POST['domain'] ?? '')) ?: ($ps !== '' ? $ps : 'proekt');
+        foreach ($up['name'] as $i => $nm) {
+            [$path, $why] = pf_gallery_upload([
+                'name' => $nm, 'tmp_name' => $up['tmp_name'][$i] ?? '', 'error' => $up['error'][$i] ?? UPLOAD_ERR_NO_FILE,
+            ], $gslug);
+            if ($path !== null) $galNew[] = $path;
+            if ($why !== null) $galNotes[] = $why;
+        }
+    }
+
+    $ok = Store::update('works.json', function (array $groups) use ($what, $gs, $ps, $L, $galNew, &$galDrop, &$err, &$msg, &$go) {
         /* Хранилище пустое — начинаем с данных репозитория. */
         if (!$groups) $groups = works_canon();
 
@@ -278,22 +348,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $al  = array_values(array_unique(array_diff($al, [$slug])));
             if ($al) $w['aliases'] = $al; else unset($w['aliases']);
 
-            /* Галерея — пути снимков по одному в строке. Неверная строка —
-               отказ, как у обложки: иначе опечатка молча выкидывала бы снимок. */
-            if (array_key_exists('gallery', $_POST)) {
+            /* Галерея: снимки в том порядке, в каком они стоят в форме, без
+               отмеченных «Удалить», плюс только что загруженные — в конец.
+               Блока галереи в форме нет — галерею не трогаем. */
+            if (isset($_POST['gallery_form'])) {
+                $del = [];
+                foreach ((array)($_POST['gallery_del'] ?? []) as $x) if (is_string($x)) $del[$x] = true;
                 $gal = [];
-                foreach (preg_split('~\R~u', post_one($_POST['gallery'], true)) as $line) {
-                    $line = trim($line);
-                    if ($line === '') continue;
-                    $gp = post_image($line);
-                    if ($gp === null || !is_file(ADMIN_WEBROOT . $gp)) {
-                        $err = 'В галерее строка «' . $line . '» — не путь к картинке на сайте. '
-                             . 'Нужен путь вида /images/…; загрузить снимок — в разделе «Изображения».';
-                        return null;
-                    }
-                    $gal[] = $gp;
+                foreach ((array)($_POST['gallery_list'] ?? []) as $x) {
+                    if (!is_string($x)) continue;
+                    if (isset($del[$x])) { $galDrop[] = $x; continue; }
+                    $gp = post_image($x);
+                    if ($gp !== null && is_file(ADMIN_WEBROOT . $gp) && !in_array($gp, $gal, true)) $gal[] = $gp;
                 }
-                $w['gallery'] = $gal;
+                $w['gallery'] = array_merge($gal, $galNew);
             }
 
             $w['domain']   = $dom;
@@ -343,14 +411,32 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         return null;
     });
 
+    if ($err !== null || !$ok) {
+        /* Проект не сохранился — только что загруженные снимки не нужны. */
+        foreach ($galNew as $gp) @unlink(ADMIN_WEBROOT . $gp);
+    }
     if ($err !== null) {
         $keep();
         admin_flash('НЕ СОХРАНЕНО: ' . $err, 'err');
         admin_go($back);
     }
     if ($ok) {
+        /* Удалённые из галереи снимки, загруженные через панель, стираем
+           с диска. Снимки из репозитория (images/works/gallery) не трогаем:
+           их вернёт следующая выкладка, а в галерею — только сама панель. */
+        foreach ($galDrop as $gp) {
+            if (strpos($gp, '/images/uploads/gallery/') === 0 && strpos($gp, '..') === false && is_file(ADMIN_WEBROOT . $gp)) {
+                @unlink(ADMIN_WEBROOT . $gp);
+            }
+        }
+        if ($galNew) $msg .= ' Добавлено снимков в галерею: ' . count($galNew) . '.';
+        if ($galDrop) $msg .= ' Убрано из галереи: ' . count($galDrop) . '.';
         admin_note_edit('portfolio:' . $gs);
-        admin_flash($msg);
+        if ($galNotes) {
+            admin_flash($msg . ' Не приняты: ' . implode('; ', $galNotes) . '.', 'warn');
+        } else {
+            admin_flash($msg);
+        }
         admin_go($go);
     }
     admin_flash('Не удалось записать. Проверьте место на диске и права на папку ' . Store::dir(), 'err');
@@ -464,17 +550,24 @@ if ($prj !== null || $ps === 'new'):
         $w['desc'][$L] = $d['desc'] ?? '';
         $w['text'][$L] = $d['text'] ?? '';
         $w['seo'][$L]  = ['title' => $d['seo_title'] ?? '', 'description' => $d['seo_desc'] ?? ''];
+        if (isset($d['gallery_list'])) {
+            $w['gallery'] = array_values(array_filter((array)$d['gallery_list'], static fn($gp) => is_file(ADMIN_WEBROOT . $gp)));
+        }
         $moveTo = $d['move_to'] ?? $moveTo;
     }
+    $galDel = array_flip((array)($d['gallery_del'] ?? []));
 ?>
   <p style="margin:0 0 16px;display:flex;gap:8px;flex-wrap:wrap">
     <a class="btn ghost sm" href="<?= $e(admin_url('portfolio')) ?>">← Все проекты</a>
     <?php if ($grp !== null): ?>
       <a class="btn ghost sm" href="<?= $e(admin_url('portfolio', ['cat' => $grp['slug']])) ?>">Проекты категории «<?= $e($txt($grp['name'])) ?>»</a>
     <?php endif; ?>
+    <?php if (!$isNew): ?>
+      <a class="btn sm" style="margin-left:auto" href="<?= $e(portfolio_url($grp['slug'], $slug, $L)) ?>" target="_blank" rel="noopener">Посмотреть проект на сайте ↗</a>
+    <?php endif; ?>
   </p>
 
-  <form method="post" action="<?= $e(admin_url('portfolio')) ?>" data-guard="1">
+  <form method="post" action="<?= $e(admin_url('portfolio')) ?>" enctype="multipart/form-data" data-guard="1">
     <?php $hidden($isNew ? 'add-project' : 'save-project', ['g' => $grp['slug'] ?? '', 'p' => $slug, 'lang' => $L]); ?>
 
     <div class="panel">
@@ -525,16 +618,32 @@ if ($prj !== null || $ps === 'new'):
         </div>
       </div>
 
-      <?php $galList = implode("\n", array_map('strval', (array)($d['gallery'] ?? null ?: ($w['gallery'] ?? [])))); ?>
-      <label for="pf-gallery">Галерея на странице проекта <span class="hint">снимки сайта, путь по одному в строке; пусто — галереи нет</span></label>
-      <textarea id="pf-gallery" name="gallery" class="mono" rows="<?= max(3, min(9, substr_count($galList, "\n") + 2)) ?>"><?= $e($galList) ?></textarea>
-      <?php if (!empty($w['gallery'])): ?>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-          <?php foreach ((array)$w['gallery'] as $gp): ?>
-            <img src="<?= $e($gp) ?>" alt="" loading="lazy" style="width:110px;height:76px;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--line)">
+      <?php /* Галерея на странице проекта: порядок — стрелками (admin.js),
+               «Удалить» убирает снимок при сохранении, новые — загрузкой. */
+            $galNow = (array)($w['gallery'] ?? []); ?>
+      <input type="hidden" name="gallery_form" value="1">
+      <label>Галерея на странице проекта <span class="hint">порядок — стрелками, лишнее — «Удалить»; всё применится по «Сохранить»</span></label>
+      <?php if ($galNow): ?>
+        <div class="gal-grid">
+          <?php foreach ($galNow as $gp): ?>
+            <?php $off = isset($galDel[$gp]); ?>
+            <figure class="gal-item<?= $off ? ' off' : '' ?>">
+              <a href="<?= $e($gp) ?>" target="_blank" rel="noopener" title="Открыть снимок целиком"><img src="<?= $e($gp) ?>" alt="" loading="lazy"></a>
+              <input type="hidden" name="gallery_list[]" value="<?= $e($gp) ?>">
+              <div class="gal-acts">
+                <button type="button" class="btn sm" data-gal-move="-1" title="Левее" aria-label="Переставить левее">←</button>
+                <button type="button" class="btn sm" data-gal-move="1" title="Правее" aria-label="Переставить правее">→</button>
+                <label class="gal-del"><input type="checkbox" name="gallery_del[]" value="<?= $e($gp) ?>"<?= $off ? ' checked' : '' ?>> Удалить</label>
+              </div>
+            </figure>
           <?php endforeach; ?>
         </div>
+      <?php else: ?>
+        <p class="muted">Снимков пока нет — на странице проекта галереи не будет.</p>
       <?php endif; ?>
+      <label for="pf-gal-new">Добавить фото <span class="hint">JPEG, PNG или WebP, можно выбрать несколько; <?= function_exists('admin_upload_cap') && admin_upload_cap() > 0 ? 'до ' . $e(admin_size(admin_upload_cap())) . ' за раз' : '' ?></span></label>
+      <input type="file" id="pf-gal-new" name="gallery_new[]" accept="image/jpeg,image/png,image/webp" multiple>
+      <p class="muted" style="margin-top:6px">Большие снимки панель уменьшит сама: до 1000 px по ширине, у полностраничных — верх страницы.</p>
 
       <label class="check">
         <input type="checkbox" name="archived" value="1"<?= !empty($w['archived']) ? ' checked' : '' ?>>
@@ -784,7 +893,8 @@ else:
           <td><a href="<?= $e(admin_url('portfolio', ['p' => $slug])) ?>"><b class="clamp"><?= $inL($w['desc']) ?></b></a>
               <span class="muted"><?= $e($w['domain']) ?><?= !empty($w['archived']) ? ' · <span class="pill grey">архив</span>' : '' ?></span></td>
           <td><a href="<?= $e(admin_url('portfolio', ['cat' => $g['slug']])) ?>"><?= $e($txt($g['name'])) ?></a></td>
-          <td><span class="path" title="<?= $e('/portfolio/' . $g['slug'] . '/' . $slug . '/') ?>">…/<?= $e($slug) ?>/</span></td>
+          <td><a class="path" href="<?= $e(portfolio_url($g['slug'], $slug, $L)) ?>" target="_blank" rel="noopener"
+                 title="Открыть страницу проекта на сайте: <?= $e(portfolio_url($g['slug'], $slug, $L)) ?>">…/<?= $e($slug) ?>/ ↗</a></td>
           <td><?= admin_dot(($w['text'][$L] ?? '') !== '', 'текст страницы') ?></td>
           <td><?= admin_dot($hasSeo($w), 'свой заголовок для поиска') ?></td>
           <td><?= admin_lang_badges($fill, '/portfolio/' . $g['slug'] . '/' . $slug . '/') ?></td>

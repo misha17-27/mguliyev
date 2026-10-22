@@ -431,3 +431,13 @@ table.list .acts .btn.x:hover{background:var(--err);color:#fff;border-color:var(
 .split{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:22px;align-items:start}
 .split > .panel{margin:0}
 @media(max-width:1100px){ .split{grid-template-columns:1fr} }
+
+/* ---- Галерея проекта в панели ---- */
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin:6px 0 4px}
+.gal-item{margin:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;transition:opacity .2s}
+.gal-item img{display:block;width:100%;height:118px;object-fit:cover;object-position:top}
+.gal-acts{display:flex;align-items:center;gap:6px;padding:8px}
+.gal-acts .btn{padding:4px 10px}
+.gal-del{margin:0 0 0 auto;font-size:12.5px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--muted)}
+.gal-item.off{opacity:.38}
+.gal-item.off .gal-del{color:#B42318;font-weight:600}
