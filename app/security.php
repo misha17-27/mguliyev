@@ -30,7 +30,7 @@ require_once __DIR__ . '/store.php';
    в политике всегда, даже когда капча выключена: .htaccess не умеет
    читать настройки из хранилища, а разрешённый, но не используемый
    источник сам по себе ничего не открывает. */
-const CSP_POLICY = "default-src 'self'; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://challenges.cloudflare.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
+const CSP_POLICY = "default-src 'self'; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://challenges.cloudflare.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
 
 /* Сети Cloudflare. Взяты с https://www.cloudflare.com/ips-v4 и ips-v6
    20.10.2026. Меняются редко, несколько раз в год; если Cloudflare добавит

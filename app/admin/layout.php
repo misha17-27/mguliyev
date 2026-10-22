@@ -17,8 +17,7 @@
 function admin_assets(): void
 {
     ?>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@600;700&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=<?= (int)@filemtime(ADMIN_WEBROOT . '/assets/fonts/fonts.css') ?>">
 <?php /* Версия по времени файла: стили и скрипты теперь кешируются на год
          (public/.htaccess), и номер, поднятый вручную, легко забыть. */ ?>
 <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('/admin/assets/admin.css'), ENT_QUOTES) ?>">

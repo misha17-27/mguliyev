@@ -1,0 +1,3 @@
+Golos Text, Alumni Sans, Cormorant Garamond, Onest — шрифты Google Fonts
+под лицензией SIL Open Font License 1.1: https://openfontlicense.org
+Файлы woff2 скачаны с fonts.gstatic.com без изменений.

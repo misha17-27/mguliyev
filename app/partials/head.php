@@ -89,17 +89,14 @@ if ($ogDim): ?>
 <meta property="og:image:height" content="<?= (int)$ogDim[1] ?>">
 <?php endif; ?>
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@600;700;800&amp;family=Cormorant+Garamond:ital,wght@1,500;1,600&amp;family=Golos+Text:wght@400;500;600&amp;display=swap">
-<?php /* В Golos Text у ğ/Ğ нет бреве, а ə/Ə нет вовсе. Эти четыре буквы
-         берём из Onest — близкого по рисунку гротеска. text= урезает шрифт
-         до них; G и g Google оставляет в наборе как основу ğ/Ğ, поэтому на
-         /az/ они тоже из Onest, остальной текст — Golos (см. style.css).
-         Отдельной ссылкой: text= в общей ссылке урезал бы и остальные шрифты. */
-      if (I18n::$lang === 'az'): ?>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&amp;text=%C4%9E%C4%9F%C6%8F%C9%99&amp;display=swap">
-<?php endif; ?>
+<?php /* Шрифты — со своего сервера (см. /assets/fonts/fonts.css). Заранее
+         просим два файла, без которых первый экран рисуется запасным
+         шрифтом: основной текст и заголовки — в наборе языка страницы. */
+      $fontSet = I18n::$lang === 'ru' ? ['golos-text-normal-cyrillic-465785.woff2', 'alumni-sans-normal-cyrillic-3ff3ae.woff2'] : ['golos-text-normal-latin-83cb19.woff2', 'alumni-sans-normal-latin-994f50.woff2']; ?>
+<?php foreach ($fontSet as $ff): ?>
+<link rel="preload" href="/assets/fonts/<?= $esc($ff) ?>" as="font" type="font/woff2" crossorigin>
+<?php endforeach; ?>
+<link rel="stylesheet" href="<?= $esc(asset_url('/assets/fonts/fonts.css')) ?>">
 <link rel="stylesheet" href="<?= $esc(asset_url('/assets/css/style.css')) ?>">
 <?php /* Скрипта капчи здесь нет: его подключает app.js, когда человек
          подходит к форме. В шапке он грузился на каждой странице, в том
