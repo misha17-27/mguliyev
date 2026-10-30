@@ -7,6 +7,8 @@
      ?section=portfolio&p=new              добавить проект
      ?section=portfolio&p=itas-az          проект: всё, что видно на его странице
      ?section=portfolio&view=cats          категории: список и «Добавить категорию»
+     ?section=portfolio&view=drafts        черновики: проекты, скрытые с сайта
+     ?section=portfolio&view=trash         корзина
      ?section=portfolio&g=logistika        категория: название, текст, SEO
 
    Раньше проекты были видны только изнутри отрасли: чтобы найти проект,
@@ -31,7 +33,12 @@
    — запись под блокировкой: два сохранения не перепутаются;
    — домен проверяется на пустоту и повторы ВО ВСЕХ отраслях, потому что
      из него собирается адрес страницы проекта;
-   — проект удаляется только кнопкой «Удалить» с подтверждением.
+   — удалённый проект сначала лежит в корзине: его можно восстановить,
+     а насовсем он удаляется через PF_TRASH_DAYS дней (pf_trash_expire);
+   — черновик виден только в панели, на сайте его нет (works_site()).
+
+   ПОРЯДОК — ПО ДАТЕ ДОБАВЛЕНИЯ, новые первыми (works_by_date()). У старых
+   проектов даты нет, их порядок по-прежнему задают стрелки.
 
    Признак «архив» не удаляет проект. Домен может не открываться, но работа
    была сделана, и из портфолио она не исчезает — вместо ссылки пометка. */
@@ -101,6 +108,76 @@ function pf_gallery_upload(array $f, string $slug): array
     return ['/images/uploads/gallery/' . $slug . '/' . $file, null];
 }
 
+/* Сколько дней проект лежит в корзине, прежде чем удалиться насовсем. */
+const PF_TRASH_DAYS = 30;
+
+/** Удалить проект насовсем: его домен и прежние адреса — в список удалённых
+    категории (иначе проект из репозитория вернулся бы сам, см.
+    works_merge_new()), снимки галереи, загруженные панелью, — в $files:
+    их стирают с диска после записи. */
+function pf_forget(array &$g, array $w, array &$files): void
+{
+    $gone = (array)($g['gone'] ?? []);
+    foreach (array_merge([(string)($w['domain'] ?? '')], (array)($w['aliases'] ?? [])) as $d) {
+        if ($d !== '' && !in_array($d, $gone, true)) $gone[] = $d;
+    }
+    $g['gone'] = $gone;
+    foreach ((array)($w['gallery'] ?? []) as $gp) {
+        if (is_string($gp) && strpos($gp, '/images/uploads/gallery/') === 0) $files[] = $gp;
+    }
+}
+
+/** Срок в корзине вышел: пометке 'trashed' больше PF_TRASH_DAYS дней. Дата не
+    читается — срок не вышел: насовсем удаляем только то, о чём точно
+    известно, что пора. */
+function pf_trash_expired(array $w, ?int $now = null): bool
+{
+    if (empty($w['trashed'])) return false;
+    $at = strtotime((string)$w['trashed']);
+    return $at !== false && $at <= ($now ?? time()) - PF_TRASH_DAYS * 86400;
+}
+
+/** Корзина: проекты, пролежавшие там дольше PF_TRASH_DAYS, удаляются
+    насовсем. Вызывается при каждом сохранении портфолио в панели —
+    отдельного расписания на хостинге нет. Вернёт, сколько удалено. */
+function pf_trash_expire(array &$groups, array &$files): int
+{
+    $n = 0;
+    foreach (array_keys($groups) as $gi) {
+        $keep = [];
+        foreach ((array)($groups[$gi]['projects'] ?? []) as $w) {
+            if (!pf_trash_expired($w)) { $keep[] = $w; continue; }
+            pf_forget($groups[$gi], $w, $files);
+            $n++;
+        }
+        $groups[$gi]['projects'] = $keep;
+    }
+    return $n;
+}
+
+/** Стереть загруженные панелью снимки удалённых насовсем проектов — кроме
+    тех, что ещё стоят у какого-нибудь проекта (и в корзине тоже): в галерее
+    или обложкой (её можно вписать путём к любому снимку). Пути сравниваем
+    приведёнными, как в разделе «Изображения»: /images//x и /images/./x —
+    тот же файл. */
+function pf_unlink_unused(array $files, array $groups): void
+{
+    if (!$files) return;
+    $norm = static fn(string $p): string => (string)preg_replace('~/(?:\./)+~', '/', (string)preg_replace('~/{2,}~', '/', $p));
+    $used = [];
+    foreach ($groups as $g) {
+        foreach ((array)($g['projects'] ?? []) as $w) {
+            foreach ((array)($w['gallery'] ?? []) as $gp) $used[$norm((string)$gp)] = true;
+            if (!empty($w['image'])) $used[$norm((string)$w['image'])] = true;
+        }
+    }
+    foreach (array_unique($files) as $gp) {
+        $gp = $norm((string)$gp);
+        if (isset($used[$gp]) || strpos($gp, '..') !== false || strpos($gp, '/images/uploads/gallery/') !== 0) continue;
+        if (is_file(ADMIN_WEBROOT . $gp)) @unlink(ADMIN_WEBROOT . $gp);
+    }
+}
+
 /** Все адреса проектов, кроме одного: для проверки повторов. */
 function pf_slugs(array $groups, ?string $except = null): array
 {
@@ -129,6 +206,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         case 'del-project':  $back = admin_url('portfolio', ['p' => $ps]); break;
         case 'save-group':   $back = admin_url('portfolio', ['g' => $gs]); break;
         case 'move':         $back = admin_url('portfolio', ['cat' => $gs]); break;
+        /* Массовые действия возвращают в тот же список: все, категория или черновики. */
+        case 'bulk':         $back = admin_url('portfolio', array_filter([
+                                 'cat'  => post_slug($_POST['from_cat'] ?? ''),
+                                 'view' => post_one($_POST['from_view'] ?? '') === 'drafts' ? 'drafts' : '']));
+                             break;
+        case 'trash':        $back = admin_url('portfolio', ['view' => 'trash']); break;
         default:             $back = admin_url('portfolio', ['view' => 'cats']);
     }
 
@@ -151,7 +234,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
        откроется снова с его текстом. Хранится до следующей отрисовки. */
     $keep = static function () use ($what, $gs, $ps, $L): void {
         $f = [];
-        foreach (['name', 'slug', 'desc', 'intro', 'domain', 'move_to', 'image', 'archived', 'branding',
+        foreach (['name', 'slug', 'desc', 'intro', 'domain', 'move_to', 'image', 'archived', 'branding', 'draft', 'added',
                   'text', 'seo_title', 'seo_desc'] as $k) {
             if (isset($_POST[$k]) && is_string($_POST[$k])) $f[$k] = post_one($_POST[$k], true);
         }
@@ -193,14 +276,77 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         }
     }
 
-    $ok = Store::update('works.json', function (array $groups) use ($what, $gs, $ps, $L, $galNew, &$galDrop, &$err, &$msg, &$go) {
+    $purge = [];   // снимки проектов, удалённых насовсем, — стереть после записи
+    $ok = Store::update('works.json', function (array $groups) use ($what, $gs, $ps, $L, $galNew, &$galDrop, &$purge, &$err, &$msg, &$go) {
         /* Хранилище пустое — начинаем с данных репозитория. Иначе добавляем
            проекты, заведённые в репозитории позже, — как их видит сайт. */
         $groups = $groups ? works_merge_new($groups) : works_canon();
+        pf_trash_expire($groups, $purge);
 
         /* Дата правки — для карты сайта: поисковику сообщаем, что страница
            менялась, только когда менялась именно она. */
         $today = date('Y-m-d');
+
+        /* ------------------------- отмеченные в списке: черновик, сайт, корзина */
+        if ($what === 'bulk') {
+            $act = post_one($_POST['act'] ?? '');
+            $sel = [];
+            foreach ((array)($_POST['sel'] ?? []) as $x) if (is_string($x) && ($x = post_slug($x)) !== '') $sel[$x] = true;
+            if (!in_array($act, ['draft', 'publish', 'trash'], true)) { $err = 'Выберите, что сделать с отмеченными.'; return null; }
+            if (!$sel) { $err = 'Отметьте хотя бы один проект.'; return null; }
+            $done = [];
+            foreach (array_keys($sel) as $s) {
+                [$gi, $pi] = pf_locate($groups, '', $s);
+                if ($gi === null || !empty($groups[$gi]['projects'][$pi]['trashed'])) continue;
+                $w = $groups[$gi]['projects'][$pi];
+                if ($act === 'trash') {
+                    /* Проект остаётся на своём месте в списке, только с пометкой:
+                       восстановленный, он встанет туда же, где стоял. */
+                    $groups[$gi]['projects'][$pi]['trashed'] = date('Y-m-d H:i:s');
+                } elseif ($act === 'draft') {
+                    $groups[$gi]['projects'][$pi]['draft'] = true;
+                } else {
+                    unset($groups[$gi]['projects'][$pi]['draft']);
+                }
+                $groups[$gi]['updated'] = $today;
+                $done[] = $w['domain'];
+            }
+            if (!$done) { $err = 'Отмеченных проектов уже нет — возможно, их изменили из другой вкладки.'; return null; }
+            $list = implode(', ', $done);
+            $msg = [
+                'draft'   => 'В черновики (' . count($done) . '): ' . $list . '. На сайте их больше не видно, в панели они остались.',
+                'publish' => 'Опубликовано (' . count($done) . '): ' . $list . '.',
+                'trash'   => 'В корзину (' . count($done) . '): ' . $list . '. Через ' . PF_TRASH_DAYS
+                           . ' дней они удалятся сами, до тех пор их можно восстановить.',
+            ][$act];
+            return $groups;
+        }
+
+        /* ------------------------------------- корзина: вернуть или удалить */
+        if ($what === 'trash') {
+            $act = post_one($_POST['act'] ?? '');
+            $sel = [];
+            foreach ((array)($_POST['sel'] ?? []) as $x) if (is_string($x) && ($x = post_slug($x)) !== '') $sel[$x] = true;
+            if (!in_array($act, ['restore', 'purge'], true)) { $err = 'Выберите, что сделать с отмеченными.'; return null; }
+            if (!$sel) { $err = 'Отметьте хотя бы один проект в корзине.'; return null; }
+            $done = [];
+            foreach (array_keys($sel) as $s) {
+                [$gi, $pi] = pf_locate($groups, '', $s);
+                if ($gi === null || empty($groups[$gi]['projects'][$pi]['trashed'])) continue;
+                $w = $groups[$gi]['projects'][$pi];
+                if ($act === 'restore') {
+                    unset($groups[$gi]['projects'][$pi]['trashed']);
+                } else {
+                    array_splice($groups[$gi]['projects'], $pi, 1);
+                    pf_forget($groups[$gi], $w, $purge);
+                }
+                $groups[$gi]['updated'] = $today;
+                $done[] = $w['domain'];
+            }
+            if (!$done) { $err = 'Отмеченного в корзине уже нет — возможно, его изменили из другой вкладки.'; return null; }
+            $msg = ($act === 'restore' ? 'Восстановлено (' : 'Удалено насовсем (') . count($done) . '): ' . implode(', ', $done) . '.';
+            return $groups;
+        }
 
         /* ---------------------------------------------- новая категория */
         if ($what === 'add-group') {
@@ -243,7 +389,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             /* Проекты не удаляются вместе с категорией, а переходят в
                выбранную — как записи удалённой рубрики в WordPress. Удалить
                проекты целиком — отдельное и осознанное действие. */
-            $n = count($groups[$gi]['projects']);
+            /* Считаем видимые: проекты из корзины переезжают вместе с ними
+               (или в соседнюю категорию, если видимых нет), а не теряются. */
+            $n = count(array_filter((array)$groups[$gi]['projects'], static fn($w) => empty($w['trashed'])));
             $name = tr($groups[$gi]['name'], deflang());
             if ($n > 0) {
                 $to = post_slug($_POST['move_to'] ?? '');
@@ -256,10 +404,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             } else {
                 $msg = 'Категория «' . $name . '» удалена.';
             }
-            /* Список удалённых проектов категории не теряем — переносим
-               в соседнюю, см. works_merge_new(). */
+            /* Список удалённых и проекты из корзины не теряем — переносим
+               в соседнюю. См. works_merge_new(). */
+            $ki = $ti ?? ($gi === 0 ? 1 : 0);
+            if ($n === 0) foreach ((array)$groups[$gi]['projects'] as $w) $groups[$ki]['projects'][] = $w;
             if (!empty($groups[$gi]['gone'])) {
-                $ki = $ti ?? ($gi === 0 ? 1 : 0);
                 $groups[$ki]['gone'] = array_values(array_unique(array_merge(
                     (array)($groups[$ki]['gone'] ?? []), (array)$groups[$gi]['gone'])));
             }
@@ -285,11 +434,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         }
 
         /* --------------------------------------------- порядок проектов */
+        if ($pi !== null && !empty($groups[$gi]['projects'][$pi]['trashed'])) {
+            $err = 'Проект в корзине. Сначала восстановите его.';
+            return null;
+        }
+
         if ($what === 'move') {
             if ($pi === null) { $err = 'Проект не найден.'; return null; }
-            $to = post_one($_POST['dir'] ?? '') === 'up' ? $pi - 1 : $pi + 1;
+            /* Проекты с датой добавления стоят по дате, стрелки на них не
+               действуют: меняемся местами с ближайшим проектом без даты
+               (и не из корзины — его в списке не видно). */
+            $step = post_one($_POST['dir'] ?? '') === 'up' ? -1 : 1;
             $list = &$groups[$gi]['projects'];
-            if (isset($list[$to])) [$list[$pi], $list[$to]] = [$list[$to], $list[$pi]];
+            for ($to = $pi + $step; isset($list[$to]) && (!empty($list[$to]['added']) || !empty($list[$to]['trashed'])); $to += $step);
+            if (isset($list[$to]) && empty($list[$pi]['added'])) [$list[$pi], $list[$to]] = [$list[$to], $list[$pi]];
             unset($list);
             $groups[$gi]['updated'] = $today;
             $msg = 'Порядок изменён — так проекты идут и на сайте.';
@@ -300,18 +458,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         /* ---------------------------------------------- удалить проект */
         if ($what === 'del-project') {
             if ($pi === null) { $err = 'Проект не найден.'; return null; }
+            /* Не насовсем, а в корзину: оттуда проект можно вернуть, а через
+               PF_TRASH_DAYS дней он удалится сам (pf_trash_expire). */
+            $groups[$gi]['projects'][$pi]['trashed'] = date('Y-m-d H:i:s');
             $dom = $groups[$gi]['projects'][$pi]['domain'];
-            /* Запоминаем удалённое — домен и прежние адреса: проект из
-               репозитория с датой «добавлен» иначе вернулся бы сам, в том
-               числе если домен перед удалением меняли. См. works_merge_new(). */
-            $gone = (array)($groups[$gi]['gone'] ?? []);
-            foreach (array_merge([$dom], (array)($groups[$gi]['projects'][$pi]['aliases'] ?? [])) as $d) {
-                if (!in_array($d, $gone, true)) $gone[] = $d;
-            }
-            $groups[$gi]['gone'] = $gone;
-            array_splice($groups[$gi]['projects'], $pi, 1);
             $groups[$gi]['updated'] = $today;
-            $msg = 'Проект ' . $dom . ' удалён. Его страница больше не открывается.';
+            $msg = 'Проект ' . $dom . ' перемещён в корзину, на сайте его больше нет. Через ' . PF_TRASH_DAYS
+                 . ' дней он удалится сам; до тех пор его можно восстановить.';
             $go  = admin_url('portfolio');
             return $groups;
         }
@@ -327,8 +480,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $taken = pf_slugs($groups, $what === 'save-project' ? $ps : null);
             if (isset($taken[$slug])) {
                 /* Проверка по ВСЕМ отраслям: из домена собирается адрес страницы,
-                   и два проекта с одним адресом открывали бы одну страницу. */
-                $err = 'Проект с адресом /' . $slug . '/ уже есть в категории «' . $taken[$slug] . '».';
+                   и два проекта с одним адресом открывали бы одну страницу.
+                   Проект в корзине адрес тоже занимает: его могут вернуть. */
+                [$xg, $xp] = pf_locate($groups, '', $slug);
+                $err = $xg !== null && !empty($groups[$xg]['projects'][$xp]['trashed'])
+                    ? 'Проект с адресом /' . $slug . '/ лежит в корзине. Восстановите его или удалите насовсем.'
+                    : 'Проект с адресом /' . $slug . '/ уже есть в категории «' . $taken[$slug] . '».';
                 return null;
             }
 
@@ -386,6 +543,24 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             /* Логотип и брендбук — только там, где их правда делала студия:
                отмечает владелец, сама панель этого не решает. */
             $w['branding'] = !empty($_POST['branding']);
+            if (!empty($_POST['draft'])) $w['draft'] = true; else unset($w['draft']);
+            /* Дата добавления — по ней проекты идут на сайте, новые первыми.
+               У нового проекта сегодняшняя дата — ставим и время: два
+               проекта, добавленные в один день, тоже встанут новым вперёд.
+               Дата не поменялась — оставляем как была, вместе со временем. */
+            $add = post_one($_POST['added'] ?? '');
+            $old = (string)($w['added'] ?? '');
+            if ($add !== '' && (!preg_match('~^(\d{4})-(\d{2})-(\d{2})$~', $add, $dm) || !checkdate((int)$dm[2], (int)$dm[3], (int)$dm[1]))) {
+                $err = 'Дата добавления записана неверно — нужен день, месяц и год.';
+                return null;
+            }
+            if ($what === 'add-project' && $add === $today) {
+                $w['added'] = date('Y-m-d H:i:s');
+            } elseif ($add === '') {
+                unset($w['added']);
+            } elseif ($add !== substr($old, 0, 10)) {
+                $w['added'] = $add;
+            }
             $w['updated']  = $today;
             $w['desc'][$L] = $desc;
             $w['text'][$L] = post_one($_POST['text'] ?? '', true);
@@ -448,6 +623,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         if ($galNew) $msg .= ' Добавлено снимков в галерею: ' . count($galNew) . '.';
         if ($galDrop) $msg .= ' Убрано из галереи: ' . count($galDrop) . '.';
         admin_note_edit('portfolio:' . $gs);
+        pf_unlink_unused($purge, (array)(Store::read('works.json') ?? []));
         if ($galNotes) {
             admin_flash($msg . ' Не приняты: ' . implode('; ', $galNotes) . '.', 'warn');
         } else {
@@ -465,7 +641,22 @@ $gs   = post_slug($_GET['g'] ?? '');
 $ps   = is_string($_GET['p'] ?? null) ? $_GET['p'] : '';
 $ps   = $ps === 'new' ? 'new' : post_slug($ps);
 $cat  = post_slug($_GET['cat'] ?? '');
-$view = ($_GET['view'] ?? '') === 'cats' ? 'cats' : '';
+$view = in_array($_GET['view'] ?? '', ['cats', 'drafts', 'trash'], true) ? $_GET['view'] : '';
+
+/* Корзина одним списком: [категория, проект]. Удалённые последними — сверху.
+   У кого срок вышел, здесь уже не показываем, а из файла они уходят при
+   ближайшем сохранении портфолио (pf_trash_expire в каждой записи).
+   Просмотр страницы файл не меняет: иначе форма, открытая в соседней
+   вкладке, сочла бы, что портфолио правили, и не сохранилась бы. */
+$trash = [];
+foreach (works_canon(true) as $g) {
+    foreach ($g['projects'] as $w) {
+        if (!empty($w['trashed']) && !pf_trash_expired($w)) $trash[] = [$g, $w];
+    }
+}
+usort($trash, static fn($a, $b) => strcmp((string)$b[1]['trashed'], (string)$a[1]['trashed']));
+$drafts = 0;
+foreach ($groups as $g) foreach ($g['projects'] as $w) if (!empty($w['draft'])) $drafts++;
 
 /* Категория по адресу: номер в массиве или null. */
 $catIndex = static function (string $slug) use ($groups): ?int {
@@ -478,6 +669,11 @@ $grp = $prj = null;
 if ($ps !== '' && $ps !== 'new') {
     [$gi, $pi] = pf_locate($groups, '', $ps);
     if ($gi === null) {
+        /* Проект из корзины не правится: сначала его восстанавливают. */
+        if (pf_locate(works_canon(true), '', $ps)[0] !== null) {
+            admin_flash('Проект «' . $ps . '» в корзине. Восстановите его, чтобы править.', 'warn');
+            admin_go(admin_url('portfolio', ['view' => 'trash']));
+        }
         admin_flash('Проекта с адресом «' . $ps . '» нет — возможно, его удалили или сменили домен.', 'warn');
         admin_go(admin_url('portfolio'));
     }
@@ -546,6 +742,21 @@ $hidden = static function (string $do, array $more = []) use ($e): void {
 $total = 0;
 foreach ($groups as $g) $total += count($g['projects']);
 
+/* Полоска над списками: все, категории, черновики, корзина. */
+$chips = static function () use ($e, $groups, $cat, $view, $total, $drafts, $trash, $txt): void { ?>
+    <nav class="chips" aria-label="Категории">
+      <?php $on = $cat === '' && $view === ''; ?>
+      <a href="<?= $e(admin_url('portfolio')) ?>"<?= $on ? ' class="on" aria-current="true"' : '' ?>>Все <span><?= $total ?></span></a>
+      <?php foreach ($groups as $g): $on = $cat === $g['slug'] && $view === ''; ?>
+        <a href="<?= $e(admin_url('portfolio', ['cat' => $g['slug']])) ?>"<?= $on ? ' class="on" aria-current="true"' : '' ?>><?= $e($txt($g['name'])) ?> <span><?= count($g['projects']) ?></span></a>
+      <?php endforeach; ?>
+      <?php if ($drafts > 0 || $view === 'drafts'): ?>
+        <a href="<?= $e(admin_url('portfolio', ['view' => 'drafts'])) ?>"<?= $view === 'drafts' ? ' class="on" aria-current="true"' : '' ?>>Черновики <span><?= $drafts ?></span></a>
+      <?php endif; ?>
+      <a href="<?= $e(admin_url('portfolio', ['view' => 'trash'])) ?>"<?= $view === 'trash' ? ' class="on" aria-current="true"' : '' ?>>Корзина <span><?= count($trash) ?></span></a>
+    </nav>
+<?php };
+
 admin_head('portfolio');
 
 /* ================================================== 1. ПРОЕКТ (правка/новый) */
@@ -563,6 +774,8 @@ if ($prj !== null || $ps === 'new'):
         $w['image']    = ($d['image'] ?? '') !== '' ? $d['image'] : null;
         $w['archived'] = !empty($d['archived']);
         $w['branding'] = !empty($d['branding']);
+        if (!empty($d['draft'])) $w['draft'] = true; else unset($w['draft']);
+        if (array_key_exists('added', $d)) $w['added'] = $d['added'];
         $w['desc'][$L] = $d['desc'] ?? '';
         $w['text'][$L] = $d['text'] ?? '';
         $w['seo'][$L]  = ['title' => $d['seo_title'] ?? '', 'description' => $d['seo_desc'] ?? ''];
@@ -578,8 +791,10 @@ if ($prj !== null || $ps === 'new'):
     <?php if ($grp !== null): ?>
       <a class="btn ghost sm" href="<?= $e(admin_url('portfolio', ['cat' => $grp['slug']])) ?>">Проекты категории «<?= $e($txt($grp['name'])) ?>»</a>
     <?php endif; ?>
-    <?php if (!$isNew): ?>
+    <?php if (!$isNew && empty($prj['draft'])): ?>
       <a class="btn sm" style="margin-left:auto" href="<?= $e(portfolio_url($grp['slug'], $slug, $L)) ?>" target="_blank" rel="noopener">Посмотреть проект на сайте ↗</a>
+    <?php elseif (!$isNew): ?>
+      <span class="pill grey" style="margin-left:auto;align-self:center">черновик — на сайте не показывается</span>
     <?php endif; ?>
   </p>
 
@@ -589,7 +804,10 @@ if ($prj !== null || $ps === 'new'):
     <div class="panel">
       <h3><?= $isNew ? 'Новый проект' : $inL($w['desc']) ?>
         <span class="lg full" style="vertical-align:3px;margin-left:6px"><?= $e(strtoupper($L)) ?></span></h3>
-      <?php if (!$isNew): ?>
+      <?php if (!$isNew && !empty($prj['draft'])): ?>
+        <p class="muted" style="margin-top:6px">Черновик — страницы на сайте нет. Снимите галочку «Черновик»
+          внизу и сохраните, чтобы опубликовать.</p>
+      <?php elseif (!$isNew): ?>
         <p class="muted" style="margin-top:6px">Страница:
           <a class="path" href="<?= $e(portfolio_url($grp['slug'], $slug, $L)) ?>" target="_blank" rel="noopener"
              title="Открыть страницу проекта на сайте"><?= $e(portfolio_url($grp['slug'], $slug, $L)) ?> ↗</a>
@@ -661,6 +879,16 @@ if ($prj !== null || $ps === 'new'):
       <input type="file" id="pf-gal-new" name="gallery_new[]" accept="image/jpeg,image/png,image/webp" multiple>
       <p class="muted" style="margin-top:6px">Большие снимки панель уменьшит сама: до 1000 px по ширине, у полностраничных — верх страницы.</p>
 
+      <?php /* У нового проекта — сегодня; у старых без даты поле пустое. */
+            $addedNow = $isNew && !isset($w['added']) ? date('Y-m-d') : substr((string)($w['added'] ?? ''), 0, 10); ?>
+      <label for="pf-added">Добавлен в портфолио <span class="hint">по этой дате проекты идут на сайте — новые первыми;
+        пусто — проект стоит после всех проектов с датой, в порядке стрелок</span></label>
+      <input type="date" id="pf-added" name="added" value="<?= $e($addedNow) ?>" style="max-width:220px">
+
+      <label class="check">
+        <input type="checkbox" name="draft" value="1"<?= !empty($w['draft']) ? ' checked' : '' ?>>
+        Черновик — проект виден только в панели: на сайте нет ни карточки, ни страницы
+      </label>
       <label class="check">
         <input type="checkbox" name="archived" value="1"<?= !empty($w['archived']) ? ' checked' : '' ?>>
         Архив — сайт не открывается: ссылку не ставим, проект остаётся в портфолио
@@ -693,7 +921,7 @@ if ($prj !== null || $ps === 'new'):
     <div class="btnrow">
       <button class="btn" type="submit"><?= $isNew ? 'Добавить проект' : 'Сохранить' ?></button>
       <a class="btn ghost" href="<?= $e(admin_url('portfolio', $grp !== null ? ['cat' => $grp['slug']] : [])) ?>">Отменить</a>
-      <?php if (!$isNew): ?>
+      <?php if (!$isNew && empty($prj['draft'])): ?>
         <a class="btn ghost" href="<?= $e(portfolio_url($grp['slug'], $slug, $L)) ?>" target="_blank" rel="noopener">Открыть страницу ↗</a>
       <?php endif; ?>
     </div>
@@ -701,9 +929,9 @@ if ($prj !== null || $ps === 'new'):
 
   <?php if (!$isNew): ?>
   <form method="post" action="<?= $e(admin_url('portfolio')) ?>" style="margin-top:26px"
-        data-confirm="Удалить проект <?= $e($w['domain']) ?>? Его страница перестанет открываться, восстановить будет нечем.">
+        data-confirm="Переместить проект <?= $e($w['domain']) ?> в корзину? На сайте его не будет; восстановить можно в течение <?= PF_TRASH_DAYS ?> дней.">
     <?php $hidden('del-project', ['g' => $grp['slug'], 'p' => $slug]); ?>
-    <button class="btn red sm" type="submit">Удалить проект</button>
+    <button class="btn red sm" type="submit">В корзину</button>
   </form>
   <?php endif; ?>
 
@@ -858,26 +1086,98 @@ elseif ($view === 'cats'):
   </div>
 
 <?php
-/* ===================================================== 4. ВСЕ ПРОЕКТЫ */
+/* ============================================================ 4. КОРЗИНА */
+elseif ($view === 'trash'):
+?>
+  <div class="panel">
+    <?php admin_list_head(count($trash), 'В корзине'); ?>
+    <?php $chips(); ?>
+    <p class="muted">На сайте проектов из корзины нет. Через <?= PF_TRASH_DAYS ?> дней после удаления проект
+       удаляется насовсем — вместе со снимками галереи, загруженными в панели. До тех пор его можно восстановить:
+       он вернётся на своё место в своей категории.</p>
+
+    <?php if ($trash): ?>
+      <form id="pf-trash" method="post" action="<?= $e(admin_url('portfolio')) ?>"
+            data-confirm-act="purge" data-confirm-text="Удалить насовсем отмеченные проекты ({n})? Вернуть их будет нельзя.">
+        <?php $hidden('trash'); ?>
+        <div class="bulk">
+          <select name="act" aria-label="Что сделать с отмеченными">
+            <option value="restore">Восстановить</option>
+            <option value="purge">Удалить насовсем</option>
+          </select>
+          <button class="btn sm" type="submit">Применить к отмеченным</button>
+          <span class="muted" data-check-count="pf-trash"></span>
+        </div>
+      </form>
+
+      <div class="tablewrap">
+        <table class="list">
+          <tr>
+            <th class="chk"><input type="checkbox" data-check-all="pf-trash" autocomplete="off" aria-label="Отметить все"></th>
+            <th class="pic">Снимок</th><th>Проект</th><th>Категория</th><th>Удалён</th><th>Удалится насовсем</th><th class="right"></th>
+          </tr>
+          <?php foreach ($trash as [$g, $w]):
+            $at   = strtotime((string)$w['trashed']) ?: time();
+            $end  = $at + PF_TRASH_DAYS * 86400;
+            $left = max(0, (int)ceil(($end - time()) / 86400));
+            $slug = project_slug($w['domain']);
+          ?>
+          <tr>
+            <td class="chk"><input type="checkbox" name="sel[]" value="<?= $e($slug) ?>" form="pf-trash" autocomplete="off" aria-label="Отметить <?= $e($w['domain']) ?>"></td>
+            <td class="pic"><?= admin_thumb(project_cover($w, $g), $w['domain']) ?></td>
+            <td><b class="clamp"><?= $inL((array)($w['desc'] ?? [])) ?></b>
+                <span class="muted"><?= $e($w['domain']) ?></span></td>
+            <td><?= $e($txt($g['name'])) ?></td>
+            <td><?= $e(date('d.m.Y H:i', $at)) ?></td>
+            <td><?= $e(date('d.m.Y', $end)) ?> <span class="muted">· осталось <?= $left ?> дн.</span></td>
+            <td class="right"><div class="acts">
+              <form method="post" action="<?= $e(admin_url('portfolio')) ?>">
+                <?php $hidden('trash', ['act' => 'restore', 'sel[]' => $slug]); ?>
+                <button class="btn sm" type="submit">Восстановить</button>
+              </form>
+              <form method="post" action="<?= $e(admin_url('portfolio')) ?>"
+                    data-confirm="Удалить <?= $e($w['domain']) ?> насовсем? Вернуть будет нельзя.">
+                <?php $hidden('trash', ['act' => 'purge', 'sel[]' => $slug]); ?>
+                <button class="btn x sm" type="submit">Удалить насовсем</button>
+              </form>
+            </div></td>
+          </tr>
+          <?php endforeach; ?>
+        </table>
+      </div>
+    <?php else: ?>
+      <p class="muted" style="margin-top:12px">Корзина пуста.</p>
+    <?php endif; ?>
+  </div>
+
+<?php
+/* ===================================================== 5. ВСЕ ПРОЕКТЫ */
 else:
-    /* Строки списка: все проекты в порядке сайта или одной категории. */
+    /* Строки списка: все проекты, одной категории или черновики — в том
+       порядке, в каком они идут на сайте: по дате добавления, новые первыми.
+       Внутри категории так уже упорядочил works_canon(), «все» — через все
+       категории, как на странице портфолио. */
     $rows = [];
     foreach ($groups as $g) {
         if ($cat !== '' && $g['slug'] !== $cat) continue;
-        foreach ($g['projects'] as $pi => $w) $rows[] = [$g, $w, $pi, count($g['projects'])];
+        foreach ($g['projects'] as $w) {
+            if ($view === 'drafts' && empty($w['draft'])) continue;
+            $rows[] = [$g, $w];
+        }
     }
-    $catName = $cat !== '' ? $txt($groups[$catIndex($cat)]['name']) : '';
+    if ($cat === '') $rows = works_by_date($rows, static fn(array $x): array => $x[1]);
+
+    /* Стрелки — только внутри категории и только у проектов без даты:
+       проекты с датой стоят по ней. Крайние считаем среди проектов без даты. */
+    $arrows  = $cat !== '' && $view === '';
+    $undated = array_keys(array_filter($rows, static fn(array $r): bool => empty($r[1]['added'])));
+    $firstU  = $undated ? min($undated) : null;
+    $lastU   = $undated ? max($undated) : null;
 ?>
   <div class="panel">
-    <?php admin_list_head(count($rows), $cat !== '' ? 'Проектов в категории' : 'Проектов', 'Добавить проект',
-        admin_url('portfolio', array_filter(['p' => 'new', 'cat' => $cat]))); ?>
-
-    <nav class="chips" aria-label="Категории">
-      <a href="<?= $e(admin_url('portfolio')) ?>"<?= $cat === '' ? ' class="on" aria-current="true"' : '' ?>>Все <span><?= $total ?></span></a>
-      <?php foreach ($groups as $g): ?>
-        <a href="<?= $e(admin_url('portfolio', ['cat' => $g['slug']])) ?>"<?= $cat === $g['slug'] ? ' class="on" aria-current="true"' : '' ?>><?= $e($txt($g['name'])) ?> <span><?= count($g['projects']) ?></span></a>
-      <?php endforeach; ?>
-    </nav>
+    <?php admin_list_head(count($rows), $view === 'drafts' ? 'Черновиков' : ($cat !== '' ? 'Проектов в категории' : 'Проектов'),
+        'Добавить проект', admin_url('portfolio', array_filter(['p' => 'new', 'cat' => $cat]))); ?>
+    <?php $chips(); ?>
 
     <div class="row" style="align-items:end;margin-top:6px">
       <div>
@@ -887,50 +1187,75 @@ else:
       <div><p class="muted" id="texts-count" aria-live="polite" style="margin:0 0 10px"></p></div>
     </div>
 
-    <?php if ($cat === ''): ?>
-      <p class="muted">Порядок проектов меняется стрелками внутри категории — откройте её выше.</p>
-    <?php endif; ?>
+    <p class="muted">Проекты идут по дате добавления — новые первыми. У проектов без даты порядок
+      меняется стрелками внутри категории<?= $arrows ? '' : ' — откройте её выше' ?>.
+      <?= $view === 'drafts' ? 'Черновики видны только здесь: на сайте их нет.' : '' ?></p>
+
+    <?php /* Отметки строк привязаны к этой форме атрибутом form: в строках
+             есть свои формы (стрелки), а формы не вкладываются друг в друга. */ ?>
+    <form id="pf-bulk" method="post" action="<?= $e(admin_url('portfolio')) ?>"
+          data-confirm-act="trash" data-confirm-text="Переместить в корзину отмеченные проекты ({n})? На сайте их не будет; восстановить можно в течение <?= PF_TRASH_DAYS ?> дней.">
+      <?php $hidden('bulk', ['from_cat' => $cat, 'from_view' => $view]); ?>
+      <div class="bulk">
+        <select name="act" aria-label="Что сделать с отмеченными" required>
+          <option value="">Действие с отмеченными…</option>
+          <option value="draft">В черновики (скрыть с сайта)</option>
+          <option value="publish">Опубликовать</option>
+          <option value="trash">В корзину</option>
+        </select>
+        <button class="btn sm" type="submit">Применить</button>
+        <span class="muted" data-check-count="pf-bulk"></span>
+      </div>
+    </form>
 
     <div class="tablewrap">
       <table class="list">
         <tr>
+          <th class="chk"><input type="checkbox" data-check-all="pf-bulk" autocomplete="off" aria-label="Отметить все"></th>
           <th class="num">№</th><th class="pic">Снимок</th><th>Проект</th><th>Категория</th>
           <th>Адрес страницы</th><th>Текст</th><th>SEO</th><th>Языки</th><th class="right"></th>
         </tr>
-        <?php foreach ($rows as $i => [$g, $w, $pi, $cnt]):
-          $slug = project_slug($w['domain']);
-          $fill = [];
+        <?php foreach ($rows as $i => [$g, $w]):
+          $slug  = project_slug($w['domain']);
+          $draft = !empty($w['draft']);
+          $fill  = [];
           foreach (langs() as $l) $fill[$l] = ($w['desc'][$l] ?? '') !== '' ? 1 : 0;
-          $hay  = mb_strtolower($txt($w['desc']) . ' ' . tr($w['desc'], $DEF) . ' ' . $w['domain'] . ' ' . $txt($g['name']));
+          $hay   = mb_strtolower($txt($w['desc']) . ' ' . tr($w['desc'], $DEF) . ' ' . $w['domain'] . ' ' . $txt($g['name']));
+          $added = (string)($w['added'] ?? '');
+          $ts    = $added !== '' ? strtotime($added) : false;
         ?>
-        <tr data-text-row="<?= $e($hay) ?>">
+        <tr data-text-row="<?= $e($hay) ?>"<?= $draft ? ' class="is-draft"' : '' ?>>
+          <td class="chk"><input type="checkbox" name="sel[]" value="<?= $e($slug) ?>" form="pf-bulk" autocomplete="off" aria-label="Отметить <?= $e($w['domain']) ?>"></td>
           <td class="num"><?= admin_num($i) ?></td>
           <td class="pic"><?= admin_thumb(project_cover($w, $g), $w['domain']) ?></td>
           <td><a href="<?= $e(admin_url('portfolio', ['p' => $slug])) ?>"><b class="clamp"><?= $inL($w['desc']) ?></b></a>
-              <span class="muted"><?= $e($w['domain']) ?><?= !empty($w['archived']) ? ' · <span class="pill grey">архив</span>' : '' ?></span></td>
+              <span class="muted"><?= $e($w['domain']) ?><?= $ts ? ' · добавлен ' . $e(date('d.m.Y', $ts)) : '' ?><?= $draft ? ' · <span class="pill grey">черновик</span>' : '' ?><?= !empty($w['archived']) ? ' · <span class="pill grey">архив</span>' : '' ?></span></td>
           <td><a href="<?= $e(admin_url('portfolio', ['cat' => $g['slug']])) ?>"><?= $e($txt($g['name'])) ?></a></td>
-          <td><a class="path" href="<?= $e(portfolio_url($g['slug'], $slug, $L)) ?>" target="_blank" rel="noopener"
-                 title="Открыть страницу проекта на сайте: <?= $e(portfolio_url($g['slug'], $slug, $L)) ?>">…/<?= $e($slug) ?>/ ↗</a></td>
+          <td><?php if ($draft): ?><span class="path muted" title="Черновик: на сайте страницы нет">…/<?= $e($slug) ?>/</span>
+              <?php else: ?><a class="path" href="<?= $e(portfolio_url($g['slug'], $slug, $L)) ?>" target="_blank" rel="noopener"
+                 title="Открыть страницу проекта на сайте: <?= $e(portfolio_url($g['slug'], $slug, $L)) ?>">…/<?= $e($slug) ?>/ ↗</a><?php endif; ?></td>
           <td><?= admin_dot(($w['text'][$L] ?? '') !== '', 'текст страницы') ?></td>
           <td><?= admin_dot($hasSeo($w), 'свой заголовок для поиска') ?></td>
-          <td><?= admin_lang_badges($fill, '/portfolio/' . $g['slug'] . '/' . $slug . '/') ?></td>
+          <td><?= admin_lang_badges($fill, $draft ? null : '/portfolio/' . $g['slug'] . '/' . $slug . '/') ?></td>
           <td class="right"><div class="acts">
             <a class="btn sm" href="<?= $e(admin_url('portfolio', ['p' => $slug])) ?>">Изменить</a>
-            <?php if ($cat !== ''): foreach (['up' => '↑', 'down' => '↓'] as $dir => $arrow):
-              $edge = $dir === 'up' ? $pi === 0 : $pi === $cnt - 1; ?>
+            <?php if ($arrows && $added === ''): foreach (['up' => '↑', 'down' => '↓'] as $dir => $arrow):
+              $edge = $dir === 'up' ? $i === $firstU : $i === $lastU; ?>
               <form method="post" action="<?= $e(admin_url('portfolio')) ?>">
                 <?php $hidden('move', ['dir' => $dir, 'g' => $g['slug'], 'p' => $slug]); ?>
                 <button class="btn sm" type="submit" title="<?= $dir === 'up' ? 'Выше' : 'Ниже' ?>"<?= $edge ? ' disabled' : '' ?>><?= $arrow ?></button>
               </form>
             <?php endforeach; endif; ?>
-            <a class="btn sm" href="<?= $e(portfolio_url($g['slug'], $slug, $L)) ?>" target="_blank" rel="noopener" title="Открыть страницу на <?= $e(strtoupper($L)) ?>">↗</a>
+            <?php if (!$draft): ?>
+              <a class="btn sm" href="<?= $e(portfolio_url($g['slug'], $slug, $L)) ?>" target="_blank" rel="noopener" title="Открыть страницу на <?= $e(strtoupper($L)) ?>">↗</a>
+            <?php endif; ?>
           </div></td>
         </tr>
         <?php endforeach; ?>
       </table>
     </div>
     <?php if (!$rows): ?>
-      <p class="muted" style="margin-top:12px">В этой категории пока нет проектов.</p>
+      <p class="muted" style="margin-top:12px"><?= $view === 'drafts' ? 'Черновиков нет.' : 'В этой категории пока нет проектов.' ?></p>
     <?php endif; ?>
   </div>
 <?php endif; ?>

@@ -84,12 +84,64 @@ function by_lang(string $ru, array $ovs, string ...$path): array
    КАНОНИЧЕСКИЙ ВИД: все языки сразу. Этим пользуется панель управления.
    ==================================================================== */
 
-/** Портфолио: группы по отраслям, внутри проекты. */
-function works_canon(): array
+/** Портфолио: группы по отраслям, внутри проекты — по дате добавления
+    (см. works_by_date()). Проекты из корзины панели (пометка 'trashed')
+    не отдаются никому, кроме экрана корзины: $withTrash = true. В файле
+    они стоят на своих местах, чтобы восстановленный встал туда же. */
+function works_canon(bool $withTrash = false): array
 {
     $s = Store::read('works.json');
-    if (is_array($s) && isset($s[0]['slug'], $s[0]['projects'])) return works_seo_fill(works_merge_new($s));
-    return works_seo_fill(works_repo());
+    $groups = is_array($s) && isset($s[0]['slug'], $s[0]['projects'])
+        ? works_seo_fill(works_merge_new($s))
+        : works_seo_fill(works_repo());
+    foreach ($groups as &$g) {
+        $list = (array)$g['projects'];
+        if (!$withTrash) $list = array_filter($list, static fn($w) => empty($w['trashed']));
+        $g['projects'] = works_by_date($list);
+    }
+    unset($g);
+    return $groups;
+}
+
+/** Портфолио для сайта: как works_canon(), но без черновиков. Черновик
+    виден только в панели: на сайте у него нет ни карточки, ни страницы,
+    ни строки в карте сайта, и в число проектов он не входит. Проекты из
+    корзины works_canon() не отдаёт вовсе.
+    Отрасль, в которой на сайте не осталось ни одного проекта, тоже. */
+function works_site(): array
+{
+    $out = [];
+    foreach (works_canon() as $g) {
+        $g['projects'] = array_values(array_filter((array)$g['projects'], static fn($w) => empty($w['draft'])));
+        /* Отрасль без проектов на сайте не показываем: пустая страница с
+           кодом 200 и описанием спрятанных работ — мусор для поиска. Её
+           адрес отдаст честный 404, в меню и карте сайта её нет. */
+        if ($g['projects']) $out[] = $g;
+    }
+    return $out;
+}
+
+/** Проекты по дате добавления: сначала те, у кого дата есть, — новые
+    выше; за ними без даты, в прежнем порядке (его задают стрелки панели).
+
+    Дата есть у проектов, добавленных после того, как ввели сортировку:
+    у заведённых в works.php — шестой элемент, у добавленных в панели —
+    ставится сама. Старым проектам дату не придумываем: её можно вписать
+    в панели, если она известна. $get достаёт проект из элемента списка,
+    когда список — не из проектов (например, пары [категория, проект]). */
+function works_by_date(array $list, ?callable $get = null): array
+{
+    $rows = [];
+    foreach (array_values($list) as $i => $x) {
+        $w = $get !== null ? $get($x) : $x;
+        $rows[] = [(string)($w['added'] ?? ''), $i, $x];
+    }
+    /* Номер в исходном списке — последний ключ: usort в PHP 7.4 неустойчив. */
+    usort($rows, static function (array $a, array $b): int {
+        if (($a[0] === '') !== ($b[0] === '')) return $a[0] === '' ? 1 : -1;
+        return strcmp($b[0], $a[0]) ?: $a[1] <=> $b[1];
+    });
+    return array_column($rows, 2);
 }
 
 /** Портфолио из репозитория: app/data/works.php с переводами. */
@@ -475,7 +527,7 @@ function seo_canon(): array
 function works_count(): array
 {
     $c = ['n' => 0, 'covers' => 0];
-    foreach (works_canon() as $g) {
+    foreach (works_site() as $g) {
         foreach ($g['projects'] as $w) {
             $c['n']++;
             if (!empty($w['image'])) $c['covers']++;
@@ -488,7 +540,7 @@ function works_count(): array
 function works(): array
 {
     $out = [];
-    foreach (works_canon() as $g) {
+    foreach (works_site() as $g) {
         $pr = [];
         foreach ($g['projects'] as $w) {
             $pr[] = [$w['domain'], tr($w['desc']), $w['image'] ?? null, !empty($w['archived'])];
@@ -730,7 +782,7 @@ function portfolio_find(?string $cat, ?string $proj = null): array
 {
     $out = ['group' => null, 'project' => null, 'cat' => null, 'slug' => null];
     $old = null;
-    foreach (works_canon() as $g) {
+    foreach (works_site() as $g) {
         if ($proj !== null) {
             foreach ($g['projects'] as $w) {
                 $s = project_slug($w['domain']);

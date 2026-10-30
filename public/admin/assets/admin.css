@@ -212,6 +212,11 @@ legend{color:var(--ink);font-weight:700;font-size:13px;padding:0 6px}
           flex-wrap:wrap;margin-bottom:16px}
 .listhead .total{color:var(--muted);font-size:13.5px}
 .listhead .total b{color:var(--text);font-size:15px}
+td.chk,th.chk{width:34px;padding-right:0 !important}
+td.chk input,th.chk input{width:17px;height:17px;margin:0;cursor:pointer;accent-color:var(--ink,#111)}
+tr.is-draft td.pic,tr.is-draft td b.clamp{opacity:.55}
+.bulk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 12px}
+.bulk select{width:auto;min-width:230px;margin:0}
 td.num,th.num{width:46px;color:var(--muted);font-weight:800;font-size:13px;
               font-variant-numeric:tabular-nums}
 td.pic,th.pic{width:96px}

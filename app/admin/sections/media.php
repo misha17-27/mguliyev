@@ -109,7 +109,8 @@ function media_video_ext(string $head): ?string
    разработчика /images/works/x.jpg и загруженный /images/uploads/x.jpg —
    разные файлы. Нужно и списку, и удалению. */
 $used = [];
-foreach (works_canon() as $g) {
+/* С проектами из корзины: их обложка тоже занята — проект могут вернуть. */
+foreach (works_canon(true) as $g) {
     foreach ($g['projects'] as $w) {
         if (empty($w['image'])) continue;
         /* post_image() пропускает и /images//uploads/x.png, и /images/./uploads/x.png,

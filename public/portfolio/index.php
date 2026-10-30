@@ -14,7 +14,7 @@ require __DIR__ . '/../../app/bootstrap.php';
 $current = 'portfolio';
 
 [$catSlug] = portfolio_route();
-$groups = works_canon();
+$groups = works_site();
 $cat = null;
 
 /* Адрес, который маршрут не разобрал, — это не «все работы». Сюда его
@@ -59,12 +59,15 @@ if ($catSlug !== null || $lost) {
 
 include __DIR__ . '/../../app/partials/head.php';
 
-/* Проекты в сетке: все или одной отрасли. */
+/* Проекты в сетке: все или одной отрасли. Во «всех работах» — по дате
+   добавления через все отрасли: новый проект первым, а не где-то в середине
+   своей отрасли. Внутри отрасли works_canon() уже упорядочил так же. */
 $items = [];
 foreach ($groups as $g) {
     if ($cat !== null && $g['slug'] !== $cat['slug']) continue;
     foreach ($g['projects'] as $w) $items[] = [$g, $w];
 }
+if ($cat === null) $items = works_by_date($items, static fn(array $x): array => $x[1]);
 
 $shown = 0; $dead = 0; $covers = 0;
 foreach ($groups as $g) {

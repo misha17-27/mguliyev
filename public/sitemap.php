@@ -35,7 +35,7 @@ foreach (['/', '/uslugi/', '/portfolio/', '/tseny/', '/o-studii/', '/kontakty/',
 foreach (catalog_canon() as $slug => $c) {
     $urls[] = ['/uslugi/' . $slug . '/', $langs];
 }
-foreach (works_canon() as $g) {
+foreach (works_site() as $g) {   // без черновиков
     $urls[] = ['/portfolio/' . $g['slug'] . '/', $langs];
     foreach ($g['projects'] as $w) {
         $urls[] = ['/portfolio/' . $g['slug'] . '/' . project_slug($w['domain']) . '/', $langs];

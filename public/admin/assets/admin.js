@@ -41,10 +41,64 @@
          «Удалить?» без указания, что именно, — бесполезный вопрос. ---- */
   document.addEventListener("submit", function (ev) {
     var f = ev.target;
-    if (!f || !f.getAttribute) return;
+    if (!f || !f.getAttribute || ev.defaultPrevented) return;
     var ask = f.getAttribute("data-confirm");
+    /* Форма с выбором действия спрашивает только про необратимое или
+       заметное: «в корзину», «удалить насовсем». */
+    var act = f.getAttribute("data-confirm-act");
+    if (!ask && act && f.elements.act && f.elements.act.value === act && f.id) {
+      ask = (f.getAttribute("data-confirm-text") || "").replace("{n}", String(boxesOf(f.id).filter(function (b) { return b.checked; }).length));
+    }
     if (ask && !window.confirm(ask)) ev.preventDefault();
   });
+
+  /* ---- Отметки строк для действий сразу с несколькими. Галочки
+         привязаны к форме атрибутом form="…"; «Отметить все» берёт
+         только видимые строки — те, что остались после поиска. ---- */
+  var boxesOf = function (id) {
+    return [].slice.call(document.querySelectorAll('input[type="checkbox"][form="' + id + '"]'));
+  };
+  var recount = function (id) {
+    var n = boxesOf(id).filter(function (b) { return b.checked; }).length;
+    [].forEach.call(document.querySelectorAll('[data-check-count="' + id + '"]'), function (el) {
+      el.textContent = n ? "Отмечено: " + n : "";
+    });
+    var all = document.querySelector('[data-check-all="' + id + '"]');
+    if (all) {
+      var vis = boxesOf(id).filter(function (b) { var r = b.closest("tr"); return !r || !r.hidden; });
+      var on = vis.filter(function (b) { return b.checked; }).length;
+      all.checked = vis.length > 0 && on === vis.length;
+      all.indeterminate = on > 0 && on < vis.length;
+    }
+  };
+  var recountAll = function () {
+    [].forEach.call(document.querySelectorAll("[data-check-all]"), function (a) { recount(a.getAttribute("data-check-all")); });
+  };
+  recountAll();
+  window.addEventListener("pageshow", recountAll);
+  document.addEventListener("change", function (ev) {
+    var t = ev.target;
+    if (!t || !t.getAttribute) return;
+    var id = t.getAttribute("data-check-all");
+    if (id) {
+      boxesOf(id).forEach(function (b) {
+        var r = b.closest("tr");
+        if (!r || !r.hidden) b.checked = t.checked;
+      });
+      recount(id);
+      return;
+    }
+    if (t.type === "checkbox" && t.getAttribute("form")) recount(t.getAttribute("form"));
+  });
+  /* Отправка без отметок — подсказка сразу, а не после перезагрузки. */
+  document.addEventListener("submit", function (ev) {
+    var f = ev.target;
+    if (!f || !f.id || !f.hasAttribute("data-confirm-act") || ev.defaultPrevented) return;
+    if (!boxesOf(f.id).some(function (b) { return b.checked; })) {
+      ev.preventDefault();
+      window.alert("Сначала отметьте проекты галочками слева.");
+    }
+  }, true);
 
   /* ---- Поиск по строкам словаря: их больше трёхсот, и прокручивать
          список глазами бессмысленно. Фильтр по ключу и по тексту. ---- */
@@ -60,7 +114,11 @@
         var on = q === "" || (r.getAttribute("data-text-row") || "").indexOf(q) !== -1;
         r.hidden = !on;
         if (on) n++;
+        /* Скрытая поиском строка теряет отметку: массовое действие не
+           должно задеть проекты, которых на экране не видно. */
+        else [].forEach.call(r.querySelectorAll('input[type="checkbox"][form]'), function (b) { b.checked = false; });
       });
+      recountAll();
       if (live) live.textContent = q === ""
         ? "Показаны все " + rows.length
         : "Найдено " + n + " из " + rows.length;
