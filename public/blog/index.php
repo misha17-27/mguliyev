@@ -26,6 +26,9 @@ foreach (articles_canon() as $c) {
     <div class="posts" style="margin-top:clamp(28px,4vw,52px)">
       <?php foreach ($arts as $a): ?>
       <article class="post">
+        <?php if (!empty($a['cover'])): ?>
+          <a class="post-img" href="<?= u('/blog/' . $a['slug'] . '/') ?>" tabindex="-1" aria-hidden="true"><img src="<?= e($a['cover']['image']) ?>"<?= cover_srcset($a['cover']['image']) ?> alt="" loading="lazy" width="1200" height="750"></a>
+        <?php endif; ?>
         <div class="pm"><span><?= htmlspecialchars($a['rubric']) ?></span><span><?= date_h((string)$a['date']) ?> · <?= tn('blog.read', ['n' => (int)$a['read']]) ?></span></div>
         <?php /* h2: на этой странице над статьями только h1 */ ?>
         <h2><a href="<?= u('/blog/' . $a['slug'] . '/') ?>"><?= htmlspecialchars($a['title']) ?></a></h2>

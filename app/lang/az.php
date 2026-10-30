@@ -50,6 +50,7 @@ return [
     'blog.ru_only'           => 'Bəzi məqalələr hələlik yalnız rus dilindədir. Saytın digər bölmələri üç dildə mövcuddur.',
     'blog.nf' => 'Məqalə tapılmadı',
     'blog.svc' => 'Mövzu üzrə studiya xidməti',
+    'blog.photo' => 'Foto',
 
     'nf.h'    => 'Belə səhifə yoxdur',
     'nf.p'    => 'Ola bilsin, ünvan səhv yazılıb və ya səhifə başqa yerə köçürülüb. Aşağıdakı bölmələrdən birinə keçin.',

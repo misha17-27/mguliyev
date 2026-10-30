@@ -21,6 +21,7 @@ $IMG = dirname(__DIR__) . '/public/images';
 $JOBS = [
     [$IMG . '/works/*.jpg',             [480, 800, 1200], 78],
     [$IMG . '/home/work-*.jpg',         [480, 800, 1200], 78],
+    [$IMG . '/blog/*.jpg',              [480, 800, 1200], 78],
     [$IMG . '/home/reel-*.jpg',         [360, 540],       78],
     [$IMG . '/demo/shot-*-poster.jpg',  [null],           75],
 ];

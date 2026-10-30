@@ -9,6 +9,13 @@ if (empty($art)) return;
     <p class="lb"><a href="<?= u('/blog/') ?>"><?= t('nav.blog') ?></a> · <?= htmlspecialchars($art['rubric']) ?></p>
     <h1 class="disp h2" style="margin-block:18px 16px"><?= htmlspecialchars($art['title']) ?></h1>
     <p class="art-meta"><?= date_h((string)$art['date']) ?> · <?= tn('blog.read_full', ['n' => (int)$art['read']]) ?></p>
+    <?php if (!empty($art['cover'])): $cv = $art['cover']; ?>
+      <figure class="art-fig">
+        <img src="<?= e($cv['image']) ?>"<?= cover_srcset($cv['image'], '(max-width:1100px) 92vw, 1040px') ?> alt=""
+             width="1200" height="750" fetchpriority="high">
+        <figcaption><?= t('blog.photo') ?>: <a href="<?= e($cv['url']) ?>" target="_blank" rel="noopener nofollow"><?= e($cv['author']) ?></a> / Unsplash</figcaption>
+      </figure>
+    <?php endif; ?>
     <p class="art-lead"><?= nl2br(htmlspecialchars($art['lead'])) ?></p>
 
     <?php foreach ($art['body'] as $s): ?>

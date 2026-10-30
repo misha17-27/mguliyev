@@ -472,9 +472,26 @@ function articles_repo(): array
             /* Направление каталога, к которому статья относится: под ней —
                ссылка на страницу услуги. Не язык, а адрес, поэтому без перевода. */
             'service'  => (string)($a['service'] ?? ''),
+            'cover'    => blog_cover($sl),
         ];
     }
     return $out;
+}
+
+/** Фото статьи из app/data/blog_covers.php: ['image', 'author', 'url'] или null.
+    Файла на диске нет — тоже null: битая картинка хуже, чем никакой. */
+function blog_cover(string $slug): ?array
+{
+    static $all = null;
+    if ($all === null) {
+        $f = __DIR__ . '/data/blog_covers.php';
+        $all = is_file($f) ? (array) require $f : [];
+    }
+    $c = $all[$slug] ?? null;
+    if (!is_array($c) || empty($c['image']) || !preg_match('~^/images/blog/[a-z0-9-]+\.jpg$~', (string)$c['image'])) return null;
+    $root = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/\\');
+    if ($root !== '' && !is_file($root . $c['image'])) return null;
+    return $c;
 }
 
 /** Строки интерфейса и страниц: ключ → значения по языкам. */
@@ -617,6 +634,7 @@ function articles(): array
             'seoDesc'  => $own($a['seoDesc'] ?? null),
             'body'     => $body,
             'service'  => (string)($a['service'] ?? ''),
+            'cover'    => $a['cover'] ?? blog_cover($a['slug']),
         ];
     }
     return $out;
@@ -1045,7 +1063,7 @@ function schema_graph(array $ctx): array
             'inLanguage'       => lang(),
             'articleSection'   => $a['rubric'],
             'timeRequired'     => 'PT' . (int)$a['read'] . 'M',
-            'image'            => $base . $cfg['og_image'],
+            'image'            => $base . (!empty($a['cover']['image']) ? $a['cover']['image'] : $cfg['og_image']),
             'author'           => ['@id' => $orgId],
             'publisher'        => ['@id' => $orgId],
         ];

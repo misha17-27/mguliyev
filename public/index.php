@@ -288,10 +288,14 @@ include __DIR__ . '/../app/partials/head.php';
       <h2 class="disp h2"><?= t('home.t118') ?></h2>
       <a class="pill" href="<?= u('/blog/') ?>"><?= t('home.t119') ?></a>
     </div>
-    <?php $arts = articles(); ?>
+    <?php /* На главной — три последние статьи, остальные в блоге. */
+          $arts = array_slice(articles(), 0, 3); ?>
     <div class="posts rv">
       <?php foreach ($arts as $a): ?>
       <article class="post">
+        <?php if (!empty($a['cover'])): ?>
+          <a class="post-img" href="<?= u('/blog/' . $a['slug'] . '/') ?>" tabindex="-1" aria-hidden="true"><img src="<?= e($a['cover']['image']) ?>"<?= cover_srcset($a['cover']['image']) ?> alt="" loading="lazy" width="1200" height="750"></a>
+        <?php endif; ?>
         <div class="pm"><span><?= htmlspecialchars($a['rubric']) ?></span><span><?= date_h((string)$a['date']) ?> · <?= tn('blog.read', ['n' => (int)$a['read']]) ?></span></div>
         <h3><a href="<?= u('/blog/' . $a['slug'] . '/') ?>"><?= htmlspecialchars($a['title']) ?></a></h3>
         <p><?= htmlspecialchars($a['desc']) ?></p>
