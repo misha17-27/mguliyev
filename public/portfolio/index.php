@@ -67,7 +67,7 @@ foreach ($groups as $g) {
     if ($cat !== null && $g['slug'] !== $cat['slug']) continue;
     foreach ($g['projects'] as $w) $items[] = [$g, $w];
 }
-if ($cat === null) $items = works_by_date($items, static fn(array $x): array => $x[1]);
+if ($cat === null) $items = works_by_order($items, static fn(array $x): array => $x[1]);
 
 $shown = 0; $dead = 0; $covers = 0;
 foreach ($groups as $g) {

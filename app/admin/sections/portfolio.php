@@ -37,8 +37,9 @@
      а насовсем он удаляется через PF_TRASH_DAYS дней (pf_trash_expire);
    — черновик виден только в панели, на сайте его нет (works_site()).
 
-   ПОРЯДОК — ПО ДАТЕ ДОБАВЛЕНИЯ, новые первыми (works_by_date()). У старых
-   проектов даты нет, их порядок по-прежнему задают стрелки.
+   ПОРЯДОК: новый проект встаёт первым по дате добавления, дальше любой
+   проект поднимают и опускают стрелками — в списке «Все» и в категории
+   (works_by_order()). Тот же порядок — на сайте.
 
    Признак «архив» не удаляет проект. Домен может не открываться, но работа
    была сделана, и из портфолио она не исчезает — вместо ссылки пометка. */
@@ -205,7 +206,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         case 'save-project':
         case 'del-project':  $back = admin_url('portfolio', ['p' => $ps]); break;
         case 'save-group':   $back = admin_url('portfolio', ['g' => $gs]); break;
-        case 'move':         $back = admin_url('portfolio', ['cat' => $gs]); break;
+        case 'move':         $back = admin_url('portfolio', array_filter(['cat' => post_slug($_POST['scope'] ?? '')])); break;
         /* Массовые действия возвращают в тот же список: все, категория или черновики. */
         case 'bulk':         $back = admin_url('portfolio', array_filter([
                                  'cat'  => post_slug($_POST['from_cat'] ?? ''),
@@ -441,17 +442,36 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
         if ($what === 'move') {
             if ($pi === null) { $err = 'Проект не найден.'; return null; }
-            /* Проекты с датой добавления стоят по дате, стрелки на них не
-               действуют: меняемся местами с ближайшим проектом без даты
-               (и не из корзины — его в списке не видно). */
-            $step = post_one($_POST['dir'] ?? '') === 'up' ? -1 : 1;
-            $list = &$groups[$gi]['projects'];
-            for ($to = $pi + $step; isset($list[$to]) && (!empty($list[$to]['added']) || !empty($list[$to]['trashed'])); $to += $step);
-            if (isset($list[$to]) && empty($list[$pi]['added'])) [$list[$pi], $list[$to]] = [$list[$to], $list[$pi]];
-            unset($list);
+            /* Список, в котором нажали стрелку: «Все» или одна категория. */
+            $scope = post_slug($_POST['scope'] ?? '');
+
+            /* Все проекты в том порядке, в каком они сейчас на сайте, — и
+               нумеруем их так: 10, 20, 30… (с корзиной: восстановленный
+               встанет туда же). Дальше порядок держится на номерах. */
+            $all = [];
+            foreach ($groups as $i => $g) foreach ((array)$g['projects'] as $j => $w) $all[] = [$i, $j, $w];
+            $all = works_by_order($all, static fn(array $x): array => $x[2]);
+            $r = 0;
+            foreach ($all as [$i, $j]) $groups[$i]['projects'][$j]['rank'] = ($r += 10);
+
+            /* Сосед — в том же списке, что видел человек: без корзины и,
+               если стрелку нажали в категории, только из неё. */
+            $seen = array_values(array_filter($all, static fn(array $x): bool => empty($x[2]['trashed'])
+                && ($scope === '' || $groups[$x[0]]['slug'] === $scope)));
+            $k = null;
+            foreach ($seen as $n => [$i, $j]) if ($i === $gi && $j === $pi) { $k = $n; break; }
+            $to = $k === null ? null : $k + (post_one($_POST['dir'] ?? '') === 'up' ? -1 : 1);
+            if ($to !== null && isset($seen[$to])) {
+                [$ti, $tj] = $seen[$to];
+                $a = $groups[$gi]['projects'][$pi]['rank'];
+                $groups[$gi]['projects'][$pi]['rank'] = $groups[$ti]['projects'][$tj]['rank'];
+                $groups[$ti]['projects'][$tj]['rank'] = $a;
+                $groups[$ti]['updated'] = $today;
+            }
             $groups[$gi]['updated'] = $today;
             $msg = 'Порядок изменён — так проекты идут и на сайте.';
-            $go  = admin_url('portfolio', ['cat' => $groups[$gi]['slug']]);
+            /* Назад к той же строке: в длинном списке не искать её глазами. */
+            $go  = admin_url('portfolio', array_filter(['cat' => $scope])) . '#p-' . $ps;
             return $groups;
         }
 
@@ -881,8 +901,8 @@ if ($prj !== null || $ps === 'new'):
 
       <?php /* У нового проекта — сегодня; у старых без даты поле пустое. */
             $addedNow = $isNew && !isset($w['added']) ? date('Y-m-d') : substr((string)($w['added'] ?? ''), 0, 10); ?>
-      <label for="pf-added">Добавлен в портфолио <span class="hint">по этой дате проекты идут на сайте — новые первыми;
-        пусто — проект стоит после всех проектов с датой, в порядке стрелок</span></label>
+      <label for="pf-added">Добавлен в портфолио <span class="hint">новый проект с датой встаёт первым; переставлять
+        проекты — стрелками в списке</span></label>
       <input type="date" id="pf-added" name="added" value="<?= $e($addedNow) ?>" style="max-width:220px">
 
       <label class="check">
@@ -1165,14 +1185,11 @@ else:
             $rows[] = [$g, $w];
         }
     }
-    if ($cat === '') $rows = works_by_date($rows, static fn(array $x): array => $x[1]);
+    if ($cat === '') $rows = works_by_order($rows, static fn(array $x): array => $x[1]);
 
-    /* Стрелки — только внутри категории и только у проектов без даты:
-       проекты с датой стоят по ней. Крайние считаем среди проектов без даты. */
-    $arrows  = $cat !== '' && $view === '';
-    $undated = array_keys(array_filter($rows, static fn(array $r): bool => empty($r[1]['added'])));
-    $firstU  = $undated ? min($undated) : null;
-    $lastU   = $undated ? max($undated) : null;
+    /* Стрелки — в «Все» и в категории; в черновиках порядок не меняем:
+       там только часть списка. */
+    $arrows = $view === '';
 ?>
   <div class="panel">
     <?php admin_list_head(count($rows), $view === 'drafts' ? 'Черновиков' : ($cat !== '' ? 'Проектов в категории' : 'Проектов'),
@@ -1187,8 +1204,8 @@ else:
       <div><p class="muted" id="texts-count" aria-live="polite" style="margin:0 0 10px"></p></div>
     </div>
 
-    <p class="muted">Проекты идут по дате добавления — новые первыми. У проектов без даты порядок
-      меняется стрелками внутри категории<?= $arrows ? '' : ' — откройте её выше' ?>.
+    <p class="muted">Новый проект встаёт первым. Любой проект можно поднять или опустить стрелками ↑ ↓ —
+      так же он встанет и на сайте<?= $cat !== '' ? ', внутри категории' : '' ?>.
       <?= $view === 'drafts' ? 'Черновики видны только здесь: на сайте их нет.' : '' ?></p>
 
     <?php /* Отметки строк привязаны к этой форме атрибутом form: в строках
@@ -1224,7 +1241,7 @@ else:
           $added = (string)($w['added'] ?? '');
           $ts    = $added !== '' ? strtotime($added) : false;
         ?>
-        <tr data-text-row="<?= $e($hay) ?>"<?= $draft ? ' class="is-draft"' : '' ?>>
+        <tr id="p-<?= $e($slug) ?>" data-text-row="<?= $e($hay) ?>"<?= $draft ? ' class="is-draft"' : '' ?>>
           <td class="chk"><input type="checkbox" name="sel[]" value="<?= $e($slug) ?>" form="pf-bulk" autocomplete="off" aria-label="Отметить <?= $e($w['domain']) ?>"></td>
           <td class="num"><?= admin_num($i) ?></td>
           <td class="pic"><?= admin_thumb(project_cover($w, $g), $w['domain']) ?></td>
@@ -1239,10 +1256,10 @@ else:
           <td><?= admin_lang_badges($fill, $draft ? null : '/portfolio/' . $g['slug'] . '/' . $slug . '/') ?></td>
           <td class="right"><div class="acts">
             <a class="btn sm" href="<?= $e(admin_url('portfolio', ['p' => $slug])) ?>">Изменить</a>
-            <?php if ($arrows && $added === ''): foreach (['up' => '↑', 'down' => '↓'] as $dir => $arrow):
-              $edge = $dir === 'up' ? $i === $firstU : $i === $lastU; ?>
+            <?php if ($arrows): foreach (['up' => '↑', 'down' => '↓'] as $dir => $arrow):
+              $edge = $dir === 'up' ? $i === 0 : $i === count($rows) - 1; ?>
               <form method="post" action="<?= $e(admin_url('portfolio')) ?>">
-                <?php $hidden('move', ['dir' => $dir, 'g' => $g['slug'], 'p' => $slug]); ?>
+                <?php $hidden('move', ['dir' => $dir, 'g' => $g['slug'], 'p' => $slug, 'scope' => $cat]); ?>
                 <button class="btn sm" type="submit" title="<?= $dir === 'up' ? 'Выше' : 'Ниже' ?>"<?= $edge ? ' disabled' : '' ?>><?= $arrow ?></button>
               </form>
             <?php endforeach; endif; ?>
