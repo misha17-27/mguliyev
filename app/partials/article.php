@@ -24,6 +24,14 @@ if (empty($art)) return;
       <?php endforeach; ?>
     </div>
 
+    <?php /* Статья про услугу студии — ссылка на её страницу. Только на
+             направление из каталога: адрес не берётся из текста как есть. */
+          $svc = catalog()[$art['service'] ?? ''] ?? null; ?>
+    <?php if ($svc !== null): ?>
+      <p class="art-svc"><span><?= t('blog.svc') ?></span>
+        <a href="<?= u('/uslugi/' . $art['service'] . '/') ?>"><?= htmlspecialchars($svc['title']) ?> →</a></p>
+    <?php endif; ?>
+
     <p class="lb" style="margin-top:clamp(34px,4vw,54px)"><a href="<?= u('/blog/') ?>">← <?= t('blog.all') ?></a></p>
   </div>
 </article>

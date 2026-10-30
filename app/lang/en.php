@@ -49,6 +49,7 @@ return [
     'blog.read'            => '{n} min',
     'blog.ru_only'           => 'Some articles are available in Russian only for now. The rest of the site is available in three languages.',
     'blog.nf' => 'Article not found',
+    'blog.svc' => 'Related studio service',
 
     'nf.h'    => 'Page not found',
     'nf.p'    => 'The address may have a typo, or the page has moved. Try one of the sections below.',

@@ -91,12 +91,12 @@ return [
                  'description' => 'Start from ₼700, Business from ₼1 190, Premium from ₼1 800: what every package includes, what costs extra and how to pay — 50% upfront, 50% on delivery.'],
     ],
     'blog' => [
-        'ru' => ['title' => 'Блог веб-студии: почта в спаме, скорость сайта, 9:16',
-                 'description' => 'Разборы для владельцев сайтов: почему письма компании попадают в спам, как Google оценивает скорость сайта и где безопасная зона вертикального видео 9:16.'],
-        'az' => ['title' => 'Veb-studiya bloqu: poçt, saytın sürəti və 9:16 video',
-                 'description' => 'Sayt sahibi üçün üç təhlil: məktublar niyə spama düşür, Google nəyi sürətli sayır və 9:16 kadr necə qurulur. Yalnız yoxlanıla bilən üsullar.'],
-        'en' => ['title' => 'Web Design Studio Blog: Email, Site Speed, 9:16 Video',
-                 'description' => 'Three walkthroughs for site owners: why email lands in spam, what Google counts as fast and how a 9:16 frame works. Verifiable technique only.'],
+        'ru' => ['title' => 'Блог веб-студии в Баку: сайты, дизайн, SEO и поддержка',
+                 'description' => 'Статьи для владельцев бизнеса: как заказать сайт и интернет-магазин, логотип и брендбук, SEO и Google Ads, хостинг, домен и почта. Только проверяемые факты.'],
+        'az' => ['title' => 'Veb-studiya bloqu: sayt, dizayn, SEO və texniki dəstək',
+                 'description' => 'Biznes sahibləri üçün məqalələr: sayt və mağaza sifarişi, loqo və brendbuk, SEO və Google Ads, hostinq, domen və poçt. Yalnız yoxlanıla bilən faktlar.'],
+        'en' => ['title' => 'Web Design Studio Blog: Websites, Design, SEO, Support',
+                 'description' => 'Articles for business owners: ordering a website or online store, logo and brand book, SEO and Google Ads, hosting, domains and email. Verifiable facts only.'],
     ],
     'contacts' => [
         'ru' => ['title' => 'Контакты MGuliyev Studio в Баку: телефон, почта, заявка',

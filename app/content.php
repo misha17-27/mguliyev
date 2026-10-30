@@ -469,6 +469,9 @@ function articles_repo(): array
             'seoTitle' => by_lang($a['seoTitle'] ?? '', $ovs, $sl, 'seoTitle'),
             'seoDesc'  => by_lang($a['seoDesc']  ?? '', $ovs, $sl, 'seoDesc'),
             'body'     => $body,
+            /* Направление каталога, к которому статья относится: под ней —
+               ссылка на страницу услуги. Не язык, а адрес, поэтому без перевода. */
+            'service'  => (string)($a['service'] ?? ''),
         ];
     }
     return $out;
@@ -613,6 +616,7 @@ function articles(): array
             'seoTitle' => $own($a['seoTitle'] ?? null),
             'seoDesc'  => $own($a['seoDesc'] ?? null),
             'body'     => $body,
+            'service'  => (string)($a['service'] ?? ''),
         ];
     }
     return $out;

@@ -549,6 +549,10 @@ footer.site{border-top:1px solid var(--line);padding-block:clamp(34px,4vw,56px) 
 .art-p:last-child{margin-bottom:0}
 .art-end{margin-top:clamp(34px,4.4vw,56px);padding-top:clamp(22px,2.6vw,32px);border-top:1px solid var(--line)}
 .art-end .art-p{color:var(--bone)}
+.art-svc{margin-top:clamp(22px,2.6vw,32px);display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.art-svc span{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.art-svc a{color:var(--bone);font-weight:600;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.art-svc a:hover{color:var(--duo-b)}
 .art .lb a:hover{color:var(--duo-b)}
 
 /* ---- Внутренние страницы ---- */
