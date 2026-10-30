@@ -68,6 +68,7 @@ return [
             'itas.az'              => 'Sənaye materialları və avadanlıq təchizatı',
             'socarmidstream.az'    => 'SOCAR-ın neft-qaz infrastrukturu',
             'elson-group.com'      => 'Aqroholdinq, məhsul ixracı',
+            'ccs.com.az'           => 'Restoranlar üçün xərclərə nəzarət',
             'marsoverseas.az'      => 'İçkilərin distribusiyası',
             'armada.az'            => 'Klinika və laboratoriyalar üçün avadanlıq',
             'argflex.co.uk'        => 'Rezin və plastik məmulatlar, Britaniya',

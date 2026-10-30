@@ -88,8 +88,13 @@ function by_lang(string $ru, array $ovs, string ...$path): array
 function works_canon(): array
 {
     $s = Store::read('works.json');
-    if (is_array($s) && isset($s[0]['slug'], $s[0]['projects'])) return works_seo_fill($s);
+    if (is_array($s) && isset($s[0]['slug'], $s[0]['projects'])) return works_seo_fill(works_merge_new($s));
+    return works_seo_fill(works_repo());
+}
 
+/** Портфолио из репозитория: app/data/works.php с переводами. */
+function works_repo(): array
+{
     $base = require __DIR__ . '/data/works.php';
     $ovs  = [];
     foreach (langs() as $l) $ovs[$l] = overlay('works', $l);
@@ -108,6 +113,7 @@ function works_canon(): array
             /* Пятый элемент — прежние адреса страницы проекта (сменили
                домен): по ним portfolio_find() ведёт на нынешний. */
             if (!empty($w[4])) $rec['aliases'] = (array)$w[4];
+            if (!empty($w[5])) $rec['added'] = (string)$w[5];
             $pr[] = $rec;
         }
         $out[] = [
@@ -117,7 +123,73 @@ function works_canon(): array
             'projects' => $pr,
         ];
     }
-    return works_seo_fill($out);
+    return $out;
+}
+
+/** Проекты, которые разработчик добавил в репозиторий уже после того, как
+    портфолио начали править в панели.
+
+    Сохранённое панелью портфолио — целиком её: состав, порядок, категории.
+    Поэтому новый проект из works.php туда сам не попадал — на сайте его не
+    было, пока его не завели в панели руками. Подмешиваем только проекты
+    с датой «добавлен» и только те, которых панель не знает: ни по нынешнему
+    адресу, ни по прежним (своим или её проектов) их нет ни среди проектов
+    панели, ни в её списке удалённых — удалённое в панели не возвращается.
+
+    Место — рядом с соседями по репозиторию: сразу после ближайшего
+    предыдущего, который есть в панели, иначе перед ближайшим следующим.
+    Категория — своя, а если её в панели удалили — та, куда переехали
+    соседи; нет и их — первая.
+
+    Со следующим сохранением панели проект записывается в её файл и дальше
+    живёт как любой другой. Второй аргумент — портфолио репозитория
+    (для проверок); по умолчанию works_repo(). */
+function works_merge_new(array $groups, ?array $repo = null): array
+{
+    if (!$groups) return $groups;
+    $known = [];   // адреса, которые панель знает: проекты, прежние адреса, удалённые
+    $at    = [];   // адрес проекта панели => номер её категории
+    foreach ($groups as $gi => $g) {
+        foreach ((array)($g['gone'] ?? []) as $d) $known[project_slug((string)$d)] = true;
+        foreach ((array)($g['projects'] ?? []) as $w) {
+            $s = project_slug((string)($w['domain'] ?? ''));
+            $known[$s] = true;
+            $at[$s] = $gi;
+            foreach ((array)($w['aliases'] ?? []) as $a) $known[(string)$a] = true;
+        }
+    }
+    foreach ($repo ?? works_repo() as $rg) {
+        $slugs = array_map(static fn($w) => project_slug($w['domain']), $rg['projects']);
+        foreach ($rg['projects'] as $pos => $w) {
+            if (empty($w['added'])) continue;
+            foreach (array_merge([$slugs[$pos]], (array)($w['aliases'] ?? [])) as $k) {
+                if (isset($known[$k])) continue 2;
+            }
+
+            /* Соседи по репозиторию от ближайшего: сначала предыдущие. */
+            $near = [];
+            for ($j = $pos - 1; $j >= 0; $j--) $near[] = [$slugs[$j], 1];
+            for ($j = $pos + 1; $j < count($slugs); $j++) $near[] = [$slugs[$j], 0];
+
+            $gi = null;
+            foreach ($groups as $i => $g) if (($g['slug'] ?? '') === $rg['slug']) { $gi = $i; break; }
+            if ($gi === null) foreach ($near as [$s]) if (isset($at[$s])) { $gi = $at[$s]; break; }
+            if ($gi === null) $gi = array_key_first($groups);
+
+            $list = array_values((array)($groups[$gi]['projects'] ?? []));
+            $idx  = array_map(static fn($x) => project_slug((string)($x['domain'] ?? '')), $list);
+            $ins  = count($list);
+            foreach ($near as [$s, $after]) {
+                $f = array_search($s, $idx, true);
+                if ($f !== false) { $ins = $f + $after; break; }
+            }
+            array_splice($list, $ins, 0, [$w]);
+            $groups[$gi]['projects'] = $list;
+            $known[$slugs[$pos]] = true;
+            $at[$slugs[$pos]] = $gi;
+        }
+    }
+    return $groups;
 }
 
 /** Тексты, заголовки и описания для поиска и галереи проектов из файлов

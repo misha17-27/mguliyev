@@ -194,8 +194,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     }
 
     $ok = Store::update('works.json', function (array $groups) use ($what, $gs, $ps, $L, $galNew, &$galDrop, &$err, &$msg, &$go) {
-        /* Хранилище пустое — начинаем с данных репозитория. */
-        if (!$groups) $groups = works_canon();
+        /* Хранилище пустое — начинаем с данных репозитория. Иначе добавляем
+           проекты, заведённые в репозитории позже, — как их видит сайт. */
+        $groups = $groups ? works_merge_new($groups) : works_canon();
 
         /* Дата правки — для карты сайта: поисковику сообщаем, что страница
            менялась, только когда менялась именно она. */
@@ -255,6 +256,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             } else {
                 $msg = 'Категория «' . $name . '» удалена.';
             }
+            /* Список удалённых проектов категории не теряем — переносим
+               в соседнюю, см. works_merge_new(). */
+            if (!empty($groups[$gi]['gone'])) {
+                $ki = $ti ?? ($gi === 0 ? 1 : 0);
+                $groups[$ki]['gone'] = array_values(array_unique(array_merge(
+                    (array)($groups[$ki]['gone'] ?? []), (array)$groups[$gi]['gone'])));
+            }
             array_splice($groups, $gi, 1);
             $go = admin_url('portfolio', ['view' => 'cats']);
             return $groups;
@@ -293,6 +301,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         if ($what === 'del-project') {
             if ($pi === null) { $err = 'Проект не найден.'; return null; }
             $dom = $groups[$gi]['projects'][$pi]['domain'];
+            /* Запоминаем удалённое — домен и прежние адреса: проект из
+               репозитория с датой «добавлен» иначе вернулся бы сам, в том
+               числе если домен перед удалением меняли. См. works_merge_new(). */
+            $gone = (array)($groups[$gi]['gone'] ?? []);
+            foreach (array_merge([$dom], (array)($groups[$gi]['projects'][$pi]['aliases'] ?? [])) as $d) {
+                if (!in_array($d, $gone, true)) $gone[] = $d;
+            }
+            $groups[$gi]['gone'] = $gone;
             array_splice($groups[$gi]['projects'], $pi, 1);
             $groups[$gi]['updated'] = $today;
             $msg = 'Проект ' . $dom . ' удалён. Его страница больше не открывается.';

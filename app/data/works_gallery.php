@@ -80,6 +80,14 @@ return [
         '/images/works/gallery/caucasuscl.com/04.webp',
         '/images/works/gallery/caucasuscl.com/05.webp',
     ],
+    'ccs.com.az' => [
+        '/images/works/gallery/ccs.com.az/01.webp',
+        '/images/works/gallery/ccs.com.az/02.webp',
+        '/images/works/gallery/ccs.com.az/03.webp',
+        '/images/works/gallery/ccs.com.az/04.webp',
+        '/images/works/gallery/ccs.com.az/05.webp',
+        '/images/works/gallery/ccs.com.az/06.webp',
+    ],
     'drymatic.az' => [
         '/images/works/gallery/drymatic.az/01.webp',
         '/images/works/gallery/drymatic.az/02.webp',

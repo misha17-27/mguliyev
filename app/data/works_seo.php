@@ -224,6 +224,11 @@ return [
             'en' => ['title' => 'Industrial and B2B Website Development | MGuliyev', 'description' => 'Websites for industry and B2B: oil and gas, agriculture, distribution, industrial components, medical equipment and consulting. MGuliyev Studio, Baku.'],
         ],
         'projects' => [
+            'ccs.com.az' => [
+                'ru' => ['title' => 'Сайт под ключ для Cost Control Services в Баку — ccs.com.az', 'description' => 'Создание сайта с нуля для компании по контролю затрат ресторанов: шесть направлений услуг, калькулятор себестоимости, логотипы 18 брендов, заявки в WhatsApp.'],
+                'az' => ['title' => 'ccs.com.az — restoran xərclərinə nəzarət şirkətinin saytı', 'description' => 'Cost Control Services üçün sayt sıfırdan, açar təhvil hazırlanıb: xərclərə nəzarət xidmətləri, maya dəyəri kalkulyatoru, WhatsApp ilə müraciət, AZ/RU/EN.'],
+                'en' => ['title' => 'ccs.com.az: website for a restaurant cost control firm', 'description' => 'Turnkey website built from scratch for Cost Control Services in Baku: six service areas, a food cost calculator, 18 brand logos, WhatsApp requests, AZ/RU/EN.'],
+            ],
             'itas.az' => [
                 'ru' => ['title' => 'Сайт поставщика промышленных материалов в Баку — itas.az', 'description' => 'Сайт под ключ для ITAS, поставщика промышленных материалов в Баку: каталог из 12 групп товаров, бренды-партнёры, форма заявки, карта, версии на az и en.'],
                 'az' => ['title' => 'itas.az — sənaye materialları təchizatçısının saytı', 'description' => 'ITAS üçün sayt açar təhvil hazırlanıb: sənaye materialları və avadanlıq kataloqu, tərəfdaş brendlər, əlaqə forması, AZ və EN versiyaları.'],

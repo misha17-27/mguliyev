@@ -68,6 +68,7 @@ return [
             'itas.az'              => 'Industrial materials and equipment supply',
             'socarmidstream.az'    => 'SOCAR oil and gas infrastructure',
             'elson-group.com'      => 'Agricultural holding, export of produce',
+            'ccs.com.az'           => 'Cost control for restaurants',
             'marsoverseas.az'      => 'Beverage distribution',
             'armada.az'            => 'Equipment for clinics and laboratories',
             'argflex.co.uk'        => 'Rubber and plastic products, UK',
