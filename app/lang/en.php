@@ -429,4 +429,22 @@ return [
     'web.t52'        => 'Tell us what you need',
     'web.t53'        => 'We reply within 24 hours. After the brief we will send a proposal: the scope of work, the stages and the figure.',
     'web.t54'        => 'Discuss your project',
+    // страницы услуг: дизайн, маркетинг, поддержка. Только подписи и заголовки;
+    // цифры повторяют уже сказанное на сайте — источник рядом, менять вместе.
+    'svc.mk.b1v' => '2–4 weeks',   // = home.t126, править вместе
+    'svc.mk.b1l' => 'for technical fixes to show their effect',
+    'svc.mk.b2l' => 'for stable rankings in search',   // цифра — home.t24
+    'svc.mk.b3v' => 'monthly',   // = home.t23 и home.t126, править вместе
+    'svc.mk.b3l' => 'report on rankings',
+    'svc.mk.h1' => 'How promotion works',
+    'svc.mk.h2' => 'Vertical video on subscription',
+    'svc.pd.b1l' => 'to set up email on your domain',   // цифра — home.t27
+    'svc.pd.b2v' => '1 month',   // = price.t5 и home.t117, править вместе
+    'svc.pd.b2l' => 'of free support in every package',
+    'svc.pd.b3v' => 'weekly',   // = home.t29, править вместе
+    'svc.pd.b3l' => 'site backup',
+    'svc.pd.h1' => 'Hosting and email',
+    'svc.pd.h2' => 'How to reach support',
+    'svc.pd.contacts' => 'Email and phone — on the contact page',
+    'blog.more' => 'Read next',
 ];

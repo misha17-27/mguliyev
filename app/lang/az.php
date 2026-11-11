@@ -429,4 +429,22 @@ return [
     'web.t52'        => 'Nə lazım olduğunu danışın',
     'web.t53'        => '24 saat ərzində cavab verəcəyik. Brifdən sonra təklif göndərəcəyik: işlərin tərkibi, mərhələlər və məbləğ.',
     'web.t54'        => 'Layihəni müzakirə edək',
+    // страницы услуг: дизайн, маркетинг, поддержка. Только подписи и заголовки;
+    // цифры повторяют уже сказанное на сайте — источник рядом, менять вместе.
+    'svc.mk.b1v' => '2–4 həftə',   // = home.t126, править вместе
+    'svc.mk.b1l' => 'texniki düzəlişlərin təsiri görünənə qədər',
+    'svc.mk.b2l' => 'axtarışda davamlı mövqelərə qədər',   // цифра — home.t24
+    'svc.mk.b3v' => 'hər ay',   // = home.t23 и home.t126, править вместе
+    'svc.mk.b3l' => 'mövqelər üzrə hesabat',
+    'svc.mk.h1' => 'İrəlilətmə necə qurulur',
+    'svc.mk.h2' => 'Abunə ilə şaquli video',
+    'svc.pd.b1l' => 'domeninizdə poçtun qoşulmasına',   // цифра — home.t27
+    'svc.pd.b2v' => '1 ay',   // = price.t5 и home.t117, править вместе
+    'svc.pd.b2l' => 'hər paketdə pulsuz texniki dəstək',
+    'svc.pd.b3v' => 'hər həftə',   // = home.t29, править вместе
+    'svc.pd.b3l' => 'saytın ehtiyat nüsxəsi',
+    'svc.pd.h1' => 'Hostinq və poçt',
+    'svc.pd.h2' => 'Dəstəyə necə müraciət etməli',
+    'svc.pd.contacts' => 'Poçt və telefon — əlaqə səhifəsində',
+    'blog.more' => 'Bunları da oxuyun',
 ];

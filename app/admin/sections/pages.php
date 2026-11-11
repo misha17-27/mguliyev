@@ -39,7 +39,7 @@ function admin_pages(): array
 
     /* Страницы направлений: адреса берём из каталога, а не вписываем
        руками — иначе список разъедется при первом же изменении. */
-    $prefixes = ['veb-sayty' => 'web.'];
+    $prefixes = ['veb-sayty' => 'web.', 'dizayn' => 'svc.dz.', 'marketing' => 'svc.mk.', 'podderzhka' => 'svc.pd.'];
     foreach (catalog_canon() as $slug => $c) {
         $list[] = [
             /* Ключ — ТОТ ЖЕ, что $page в файле страницы и в data/seo.php.

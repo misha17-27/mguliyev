@@ -13,7 +13,8 @@ $current = 'blog';
 $ogType  = 'article';
 
 $art = null;
-foreach (articles() as $a) {
+$arts = articles();   // ещё раз — для «Читайте также» в article.php
+foreach ($arts as $a) {
     if ($a['slug'] === $slug) { $art = $a; break; }
 }
 

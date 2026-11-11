@@ -42,4 +42,36 @@ if (empty($art)) return;
     <p class="lb" style="margin-top:clamp(34px,4vw,54px)"><a href="<?= u('/blog/') ?>">← <?= t('blog.all') ?></a></p>
   </div>
 </article>
+
+<?php /* «Читайте также» — три статьи по той же услуге: читатель уходит не
+         с сайта, а в соседнюю тему, и между статьями есть ссылки, по которым
+         поисковик видит, что они об одном. */
+      $same = ($art['service'] ?? '') === '' ? [] : array_values(array_filter($arts ?? articles(),
+          static fn($a) => ($a['service'] ?? '') === $art['service']));
+      /* Следующие за этой, по кругу: так у каждой статьи направления есть
+         входящие ссылки, а не только у первых трёх. */
+      $more = [];
+      $pos  = array_search($art['slug'], array_column($same, 'slug'), true);
+      if ($pos !== false) {
+          for ($k = 1; $k < min(4, count($same)); $k++) $more[] = $same[($pos + $k) % count($same)];
+      } ?>
+<?php if ($more): ?>
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <h2 class="disp" style="font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:clamp(18px,2.4vw,28px)"><?= t('blog.more') ?></h2>
+    <div class="posts">
+      <?php foreach ($more as $a): ?>
+      <article class="post">
+        <?php if (!empty($a['cover'])): ?>
+          <a class="post-img" href="<?= u('/blog/' . $a['slug'] . '/') ?>" tabindex="-1" aria-hidden="true"><img src="<?= e($a['cover']['image']) ?>"<?= cover_srcset($a['cover']['image']) ?> alt="" loading="lazy" width="1200" height="750"></a>
+        <?php endif; ?>
+        <div class="pm"><span><?= htmlspecialchars($a['rubric']) ?></span><span><?= date_h((string)$a['date']) ?> · <?= tn('blog.read', ['n' => (int)$a['read']]) ?></span></div>
+        <h3><a href="<?= u('/blog/' . $a['slug'] . '/') ?>"><?= htmlspecialchars($a['title']) ?></a></h3>
+        <p><?= htmlspecialchars($a['desc']) ?></p>
+      </article>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
 </main>
