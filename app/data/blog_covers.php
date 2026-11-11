@@ -7,6 +7,16 @@
    tools/make-images.php. Нет записи — статья без фото. */
 
 return [
+    'kak-vybrat-veb-studiyu-v-baku' => ['image' => '/images/blog/kak-vybrat-veb-studiyu-v-baku.jpg', 'author' => 'Brooke Cagle', 'url' => 'https://unsplash.com/photos/g1Kr4Ozfoac'],
+    'konstruktor-ili-sajt-pod-klyuch' => ['image' => '/images/blog/konstruktor-ili-sajt-pod-klyuch.jpg', 'author' => 'Theme Photos', 'url' => 'https://unsplash.com/photos/CGpifH3FjOA'],
+    'redizajn-sajta-bez-poteri-pozicij' => ['image' => '/images/blog/redizajn-sajta-bez-poteri-pozicij.jpg', 'author' => 'Kelly Sikkema', 'url' => 'https://unsplash.com/photos/ks0Z4oeFiOk'],
+    'sajt-dlya-restorana-ili-kafe' => ['image' => '/images/blog/sajt-dlya-restorana-ili-kafe.jpg', 'author' => 'Antonio Araujo', 'url' => 'https://unsplash.com/photos/yQYtdkKOLnQ'],
+    'google-biznes-profil-dlya-kompanii-v-baku' => ['image' => '/images/blog/google-biznes-profil-dlya-kompanii-v-baku.jpg', 'author' => 'GeoJango Maps', 'url' => 'https://unsplash.com/photos/Z8UgB80_46w'],
+    'google-analytics-4-chto-smotret-vladelcu' => ['image' => '/images/blog/google-analytics-4-chto-smotret-vladelcu.jpg', 'author' => 'Ngital', 'url' => 'https://unsplash.com/photos/8OYcY9CRP_0'],
+    'fotosemka-dlya-sajta-kak-podgotovitsya' => ['image' => '/images/blog/fotosemka-dlya-sajta-kak-podgotovitsya.jpg', 'author' => 'DANIEL HAY', 'url' => 'https://unsplash.com/photos/JX0xWYr4wzY'],
+    'motion-dizajn-i-ai-video-dlya-biznesa' => ['image' => '/images/blog/motion-dizajn-i-ai-video-dlya-biznesa.jpg', 'author' => 'Andri Aeschlimann', 'url' => 'https://unsplash.com/photos/VUC00c_tk0Y'],
+    'korporativnaya-pochta-na-svoyom-domene' => ['image' => '/images/blog/korporativnaya-pochta-na-svoyom-domene.jpg', 'author' => 'Vitaly Gariev', 'url' => 'https://unsplash.com/photos/xngIdNiVq9w'],
+    'bezopasnost-sajta-kak-zashchitit-ot-vzloma' => ['image' => '/images/blog/bezopasnost-sajta-kak-zashchitit-ot-vzloma.jpg', 'author' => 'Julio Lopez', 'url' => 'https://unsplash.com/photos/hLAmfdxGlls'],
     'korporativnyj-sajt-kakie-stranicy-nuzhny' => ['image' => '/images/blog/korporativnyj-sajt-kakie-stranicy-nuzhny.jpg', 'author' => 'Arlington Research', 'url' => 'https://unsplash.com/photos/kN_kViDchA0'],
     'internet-magazin-chto-nuzhno-do-zapuska' => ['image' => '/images/blog/internet-magazin-chto-nuzhno-do-zapuska.jpg', 'author' => 'rupixen', 'url' => 'https://unsplash.com/photos/Q59HmzK38eQ'],
     'lending-ili-mnogostranichnyj-sajt' => ['image' => '/images/blog/lending-ili-mnogostranichnyj-sajt.jpg', 'author' => 'Creatvise', 'url' => 'https://unsplash.com/photos/zrOBY-0hF-g'],

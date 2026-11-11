@@ -8,6 +8,714 @@
    показывается по-русски и на этом языке не индексируется. */
 
 return [
+    'kak-vybrat-veb-studiyu-v-baku' => [
+        'seoTitle' => 'How to choose a web agency in Baku: portfolio and contract',
+        'seoDesc'  => 'Choosing a website developer or web design studio in Baku: what to check in a portfolio, what to ask, which answers are red flags, what goes in the contract.',
+        'title'    => 'How to choose a web studio or freelancer in Baku: portfolio, questions and contract',
+        'desc'     => 'What to check in a portfolio, what to ask before signing, which answers should put you on guard and what to put in the contract so the website and access stay with the company.',
+        'rubric'   => 'Websites',
+        'lead'     => 'You sent an enquiry to three web design studios in Baku and one freelancer and got four proposals back: the amounts differ noticeably, and each comes with attractive images from the portfolio. Comparing them on price does not work: one figure covers design, copy and translation, another a ready-made template without them. It is easier to find out the difference before signing than after launch, when it turns out that the domain and passwords have stayed with the contractor. Let’s look at how to choose a web agency or website developer: what to check in a portfolio, which questions to ask, which answers should put you on guard and what to put in the contract.',
+        'body'     => [
+            ['How to check a web studio’s portfolio', 'A mock-up in a presentation or on Behance shows how a designer works. A working website tells you more: the mock-up was taken all the way to code, the site was launched, and it still opens today.
+
+So ask for links to live websites, not just screenshots. Open two or three of them yourself and check:
+— how the site behaves on a phone: the menu, the forms, the call button;
+— whether the pages are translated in full or only the menu, if the site is multilingual;
+— what it says at the bottom of the page: the developer is sometimes credited there, but a missing credit proves nothing — it may have been removed at the client’s request;
+— what the site looked like before: if it was captured by the Wayback Machine archive at web.archive.org, the snapshot dates show when the current design appeared; the archive does not save every website.
+
+Ask what exactly the contractor did on each project. “Our website” can mean building it from scratch or replacing a banner on someone else’s site. Ask for the contacts of one or two clients and put three questions to them: were the deadlines met, how did revisions go and who has access to the site now.'],
+            ['Who will build your website', 'Choosing a website developer means understanding who specifically will work on your project. A studio usually has several roles: a manager, a designer, a developer, sometimes a copywriter and a translator. A freelancer often does everything themselves or brings in people they know. Neither option is worse in itself — what matters is knowing the line-up in advance.
+
+Ask:
+— who your contact is for the whole project and who will stand in for them during holidays or illness;
+— who does the design and the code: staff or outside contractors;
+— how many projects this person is running alongside yours;
+— which content management system (CMS) or framework the site will be built on and why that one was chosen.
+
+With a freelancer there is a separate risk — dependence on one person. If they stop answering, another developer can carry on with the work, but only if you have all the access and the source code, and the site is built on a widely used system or framework.'],
+            ['What the price includes and what is charged separately', 'You can compare proposals only if they describe the same work. Ask each contractor to break the estimate down item by item and compare the lists:
+— how many pages and page templates, which forms and features;
+— how many design options and how many rounds of revisions the price includes;
+— adaptation for phones and tablets;
+— copy, translation into Azerbaijani, Russian and English, photos: who prepares them — the contractor or you;
+— basic setup for search: page titles and descriptions, a sitemap, connecting Search Console;
+— domain, hosting, SSL certificate: whether they are included, for how long and whose name they are registered in;
+— training in working with the admin panel.
+
+Anything that is not on the list can easily turn out to be “extra work” at handover. If one estimate is noticeably cheaper, first check whether it has fewer items.
+
+Separately, find out what happens after launch: is there a warranty period during which bugs are fixed at no extra charge, how changes are paid for after it, and how quickly the contractor responds to a request.'],
+            ['Domain, hosting and access: who owns the website', 'Design can be redone. The domain and access are harder: if they are registered to the contractor, it is the contractor who controls them, not you. Why the domain should be registered to the company is covered in detail in the article on domain registration.
+
+Ask directly: whose name will the domain and hosting be registered in, and who will hold the passwords to the accounts. The right answer is the company’s, with the contractor given access for the duration of the work. Registration data for a .com domain can be looked up at lookup.icann.org, and for a .az domain at whois.az. The owner’s name may be hidden in the public response, so it is more reliable to check in the registrar account.
+
+The second question is the content management system. A site built on an open-source system is easier to hand over to another developer. WordPress, for example, is distributed under the GPL licence, version 2 or later, and in the “Tools → Export” section, posts, pages, comments, categories and tags are exported to an XML file that can be imported into another WordPress installation.
+
+Working with a studio’s own system is possible too, but then ask for a written answer: will the source code be handed over to you, will another developer be able to carry on the work, and can the content — pages, products, enquiries — be exported in a standard format.'],
+            ['Timelines and payment: what happens if the contractor is late', 'A deadline of “two months” with no stages means little. Ask for a schedule: prototype, design, front-end coding and programming, adding content, testing, launch. Each stage should have a date and a result that you sign off.
+
+Some of the timing depends on you: copy, photos, approval of mock-ups. Agree how many days you have to respond and how the schedule shifts if materials are delayed.
+
+It is convenient to tie payment to stages: an advance, a payment once the design is approved, the balance after launch. The proportions are a matter for agreement. What matters is that the final payment falls at the point when the site is working and the access has been handed over.
+
+And ask directly what happens if the contractor misses the deadlines: is the price reduced, is there a penalty, can the contract be terminated and what will you receive in that case — the mock-ups, code and materials for the stages already paid for.'],
+            ['Which answers should be a warning sign', 'The warning signs are not a high price or a modest office, but answers and terms like these:
+— they offer to register the domain or hosting to the contractor “to keep things simple”;
+— there is no contract, or it is promised “later”, while the work goes on through messenger chats;
+— the contractor is not prepared to hand over administrator access to the site and to the domain and hosting accounts;
+— the site runs on a closed system from which the content cannot be exported, and the source code is not handed over;
+— the portfolio has only mock-ups and not a single link to a working website;
+— they promise first place on Google by a certain date.
+
+Google’s help for site owners states plainly that no one can guarantee a first place on Google. It also advises caution with SEO contractors who keep what they do secret or cannot clearly explain what they intend to do, and reminds you that you are responsible for the actions of the company you hire.'],
+            ['What to put in a website development contract', 'A contract is not only for when there is a dispute: it records what both sides mean by the word “website”. It is worth setting out:
+1. The list of work — a technical specification attached to the contract.
+2. Stages, deadlines and what the contractor expects from you at each stage.
+3. The acceptance procedure and the number of revision rounds.
+4. The cost and the payment schedule by stage.
+5. Rights to the design, copy and code.
+6. A list of the access handed over on delivery, and whose name the domain, hosting and paid services are registered in.
+7. The warranty period and the terms of support after launch.
+8. The consequences of missed deadlines and the termination procedure.
+
+The clause on rights is worth writing out separately. The Law of the Republic of Azerbaijan “On Copyright and Related Rights” includes both computer programs and works of design among the objects of copyright. Under this law, an author’s contract is concluded in writing and states the ways the work may be used, the term and the territory. Rights under such a contract are considered non-exclusive unless it says otherwise. If no territory is stated, the contract applies only within Azerbaijan. If no term is stated, the author may terminate the contract five years after it was concluded, giving six months’ written notice.
+
+In addition, transferring ownership of the physical medium does not in itself transfer the copyright in the work. In other words, the website files may sit on your hosting while the exclusive rights to the design and code stay with the contractor. So it is better to state in so many words that the exclusive rights are transferred to the company. Ready-made components — WordPress, paid themes and plugins — are distributed under their own licences, and it is worth attaching a list of them too. It makes sense to show the final version of the contract to a lawyer.'],
+        ],
+        'end'      => 'A contractor is best chosen not by the pictures or the lowest figure but by the answers to specific questions: what the work includes, who does it and whose name everything that remains after handover is registered in. If, after these conversations, you have an itemised estimate, a schedule with stages and a draft contract that sets out rights and access, the proposals can be compared.',
+    ],
+    'konstruktor-ili-sajt-pod-klyuch' => [
+        'seoTitle' => 'Website builder vs custom website: which suits a business',
+        'seoDesc'  => 'Tilda or Wix vs a bespoke site: when a website builder is enough and when you need development — export, languages, local bank payments and lifetime costs.',
+        'title'    => 'Website builder or custom development: when Tilda will do and when you need your own site',
+        'desc'     => 'A site on a website builder or one developed to order: where the line falls, what you cannot take with you from Tilda and Wix, and how to compare costs over the site’s whole lifetime.',
+        'rubric'   => 'Websites',
+        'lead'     => 'Your company needs a website, and the choice comes up straight away: build it yourselves on Tilda or Wix, or commission development. One acquaintance recommends a website builder — quick and no contractor needed; another suggests a turnkey site. Both have a point, but a wrong choice surfaces later: when you need to accept payments through a local bank, add an Azerbaijani version or move the site off the platform. Let’s look at how to decide what you need more — a website builder or a custom website, what limits a site built on a builder, and how to compare costs over the whole period rather than the first month.',
+        'body'     => [
+            ['When a website builder is enough', 'A website builder is a service where a site is assembled in the browser from ready-made blocks, while the platform takes care of hosting, the certificate and updates. For many tasks this is enough:
+
+— a business-card website or a single page with services, contacts and a form;
+— a short-lived project: an event, a seasonal promotion, testing an idea before investing in development;
+— the site is run by one person, who would rather fix a piece of text themselves than wait for a contractor;
+— the site does not need to connect to an accounting system, a warehouse or a local payment system.
+
+A free plan is usually not suitable for a working company website. On Tilda’s free plan you cannot connect your own domain, you are limited to 50 pages, and the services for receiving form data are unavailable. On Wix a free site lives at the platform’s address with its advertising banner, and your own domain can only be connected together with a paid plan. That is why it is the paid plan you should compare with development.'],
+            ['A subscription is renting, not buying', 'On a website builder you pay not for a website but for the right to use it while the subscription runs. The platforms say plainly what happens if you do not renew. Tilda unpublishes the site, keeps the data for six months and then deletes it permanently. On Wix the site stays online but reverts to the platform’s free address, and Wix ads appear on it again.
+
+Renting in itself does not make a builder a bad choice: hosting and updates cost money too, and here they are already included in the price. What matters is something else: the payment recurs for as long as the site exists, and grows as your needs do. On Wix every site needs its own plan. Some features are available only on higher plans — that is how Tilda handles export, for instance — or through separate services with their own subscription. Translations on Squarespace, for example, are handled by the Weglot service: one additional language and up to 2,000 words are free, and beyond that you need a separate subscription with Weglot itself.'],
+            ['Can you take your site off a website builder', 'As a rule, only in part, and each platform draws the line in its own place.
+
+— Wix states plainly in its help centre that a site must run on Wix’s servers and cannot be moved to another host. What you can export is, for example, the store’s products — to a CSV file, up to 5,000 rows per file.
+— Squarespace exports a file in WordPress XML format: regular pages, one blog, text blocks and image blocks. Store pages, product blocks, style settings and your own custom CSS are not included. Products are exported separately, as CSV, but without images.
+— Shopify also exports products to CSV, but the images themselves are not in the file: on import, the new store will only get them while they are still available in the old one. That is why Shopify advises against closing the old store or deleting products until the import is finished.
+— Tilda exports a site as static HTML, but only on Business plans. After export, forms send data only while the subscription is active, and the product catalogue, Tilda CRM and personal accounts are not exported. The rules allow the code to be hosted only on the domain set in the site settings and prohibit changing it outside the platform.
+
+In practice, moving off a website builder means a new site to which the content is transferred. It is best to factor its cost into your calculations in advance.'],
+            ['Languages and SEO on a website builder', 'If the site needs Azerbaijani, Russian and English versions, the platforms handle this differently.
+
+— Wix has built-in translation: language versions open by default in subfolders of one domain, and the platform adds the hreflang tags itself.
+— In Shopify each published language has its own page URLs, and translations are added through the Translate & Adapt app, CSV files or third-party apps.
+— In Tilda language versions are separate pages within one project or separate projects linked by a language switcher menu; separate projects require the Business plan. According to Tilda’s help pages, hreflang markup is added by hand as HTML code in the page’s HEAD.
+— In Squarespace translations through Weglot can only be connected on version 7.1, and they can be edited only in the Weglot interface, not in Squarespace itself.
+
+Search settings are a similar story: you control whatever the platform has put into the settings. In Tilda, for example, robots.txt and sitemap.xml are generated automatically, and 301 redirects are set up in the site settings. Template code, the platform’s scripts and the server settings stay in its hands. This rarely gets in the way of a business-card website, but for a catalogue in three languages that is meant to bring in customers from search it is a noticeable limitation. How to set up language versions is covered in a separate article about a website in az, ru and en.'],
+            ['Accepting payments through local banks', 'If the site has to accept payments, choosing a platform starts with the payment side, not with the templates.
+
+— Shopify Payments works in a limited list of countries, and Azerbaijan is not on it. A store based here needs a third-party payment provider, and Shopify charges its own fee on payments made through it; the size of the fee depends on the plan.
+— Stripe, which is built into Tilda and Squarespace, is not available to companies from Azerbaijan: the country is not on its list.
+— Tilda’s ready-made integrations are Stripe, PayPal, Verifone and systems for individual countries. For the rest there is Custom Payment Gateway: the connection template is created by the payment system’s developers, and Tilda support does not help with questions about third-party integrations.
+— Squarespace’s help centre names three ways to accept payments — Squarespace Payments, Stripe and PayPal — and the Azerbaijani manat is not in the list of store currencies.
+— Wix’s help article on payment providers by country lists only PayPal for Azerbaijan.
+
+A practical step: before choosing a platform, ask the bank or payment provider you plan to work with whether they have a ready-made module for that platform. If there is no module, connecting payments turns into a separate development job — even on a website builder.'],
+            ['When you need custom development or an open-source CMS', 'A turnkey site or an open-source content management system is justified when the website is a working tool rather than a business card:
+
+— the site will live for a long time, and enquiries or sales come through it;
+— it needs to connect to an accounting system, CRM, warehouse, delivery service or local bank;
+— three languages, each with its own search settings;
+— non-standard logic: a calculator, a personal account, bookings, a price list pulled from a spreadsheet;
+— you need full control over the code and the server and the ability to move at any time.
+
+Between a website builder and fully custom development there is a middle ground — open-source content management systems such as WordPress. It is distributed freely under the GPLv2 licence or any later version and runs on ordinary hosting: the recommended requirements are PHP 8.3 or newer and MySQL 8.0 or MariaDB 10.11 or newer. A site like this consists of files and a database, which can be moved in full to another host. The flip side is that updates to the core, plugins and themes are down to you or your contractor; what such support includes is covered in a separate article.
+
+If you commission custom development, set out in the contract who owns the source code, where it is stored and who holds access to the hosting and the domain. You are only free to move when the code and the access are in your hands.'],
+            ['Website builder vs custom website: how to compare the cost', 'Comparing prices for the first month makes no sense: with a website builder almost everything is a recurring payment, while with development most of the money is spent at the start. What you compare is the total over the same period — the one you expect the site to last.
+
+For a website builder, the calculation includes:
+
+— the subscription for every month of that period, including the move to a higher plan when you need new features;
+— the domain, if it is not included in the plan;
+— paid apps, extensions and translation services;
+— the platform’s fees on payments, if there are any;
+— the time of the employee who builds and runs the site;
+— a move, if the site outgrows the platform.
+
+For development:
+
+— development and launch;
+— hosting, the domain and the SSL certificate, if it is a paid one;
+— support: updates, backups, small edits;
+— further work as you grow.
+
+As a separate line, estimate what you will be left with if you decide to leave. From a website builder — whatever the platform’s export allows: usually the content without the site’s logic. From your own code or an open-source CMS — a working site that can be moved.'],
+        ],
+        'end'      => 'A website builder is a sound choice for a simple site that one person runs and that does not need to be connected to a bank or accounting. The longer the site has to last and the more languages and integrations it has, the more expensive the rent becomes and the harder the move. Before you choose, check three things in the platform’s help centre: what happens if you stop paying, what can be exported and whether it supports your payment provider.',
+    ],
+    'redizajn-sajta-bez-poteri-pozicij' => [
+        'seoTitle' => 'Website redesign without losing Google rankings: a checklist',
+        'seoDesc'  => 'Site migration SEO for a redesign without losing search traffic: a URL inventory in Search Console, 301 redirects, a locked test copy and post-launch checks.',
+        'title'    => 'Website redesign without losing Google rankings: what to do before and after launch',
+        'desc'     => 'How to rebuild a website without losing visitors from Google: which pages to keep, how to set up 301 redirects, how to hide the test copy from search and what to check after launch.',
+        'rubric'   => 'Websites',
+        'lead'     => 'Your company website looks dated, it is awkward to use on a phone, and you cannot change a price or a line of text without a developer — it is time for a website redesign. At this stage people usually talk about the design, and search only comes up a month after launch, when calls from Google start to tail off. But search does not care about colours and fonts; what matters to it is the page addresses, the text on the pages and permission to index them — and that is exactly what breaks unnoticed during a redesign. Let’s look at how to redesign a site without losing Google rankings: what to record before work begins, what to keep, where to redirect and what to check after launch.',
+        'body'     => [
+            ['When a website redesign is needed and what you can leave alone', 'The reasons for rebuilding a website are usually practical:
+
+— it is awkward to use on a phone, and Google indexes and ranks sites based on their mobile version;
+— the text, prices or photos cannot be changed without a developer;
+— the CMS has not been updated for years, and it can no longer be updated without rebuilding the site;
+— the company’s services or brand identity have changed, but the website has stayed the same.
+
+A redesign does not have to change everything. For search, the safest option is a new look with the same page addresses and the same content. If the page addresses or the domain change along with the design, to Google that is a site move, and it has a separate guide for that case. One of its recommendations is to change one thing at a time — for example, the domain first and the layout later: if traffic drops, it is easier to work out why.'],
+            ['The inventory: which pages bring in visitors from search', 'Before work begins, make a list of every address on the site. Sources:
+
+— the sitemap.xml file and the list of pages in the content management system;
+— the Performance report in Search Console, “Pages” tab: which addresses get impressions and clicks. Choose the longest period — Search Console keeps 16 months of data;
+— the Links report in Search Console: the pages other sites link to most often;
+— server logs and analytics: they show addresses that dropped out of the menu long ago but still get visits.
+
+The “Export” button downloads a report to Google Sheets, Excel or CSV, but no more than 1,000 rows — enough for a site with fewer than a thousand pages.
+
+Do not forget the files — images, PDFs with a price list or catalogue: they have addresses too, and Google advises moving them together with the pages.
+
+The result of the inventory is a three-column table: the old address, the new address and the decision — keep as is, redirect or delete. The same table is used to check the launch later.'],
+            ['A new address for every old one', 'If a page’s address changes, the old one needs a permanent server-side redirect to the new one. Google treats the 301 and 308 codes as permanent and 302, 303 and 307 as temporary. With a permanent redirect, the search results show the new address; with a temporary one, the old address.
+
+A trap on Apache servers: the Redirect directive without a code returns a 302. Write the code explicitly, for example Redirect 301 /old-page/ /new-page/.
+
+Three more of Google’s rules:
+
+— redirect straight to the final address, without “old — intermediate — new” chains;
+— do not send dozens of old addresses to the home page or another page that has nothing to do with them. Google may treat such a redirect as a soft 404, that is, as a missing page. If several pages have been merged into one, though, redirecting them to it is appropriate;
+— deleted pages with no replacement should return a 404 or 410 code.
+
+Google advises keeping redirects in place for as long as possible, generally at least a year — and, for the sake of visitors arriving via old links, even indefinitely.'],
+            ['What to keep on a page so that it does not slip', 'A redirect tells Google that a page has moved, but it does not guarantee rankings: what gets assessed is whatever sits at the new address. According to Google, the most basic signal that a page is relevant to a query is that its headings or text contain the same words as the query.
+
+So before you rewrite a page, look at which queries people find it by: in the Performance report, filter the data by the page’s address and open the “Queries” tab. If people find the page by searching for “heavy equipment hire in Baku”, and in the new design all that is left of the text is the heading “Our solutions” and three icons, the page no longer has anything to answer that query with.
+
+What to keep or carry over:
+
+— the title tag and the h1 heading in substance: they can be improved, but not replaced with generic words;
+— the main text: the service description, terms, prices, answers to frequently asked questions;
+— images, together with their descriptions in the alt attribute;
+— internal links: they are changed to the new addresses rather than left to go through a redirect;
+— the canonical tag: on every new page it points to the page itself;
+— on a multilingual site, hreflang markup with the new addresses.
+
+And about the mobile version: Google advises keeping the same text and headings on a phone as on a computer. Text that does not fit the layout is tucked into tabs or expandable blocks rather than deleted, but it has to be in the page’s code from the start: Google does not load content that is only fetched when someone clicks.'],
+            ['The test copy: block it from search and remember to unblock it', 'The new site is built at a test address — a subdomain or a separate folder. It must not get into search, or copies of your own pages will appear there.
+
+The ways of closing off the copy are not equally good:
+
+— a password at server level: this is what Google recommends for private content; the robot sees nothing but the password prompt;
+— noindex in a meta tag or in the X-Robots-Tag HTTP header: the page will not get into the index, but it is open to anyone who has the link;
+— blocking in robots.txt is no guarantee. A page blocked this way can appear in the results if it is linked to from somewhere, and the robot will not read a noindex on it, because it does not crawl the page.
+
+The dangerous moment is launch day: the test copy is moved to the main domain together with its blocks. In WordPress, for example, the “Discourage search engines from indexing this site” checkbox adds a noindex meta tag to pages. The setting is stored in the database and moves with it. Google lists leftover noindex tags and robots.txt blocks among the typical mistakes in a site move. Prepare the final robots.txt in advance and remove all the blocks at the moment of launch.'],
+            ['The sitemap and the Change of Address tool', 'After launch, submit a new sitemap.xml in Search Console — containing only the new addresses you want to see in search. Google advises saving the sitemap with the old addresses in advance and submitting it too: in the Sitemaps report it shows how the old addresses drop out of the index. Warnings about redirects in it are normal.
+
+The Change of Address tool in Search Console is needed only when you change the domain or subdomain. Switching to https, moving from www to the non-www version, moving pages within the site and moving to another host without changing addresses all go ahead without it.
+
+The conditions for using the tool: a 301 redirect from the old home page to the new one, and preferably from all the old pages. You also need to be an owner of both properties in Search Console, in the same Google account. Once the move has been started, Google forwards the old site’s signals to the new one for 180 days. The tool’s help page says to keep redirects in place for at least 180 days, and longer for as long as they still bring in visitors from search. Google advises keeping the old domain paid for at least a year, so that nobody else buys it.'],
+            ['What to check after launch', 'On launch day, work through the table from the inventory:
+
+1. Open the old addresses, starting with those that brought in the most clicks. Each should lead in a single step to its new page, and that page should respond with a 200 code. On Windows you can check this with the curl.exe -I command followed by the page address: the response shows the code, and for a redirect it also shows the Location header with the destination address.
+2. Check that there is no noindex in the code of the new pages or in the server’s response headers, and that robots.txt does not block the site. The URL Inspection tool in Search Console will show whether a page is allowed to be indexed.
+3. Submit the new sitemap.xml.
+
+Then keep an eye on the Search Console reports for several weeks:
+
+— the Page indexing report: whether the number of addresses with the status “Not found (404)” is growing among those that should be working;
+— “Crawl stats” in Settings: whether there is a spike in server errors (5XX);
+— the Performance report in a comparison of two periods: which pages and queries have lost clicks. Look for the cause in the inventory table: a forgotten redirect or text that was thrown out.
+
+Google describes temporary ranking fluctuations during a move as expected: the robot needs to visit every old and new address at least once, and for a small or medium-sized site this can take several weeks or longer.'],
+        ],
+        'end'      => 'A redesign without losing rankings rests not on the design but on the inventory: a list of addresses, a decision for each one and a check of that decision after launch. If the addresses and texts stay the same, most of the risk goes away on its own. If they change, you need a permanent redirect for every page, a site that is open to indexing and several weeks of watching Search Console.',
+    ],
+    'sajt-dlya-restorana-ili-kafe' => [
+        'seoTitle' => 'Restaurant or cafe website: what it should include',
+        'seoDesc'  => 'Restaurant or cafe website in Baku: a text menu with prices, hours and address matching Google, call and booking buttons, three languages, Restaurant markup.',
+        'title'    => 'A restaurant or cafe website: menu, opening hours, bookings and three languages',
+        'desc'     => 'A text menu instead of a PDF, hours and an address that match Google, call and booking buttons, languages for tourists and Restaurant markup: what a restaurant or cafe website needs.',
+        'rubric'   => 'Websites',
+        'lead'     => 'A tourist in central Baku is looking for somewhere to have dinner, finds your cafe on the map and opens the website. The menu there is twelve photos of pages from the menu folder, only in Azerbaijani, and the opening hours on the site and on Google do not match. They close the tab and go somewhere where everything they need can be seen on a phone in half a minute. Let’s look at what a restaurant or cafe website needs: the menu, hours and contacts, bookings, photos, languages and Restaurant markup.',
+        'body'     => [
+            ['What a restaurant website should have', 'People open a restaurant website to find out the essentials quickly: what kind of place it is, what is served here and what it costs, whether it is open now, how to get there, how to phone or book a table. The answers are not hidden behind a slider or a full-screen video. The minimum set:
+
+— the menu with prices;
+— opening hours, including public holidays;
+— the address with a landmark and a link to the map;
+— a phone number and WhatsApp;
+— table booking or a link to delivery, if you offer them;
+— photos of the dishes, the dining room and the entrance;
+— a language switcher.
+
+Check all of this on a phone: Google indexes and ranks websites by their mobile version. So the mobile version is not cut down — it carries the same text, the same structured data markup and the same photo descriptions as on a computer.'],
+            ['The menu as text, not a photo or a PDF', 'A common sight is a menu in the form of photos of its pages, or a PDF laid out for the print shop. On a phone, a file like that has to be zoomed in and dragged around with a finger. Nielsen Norman Group advises against using PDF for reading on screen: its layout is designed for a sheet of paper, not a browser window. Photos are no better: as the W3C explains, an image of text becomes distorted and loses sharpness when enlarged. Success criterion 1.4.5 of WCAG 2.2 requires information to be conveyed as text rather than as an image of text if the required appearance can be achieved with ordinary text.
+
+On top of that, the Google Business Profile help pages say that Google may transfer menu data from a business’s website to its profile. If the prices on the website are out of date, they may turn out to be out of date there as well.
+
+For each dish, give:
+
+— the name, and for local dishes, a short explanation;
+— the main ingredients, with “spicy” and “vegetarian” labels;
+— the weight or volume of the portion;
+— the price in manats.
+
+The menu is divided into sections — breakfasts, soups, mains, drinks — with links to them at the top of the page. It is easier to change prices in the website’s control panel than to order a new layout every time. A PDF for printing can stay, but next to the menu page, not in place of it.'],
+            ['Hours, address and phone number: the same on the site and on Google', 'Discrepancies between the website and Google Maps confuse guests. Under the Google Business Profile guidelines, the name in the profile must match the real name that the business uses consistently on its signage, website and stationery. The phone number must be under the business’s direct control; Google asks you to give a local number rather than a call centre number where possible.
+
+Opening hours on the website are written the same way as in the profile. If the cafe stays open after midnight, say so explicitly: “until 02:00”, not “until late”. For holidays, special hours are set in the profile, and on the website, a notice goes above the menu — one you remember to take down afterwards.
+
+Give the address with a landmark that makes sense to someone who does not know the area: which metro station it is near, which floor of the shopping centre, where the entrance and parking are. Next to it goes an “Open in Google Maps” link to the venue’s listing. The embedded map is given the loading attribute with the value lazy: the browser will then put off loading it until the page is scrolled close to it.
+
+The phone number is set up as a tel: link and WhatsApp as a link in the form wa.me/994XXXXXXXXX: the number in international format, without the plus, brackets, hyphens or the zero before the operator code. On a phone, keep both buttons within easy reach, for example in a bar at the bottom of the screen. Success criterion 2.5.8 of WCAG 2.2 sets a minimum of 24 by 24 CSS pixels for a tap target, and for the main buttons the W3C advises aiming for the 44 by 44 of criterion 2.5.5.'],
+            ['Bookings and delivery: where each button leads', 'Decide in advance how you take bookings, and show one main method. If tables are booked by phone, the main button is “Call”. If you use a booking service, the button goes straight to choosing a date and time, not to the service’s home page. A booking form on the website only makes sense if requests are confirmed the same evening.
+
+The same goes for delivery: the link leads to your page on the delivery service, not to its general catalogue. If delivery prices differ from dine-in prices, say so next to the menu. A cafe website with no bookings or delivery does not need this block — the main buttons remain “Call” and “Directions”.
+
+In Google Business Profile, if your profile has these options, you can add links for bookings and food orders, as well as a link to the menu. The last one has a restriction: under Google’s rules, the menu link cannot lead directly to a third-party ordering or delivery service. So you need your own menu page on the website in any case.'],
+            ['Photos: real dishes and the real dining room', 'Guests compare what they saw on the website with what is brought to their table. Stock shots and photos from other venues do not survive that comparison. The Google Business Profile guidelines say it plainly: an image should represent reality, without significant editing or excessive use of filters. It makes sense to hold the website to the same standard.
+
+What to photograph:
+
+— dishes from the menu, above all the ones ordered most often;
+— the dining room by day and in the evening, and the terrace if there is one;
+— the front of the building and the entrance: this is how guests recognise the place from the street;
+— the banquet hall, if you host banquets.
+
+Every photo needs short alternative text: “dolma in vine leaves with qatiq”, not “IMG_2045”. For phones, prepare smaller versions of the images and list them in the srcset attribute, so that a mobile device does not download a file meant for a large monitor.'],
+            ['Three languages: for residents and tourists', 'A restaurant website in Baku is opened by local residents and tourists alike, so it needs versions in Azerbaijani, Russian and English. Translate first what people open the website for: the menu, hours, address and booking terms. An English version where only the navigation is translated and the dishes are left in Azerbaijani will not help a guest. Google also advises against translating only the boilerplate text: search results then show the same content several times over, with the buttons in different languages.
+
+Local dish names are kept in the original with an explanation added: “qutab — a thin flatbread filled with herbs, meat or pumpkin”. A machine translation of the menu is reread by someone who knows both the cuisine and the language.
+
+Google recommends giving each language version its own page URL; keep the language switcher in plain view. Google advises against automatically redirecting visitors to a version based on a guess about their language: people and search engine crawlers may then never see the others. How to link the versions with the hreflang attribute is covered in a separate article on multilingual websites.'],
+            ['Restaurant markup: what it does and does not do', 'Structured data is a description of the venue in a machine-readable format, usually a JSON-LD block in the page code. The schema.org vocabulary has a FoodEstablishment type for this — a subtype of LocalBusiness, which in turn has its own subtypes: Restaurant, CafeOrCoffeeShop, BarOrPub, Bakery and others. Google advises choosing the most specific one.
+
+Google’s documentation lists two required properties: name and address. Of the recommended ones, these are useful for a restaurant:
+
+— servesCuisine — the type of cuisine;
+— menu — the full URL of the menu page (in schema.org it has been superseded by hasMenu, but Google’s documentation calls it menu);
+— priceRange — the price level, shorter than 100 characters, otherwise Google will not show it;
+— openingHoursSpecification — opening hours: validFrom and validThrough set seasonal hours, and opens and closes with the value 00:00 mean closed all day;
+— telephone, url and geo — coordinates with at least five decimal places.
+
+Opening past midnight is described with a single entry: by the schema.org definition, if the closing time is earlier than the opening time, the interval runs over into the next day.
+
+What markup does not do: it does not give you a special appearance in search results — Google states plainly that it does not guarantee that structured data will be shown in search results. The restaurant carousel, according to Google, is currently available only to a small set of providers. The data in the markup must match what is visible on the page and be up to date. It is checked in Google’s Rich Results Test and in the Schema Markup Validator at validator.schema.org.'],
+        ],
+        'end'      => 'A restaurant or cafe website works when, in half a minute on a phone, you can find out what is served here, what it costs, whether it is open now and how to get here. A text menu, the same details on the website and on Google, and real photos give guests more than animations and sliders. Check your own site: open the English version on a phone and find the price of any dish, today’s opening hours and the call button.',
+    ],
+    'google-biznes-profil-dlya-kompanii-v-baku' => [
+        'seoTitle' => 'Google Business Profile: get your business on Google Maps',
+        'seoDesc'  => 'How to get your business on Google Maps: verify your Google Business Profile, fill it in by the rules and see what Google says drives local SEO in Baku.',
+        'title'    => 'Google Business Profile: how Baku businesses get onto Google Maps',
+        'desc'     => 'How to create and verify a Google Business Profile, fill it in without breaking the rules, and what Google itself names as local ranking factors.',
+        'rubric'   => 'Marketing',
+        'lead'     => 'Someone types “dentist near me” or “air conditioner repair” into their phone, and Google shows a map with a few businesses. They can call, get directions and check opening hours straight from the listing. If your business is not on Google Maps, the call goes to someone else; if the listing has an old number, it will not get through at all. Let’s look at how to create and verify a Google Business Profile, fill it in by the rules, and what Google itself names as local ranking factors.',
+        'body'     => [
+            ['How Google decides whom to show on the map', 'According to Google’s help pages, local results depend mainly on three factors:
+— relevance: how well a profile matches the search; complete, detailed information helps here;
+— distance: how far the business is from the person searching; if they have not said where they are, Google uses what it knows about their location;
+— prominence: how well known the business is; Google counts here, for example, the number of websites linking to it and the number of reviews.
+
+The same page says that the more reviews and positive ratings a business has, the higher it may appear in local results, and that a position cannot be requested or bought. Remember this when someone offers you a “guaranteed top spot on the map”.
+
+You cannot influence distance: an office in Yasamal district will not get any closer to someone searching from Khatai district. Complete information, reviews and links are up to you. Google also says that the categories you choose affect local ranking. Strip away the promises, and local SEO in Baku is work on exactly these points.'],
+            ['How to create a profile or regain access to an existing one', 'You create a profile at business.google.com/add and then follow the steps on screen. In the Russian-language interface the service is called “Профиль компании в Google”.
+
+Quite often someone else has already added the listing. If it is not verified, find the business on Google Maps by its name and city and claim it through the option for owners. If it is already verified and you do not have access, send an ownership request. The current owner receives an email and has three days to respond; if they do not, you can sometimes verify the profile yourself. Do not create a second profile for the same business: under the rules, one location gets one listing.
+
+If customers come to you — a shop, a clinic, a salon — you give an address. If you only travel to customers — tradespeople, cleaning, delivery — you remove the address and set a service area instead: up to 20 cities, districts or postcodes, but not a radius. Google recommends keeping the area within about two hours’ drive of your base.'],
+            ['Verification: the methods available now', 'Without verification you cannot reply to reviews, and it comes first in Google’s tips on local ranking. Google chooses the method itself — based on the type of business, the region, publicly available information and opening hours — and you cannot change it. The options:
+— a call or text message with a code to your business number; if the call is answered by an automated voice menu, the code will not get through;
+— an email;
+— a video recording — Google recommends this if it is available to you;
+— a video call with a support agent, only during the business’s opening hours and not for everyone;
+— a postcard with a five-digit code, also not for everyone: it usually arrives within 14 days, and the code is valid for 30 days;
+— instant verification, for example if the website is already verified in Google Search Console.
+
+While you wait for the postcard, do not change the name, address or category, and do not request a new code: the one already sent will stop working.
+
+The verification video is filmed on a phone through the profile itself, live, in one continuous take with no editing, and lasts at least 30 seconds. It should show:
+— the location: street name signs, the building number, neighbouring businesses;
+— a sign, wall or shopfront with the same name as in the profile;
+— something only staff can access, such as an open till.
+
+If you work on the road, show tools, equipment or a van with your logo instead of a sign. Account numbers, tax numbers, ID details and other people’s faces must not appear in the video.
+
+After that, the check takes up to five working days, occasionally longer.'],
+            ['Name, category and address under Google’s rules', 'The name should be the one the business is known by in real life: as on its sign, website and stationery. Adding anything extra is not allowed — slogans, a description of services, the district, opening hours, a phone number, the website address. “Romashka — dental clinic in Nasimi 24/7” breaks the rules; “Romashka” does not. Something else matters for Baku: you cannot repeat the name in several languages or alphabets, even if that is how it appears on your sign. “Romaşka / Ромашка” will not do; choose one.
+
+A primary category is required, and you can add up to nine additional ones. The rules ask you to choose categories that are as specific and as few as possible. A category should complete the phrase “this business is a…”, not “this business has a…”. A restaurant with Wi-Fi is still a restaurant, and the Wi-Fi goes into attributes.
+
+The address must be exact: where the business actually operates. A PO box or a virtual office — that is, a rented address where you do not work — will not do. If Google cannot find the address, for example because the building has no number, you place the pin on the map manually.
+
+After a name change you may need to verify again; after a move it is mandatory. Google may suspend a profile that breaks the rules.'],
+            ['Hours, phone number and website must match', 'Give the hours when customers can actually come. Set special hours for holidays. Google advises confirming your hours on public holidays even if they are the same as usual. In Azerbaijan these include, for example, Novruz, Ramazan Bayram and Gurban Bayram — non-working days under the Labour Code. If you close for seven days in a row or longer, or do not know for how long, mark the profile as temporarily closed.
+
+The phone number should lead to this location and be under your direct control. The rules prefer a local number to a shared call centre number. Premium-rate numbers, and numbers and links that redirect anywhere other than the business itself, are not allowed.
+
+Google gets information about businesses both from users and from licensed sources. Google warns you about some edits in advance, and you have four days to accept or reject them. If you do not respond, Google may publish the edit itself if other publicly available information, such as your website, supports it. So it is best to keep the name, address, phone number and hours the same on your website, in your profile and on your sign: an outdated page can work against you.'],
+            ['Photos, videos and posts', 'Photos and videos feature in Google’s tips on local ranking. Photos: JPG or PNG, from 10 KB to 5 MB, recommended size 720 × 720 pixels, minimum 250 × 250; sharp, well lit, without heavy editing or filters. Videos: up to 30 seconds, up to 75 MB, 720p or higher. Google advises setting a logo and a cover photo and adding exterior photos so that customers recognise the place when they arrive.
+
+Posts are short updates in your profile, of three kinds: “Updates”, “Offers” and “Events”; offers and events have dates. Posts older than six months are archived unless a date range is set. A post with a phone number in its text may be rejected if the number cannot be linked to the business. The help page on local ranking does not mention posts: they are a way to tell people who have already opened your listing about something new, such as an offer or holiday hours.'],
+            ['Reviews: how to ask for them and how to reply', 'Reviews, as mentioned above, count towards prominence. Only someone signed in to a Google account can leave a review. The simplest way is to give customers a link or QR code from your profile: on the counter or in a message after an order.
+
+What you must not do:
+— offer anything in exchange for a review, or for changing or removing one: money, a discount, a free product or service;
+— ask only satisfied customers for reviews, or discourage negative ones;
+— demand a review or pressure a customer while they are with you, or set staff review targets;
+— post reviews where there is a conflict of interest: from current and former employees, relatives, contractual partners;
+— leave reviews on competitors’ listings to damage their reputation.
+
+You can reply only from a verified profile. Replies are checked — usually within 10 minutes, sometimes up to 30 days. Google advises keeping replies short, not sending everyone the same “thank you” and not turning a reply into an advert. With a negative review, address the author by name, respond to their specific point and do not delay.
+
+You cannot have a review removed just because it is unpleasant: Google only removes those that break the rules and does not get involved in disputes between a business and its customers. You flag a violation in your profile or in the review management tool. The check usually takes a few days; if the request is refused, you can appeal once.'],
+        ],
+        'end'      => 'A Google profile is not advertising space but a directory listing, and you are responsible for its accuracy. Verify it, fill it in completely and accurately, reply to reviews and collect them honestly — these are exactly what Google names as ways to rise in local results. And keeping the same details on your website and in your profile protects the listing from mistaken edits.',
+    ],
+    'google-analytics-4-chto-smotret-vladelcu' => [
+        'seoTitle' => 'Google Analytics 4 and Search Console for business owners',
+        'seoDesc'  => 'Website analytics for owners: key events, channels and landing pages in GA4, Search Console reports on queries and average position, and how to read them.',
+        'title'    => 'Website analytics: what to check once a month in Google Analytics 4 and Search Console',
+        'desc'     => 'Which Google Analytics 4 and Search Console reports to open once a month, how to mark enquiries and calls as key events and why average position is misleading.',
+        'rubric'   => 'Marketing',
+        'lead'     => 'At the start of the month you open Google Analytics 4, or your contractor sends you a report with ten or so charts, percentages and arrows. It is usually impossible to tell from it whether the website has started bringing in more enquiries. That is not your fault: the standard reports show everything at once, while an owner needs a handful of figures. Let’s look at which GA4 and Search Console reports to open once a month, what to set up so that enquiries, calls and WhatsApp clicks show up in them, and how to read average position correctly.',
+        'body'     => [
+            ['Two services answer different questions', 'Search Console shows what happens on Google before someone reaches your website: which searches your pages appeared for, how many times they were seen and how many times they were clicked. Google Analytics 4 shows what happens afterwards: where the visitor came from, where they landed and whether they did what the website exists for.
+
+That is why the figures in the two services do not match, and that is normal. Search Console counts clicks in Google’s results; GA4 counts sessions, and only those in which the analytics code loaded. GA4’s Organic Search channel also includes other search engines. And GA4 may not see a visitor who declined cookies at all.
+
+The two services can be linked: in GA4, on the Admin page, under Product links, there is an entry for Search Console. You need the Editor role in Analytics and verified owner status in Search Console. The reports on queries and on organic traffic from Google that appear after linking are unpublished by default — you turn them on in the Library section. The data arrives with a delay of about 48 hours.'],
+            ['Key events in Google Analytics 4: what counts as a result', 'GA4 collects page views and scrolls on its own, but it does not know what counts as an enquiry for you. Actions that matter to the business are marked as key events. They used to be called conversions; “conversion” is now an advertising term, and conversions are created in Google Ads from a key event. In a standard property you can mark up to 30 events as key events. Marking one does not change past data.
+
+For a company website, three are usually enough:
+
+— a form submission. If enhanced measurement with form interactions is switched on for the data stream, GA4 collects the form_submit event by itself. Check it with a test enquiry; if the event does not appear or fires on the wrong form, a developer sets up the generate_lead event recommended by Google, triggered after a successful submission;
+— a click through to WhatsApp. A wa.me link leads to another site, so GA4 records an outbound click — a click event with the address in the link_url parameter. A separate event is created from it: Admin → Events → Create event, with the conditions event_name equals click and link_url contains wa.me (or whichever address your button leads to);
+— a tap on the phone number. A tel: link does not lead to another site, and Google does not say whether GA4 counts it as an outbound click. Tap the number yourself and check in the Realtime report whether the event appears. If it does not, it is added through Google Tag Manager or in the website’s code.
+
+Events you create do not apply to past data either, and they start working no sooner than an hour later. Once the event appears in the list, mark it as a key event with the star.'],
+            ['Where visitors come from', 'The Traffic acquisition report in the Acquisition section splits sessions by channel:
+
+— Organic Search — regular, non-paid search results;
+— Paid Search — ads on search engines;
+— Organic Social — social media without ads;
+— Referral — links from other websites;
+— Direct — a saved link or an address typed in by hand;
+— Unassigned — the visit did not fit any rule.
+
+Look not only at the number of sessions but also at the key events for each channel. Lots of visits and no enquiries is a reason to check which pages that channel leads to and what people see there.
+
+To tell apart visits from your Instagram profile, from an email newsletter or from your company’s Business Profile on Google, links are marked with UTM tags. Google advises always setting three parameters: utm_source for the source, utm_medium for the type of channel and utm_campaign for the campaign. The Campaign URL Builder helps you put such a link together.'],
+            ['Landing pages: where search visitors land', 'The Landing page report in the Engagement section shows the pages sessions start on, alongside sessions, active users, average engagement time and key events. Add a filter for the Organic Search channel and you get a list of the pages people reach from search.
+
+This is where you can see which service pages bring in enquiries and which bring in only visitors. If a blog article gets search traffic but nobody goes on from it to the service, the problem is not search but the page: it has no link or clear next step.
+
+Bounces in GA4 do not work the way many people are used to. A session counts as engaged if it lasted longer than 10 seconds, included a key event or had two or more page views. Bounce rate is the share of all the other sessions. Someone who lands on the contacts page, taps the number and leaves eight seconds later will count as a bounce unless the tap is marked as a key event.'],
+            ['Search Console reports: performance and indexing', 'The Performance report has four metrics: clicks, impressions, CTR — the share of impressions that led to a click — and average position. Under the chart are the Queries, Pages, Countries, Devices and other tabs. Data is kept for 16 months; the most recent figures are shown on the chart with a dotted line — they are preliminary and may still change.
+
+Once a month, compare the last 28 days with the previous 28 (the Compare option in the date filter), and if demand is seasonal, with the same period last year. Look separately at queries that do not include the company name: people who search for your brand already know the company, while growth in the other queries means new people are finding the site. The query filter has Branded and Non-branded options for this, but sites with few impressions do not get them. In that case, choose “Custom (regex)” and the condition “Doesn’t match regex”, and list every spelling of the name, separated by a vertical bar: in Latin script, in Cyrillic, in Azerbaijani.
+
+The sum of the rows in the table usually does not match the total above the chart. Google hides some queries for privacy reasons: they are included in the totals but not in the table. On top of that, Search Console shows only the most important rows. And when a query filter is applied, the hidden queries drop out of the totals as well.
+
+A small website does not need to open the Page indexing report every month: according to Google, a site with fewer than 500 pages probably does not need it. It is enough to check key pages with the URL Inspection tool and to read Search Console’s messages — it warns you itself about a new indexing problem. More on this in the article on where SEO begins.'],
+            ['How to read average position', 'For each query, Search Console takes the topmost position at which a link to your site appeared and averages these values across all queries. A position is recorded only if there was an impression. As a rule, each element in the results occupies one position, however many links it contains: an AI Overview also has just one, shared by all the links inside it.
+
+This leads to a common mistake. The site starts appearing for new queries, even if far down the results: impressions and clicks go up, while average position gets worse. So the overall figure tells you little — look at the position for a specific query and page.
+
+1. On the Queries tab, click the query you need — the report will be filtered by it.
+2. Add a country filter for Azerbaijan and, if necessary, a device filter: positions can differ between phones and computers.
+3. On the Pages tab, check which page is being shown. If a blog article appears for a query about a service rather than the service page, revisit the copy and the internal links.'],
+            ['Settings you check once', 'Data retention. GA4’s data settings include a Data retention option: for a standard property, 2 or 14 months. The setting affects only Explorations and funnels; it does not limit the standard reports. But if you want to compare a season with last year’s in Explorations, with two months of retention there will be no data from last year. Age, gender and interest data is kept for two months whatever the setting.
+
+Cookie consent. The Google Analytics terms require you to publish a privacy policy, state in it that you use cookies and Google Analytics, and, where the law requires it, obtain the visitor’s consent. Google’s consent mode comes in two versions. In basic mode, Google tags do not load until the visitor agrees, and GA4 does not see those who decline. In advanced mode, cookieless signals are sent when a visitor declines, and Analytics can fill the gaps with modelling. Either way, GA4 does not see everyone: compare trends, not absolute values.'],
+        ],
+        'end'      => 'Once a month, an owner needs to look at just four things: key events by channel, landing pages, queries without the company name in Search Console and positions for a few important queries. The figures in the two services will not match, and they are not supposed to: what matters more is which way they move from month to month. And for the reports to have something to count, enquiries, calls and WhatsApp clicks are first marked as key events.',
+    ],
+    'fotosemka-dlya-sajta-kak-podgotovitsya' => [
+        'seoTitle' => 'Photo shoot for a website: what to prepare in advance',
+        'seoDesc'  => 'A shot list by page, landscape and portrait, consent from people in shot, lighting, files and image rights: how to plan business photography.',
+        'title'    => 'Photo shoot for a company website: from shot list to image rights',
+        'desc'     => 'How to prepare a photo and video shoot for your website and social media: a shot list by page, consent from people in shot, lighting on location, files and rights in the contract.',
+        'rubric'   => 'Marketing',
+        'lead'     => 'The website is almost ready, but the “About the company” page shows smiling people from a stock photo library, and the products were shot on a phone under different lighting. Or the photographer has already been: there are hundreds of shots, but none in portrait for stories, none with room for the headline on the home page, and the staff in the photos never signed anything. Most of the work on a photo shoot for a website is done before the photographer takes out the camera. Let’s look at how to draw up a shot list, what to shoot in both orientations at once, which consents to collect, how to prepare the location, which files to take and what to put in the contract.',
+        'body'     => [
+            ['A photo shoot for a website starts with a list of pages', 'Start not with the photographer but with the site map. For each page, write down which photos will go on it and what they need to show. The usual set looks like this:
+
+— the home page — one or two wide shots that show what the business does, with free space for the headline;
+— “About the company” and the team — portraits against the same background, a group photo, people at work;
+— the office or production site — the entrance with the sign, reception, workstations, equipment;
+— service pages — the process step by step: hands, tools, materials;
+— products — catalogue shots on a plain background and the product in use;
+— completed work — “before” and “after” from the same spot and the same height; mark where the tripod stood so that you can repeat the shot later.
+
+On each line, note the orientation, who will be in shot and what needs to be prepared. A list like this is at once the photographer’s brief, the schedule for the day and the list of people whose consent you need.'],
+            ['Landscape and portrait in one shoot', 'The same photo ends up in different frames. On a narrow phone screen, the wide header image on the home page is often shown with its edges cropped off. For articles and news, Google recommends in its Article markup several images with aspect ratios of 16:9, 4:3 and 1:1. For link previews, Facebook advises an image of at least 1200×630 pixels with an aspect ratio as close as possible to 1.91:1. Stories and Reels are vertical, 9:16.
+
+That gives two rules. Key shots are taken with space to spare around the main subject, so that one file can produce both a wide and a square version without cutting off a head or a logo. And vertical shots for social media are taken separately: if you cut a vertical frame out of a horizontal one, you are left with a narrow strip, and most of the pixels are lost in the crop. Vertical video has its own rules — they are covered in the article on the safe zone of a 9:16 frame. Mark in the list which photos you need in both orientations: on location this is easy to forget.'],
+            ['Consent from people in shot', 'The Law of the Republic of Azerbaijan “On Personal Data” treats as personal data any information that makes it possible to identify a person directly or indirectly (Article 2.1.1). The law explicitly classes an image of a person’s face as biometric data, to which its requirements apply in full (Article 9.5). Consent must be in writing, which includes an electronic document with an enhanced electronic signature (Article 8.1).
+
+Under Article 8.2, the consent states:
+
+— who gives the consent and who receives it;
+— the purpose, for example publication on the company’s website and social media;
+— which data are involved and what is done with them;
+— how long the consent is valid and the conditions for withdrawing it;
+— the conditions for destroying or archiving the data.
+
+For minors, consent is given by their parents or legal representatives (Article 8.3). It is the company that will have to prove consent was given (Article 8.4), so keep the signed consents together with the files. Visitors who happen to get into the shot are asked for their consent or photographed so that they cannot be recognised.
+
+In 2024, Article 8.6 was added to the law: except where the collection of data is mandatory, consent is obtained and withdrawn centrally through the Electronic Government Information System. Check with a lawyer how it applies to photo shoots before you approve the consent form.'],
+            ['Location, lighting and a consistent style', 'The day before, walk round the location with the camera’s eye. Clear documents off the desks, notes with passwords and schedules off the walls, and plans and figures off the whiteboards. On the monitors, close email, the CRM and anything else that shows client data. Hide cables, personal belongings and bins. Agree on clothing for the portraits in advance: plain colours, no large logos of other brands, in one palette for the whole team.
+
+Do not mix daylight from a window and warm lamps in the same shot: their light has a different tint, and in the photo some areas turn bluish and others yellowish. Another trap is lamp flicker. The mains frequency in Azerbaijan is 50 Hz, and for such networks Sony, for example, advises a shutter speed of 1/50 or 1/100 of a second; otherwise the frame may show bands and colour shifts. LED lamps can flicker at a different frequency, so a test shot under the working lights is done in advance.
+
+A consistent style rests on repetition: the same background, lighting, camera height and colour correction for every portrait. Ask the photographer to write down the set-up: then a new employee who joins six months later will be photographed so that their picture does not stand out from the rest.'],
+            ['Which files to take after the shoot', 'Agree on how the files will be handed over before the shoot, not after it.
+
+— Selected and edited photos at full resolution — the master files from which any other version is made.
+— Versions for the website in the sRGB colour space. Under the CSS specification, the browser treats an image without an embedded profile as sRGB. If a file in a wider colour space, such as Adobe RGB, loses its profile during compression, the colours on the website will look washed out.
+— Clear names. Google advises short, descriptive file names instead of generic ones like image1.jpg — and they also make the archive easier to search.
+— IPTC metadata: Creator (the author), Credit Line and Copyright Notice. Google Images takes these fields from the file.
+— Folders by website page and a spreadsheet showing who is in which shot and where their consent is kept.
+— For video, finished clips in both orientations and the source footage for future versions.
+
+Compressing to WebP or AVIF and producing several sizes of each photo for different screens with the srcset attribute is usually the developer’s job, but for that they need large originals.'],
+            ['Image rights in the contract', 'Photographs are protected by copyright — Article 6 of the Law of the Republic of Azerbaijan “On Copyright and Related Rights” says so directly. For the company to be able to use them, the author transfers the rights to it under an author’s contract (Article 30), and the law requires such a contract to be concluded in writing (Article 31).
+
+Article 31 requires the contract to set out the ways the work may be used, the term, the territory and the fee. What to check:
+
+— the ways of use: the website, social media, advertising, print, packaging; without a list, the contract may be deemed to cover only the uses the parties considered necessary, and that is grounds for a dispute;
+— the term: if it is not stated, the author can terminate the contract five years after it was concluded by giving six months’ written notice;
+— the territory: if it is missing, the rights apply only within Azerbaijan;
+— exclusivity: under Article 30, unless the contract says otherwise, the rights transferred are non-exclusive, and the photographer is entitled to let someone else use the same photos;
+— permission to crop, retouch and overlay text: the right to object to any change of meaning, distortion or adaptation of the work stays with the author even after the rights have been transferred (Article 14);
+— crediting the author by name, and the photographer’s right to show the photos in their portfolio.
+
+If the photos are taken by a staff employee as part of their job duties or on the employer’s assignment, the exclusive right to use them belongs to the employer, unless the contract between them provides otherwise (Article 13). But if the employer does not use them for three years without good reason, those rights pass to the author.'],
+            ['Why stock photos are no substitute for real ones', 'A stock photo library sells a licence, not a photo. The standard Adobe Stock licence, for example, is non-exclusive: anyone can buy the same photo, including a competitor. And a Google image search shows sites with the same or a similar image, so any visitor can check where your “team” came from.
+
+From photos for a company website — on the pages about the team, the office, the work and the products — people expect proof that the company exists and looks exactly like this. Strangers in someone else’s office do not provide that, and stock images in the section showing your work pass off someone else’s results as yours. Licences have restrictions too: the Adobe Stock terms, for example, prohibit registering a trademark that uses a stock image, in whole or in part.
+
+Stock is appropriate where there is nothing to prove: a background, a texture, an illustration for an article.'],
+        ],
+        'end'      => 'Business photography succeeds or fails before the photographer even arrives: a shot list by page, both orientations for the key shots, consent from the people in shot and a prepared location. After the shoot, you need the right files and a contract that sets out the ways of use, the term, the territory and exclusivity. Before the shoot, check three things: whether there is a shot list, whether consent has been obtained from everyone who will be in shot, and what the contract says about the rights to the photos.',
+    ],
+    'motion-dizajn-i-ai-video-dlya-biznesa' => [
+        'seoTitle' => 'Motion design for business: when you can skip the shoot',
+        'seoDesc'  => 'When an animated explainer video or AI video for advertising replaces a shoot, what the designer needs, music and voice rights, and where AI labels apply.',
+        'title'    => 'Motion design and AI video: when an animated video for business replaces a shoot',
+        'desc'     => 'Where animation and AI video replace a shoot, what the designer needs for the video, who owns the rights to a generated shot and the music, and when an AI label is required.',
+        'rubric'   => 'Design',
+        'lead'     => 'You need a video about a new service, but there is nothing to film: the product is software or an insurance policy, the office looks just like the one next door, and no shoot day is planned. The contractor suggests animation or a video put together by a neural network, and it is unclear what will come of it and what you are risking. Let’s look at where motion design replaces a shoot, what to prepare before work starts, how the rights to music, voice and generated footage work, and when you need to label the use of AI.',
+        'body'     => [
+            ['When motion design is a better fit than a shoot', 'Motion design is graphics in motion: text, icons, diagrams, illustrations, a logo. It shows what a camera cannot film.
+
+Tasks where animation usually wins:
+
+— explaining a service with no physical product: delivery, software, insurance, an accounting service;
+— showing a process or a diagram that on video would turn into a person sitting at a computer;
+— animating a logo for the intro of videos and presentations and for a screen at an exhibition;
+— putting together social media ads from existing photos, 3D models and brand colours.
+
+AI video is a separate tool. From a text description or a source image, a generator produces a short shot: clouds over a city, a product on a table, an abstract background. For a cutaway or a shot that sets the mood, that is often enough.
+
+A shoot is irreplaceable where trust rests on reality: your team, your premises, your dishes, a review from a real customer. A generated “restaurant interior” is a promise of something that does not exist. And it is precisely realistic generated footage of a venue like this that platforms require you to label first and foremost.'],
+            ['What to prepare for an animated explainer video', 'A video starts not with animation but with a script. The most convenient form is a two-column table: on the left, what is heard or written on screen; on the right, what is visible at that moment. Read the text aloud with a stopwatch at the voice-over artist’s pace. If it does not fit the allotted time, you cut the text rather than speed up the speech.
+
+The designer needs:
+
+— the logo in vector format (SVG, PDF or AI), not an image taken from the website — what belongs in the set is covered in the article on logo files;
+— the brand colours as numeric codes, and the fonts;
+— product photos, screenshots of the software and 3D models, if you have them;
+— the voice-over script for each language of the video;
+— a list of versions: platforms, aspect ratios and whether a version without sound is needed.
+
+Google Fonts are mostly released under the SIL Open Font License: they can be used free of charge in any work, including commercial work; the only thing you may not do is sell the font files themselves. With paid fonts, the rights are sometimes divided by where the work is shown. At Typotheque, for example, animations for social media are covered by the basic Desktop licence, whereas advertising on television and streaming services needs an additional Broadcast Licence, bought before the first showing.'],
+            ['Voice and music: each track has its own licence', 'The voice-over can be a live voice or a synthesised one. A live voice-over artist has to be recorded, but they will put the stress in names where you want it and read the mix of Azerbaijani, Russian and English exactly as you ask. Have a native speaker listen to a synthesised voice-over before the final edit. Someone else’s voice is not cloned without permission: the ElevenLabs rules explicitly prohibit reproducing a living person’s voice without their explicit and informed consent or another lawful basis.
+
+Mistakes with music are more common. Meta’s music guidelines prohibit using it for commercial purposes without the appropriate licences, and responsibility for music in a post or an ad lies with whoever published it. The YouTube Audio Library is available only in YouTube Studio; YouTube gives no legal guidance on using its tracks outside the YouTube platform and accepts no responsibility for “free” music from third-party libraries. If an Audio Library track is under a Creative Commons licence, the artist is credited in the video description.
+
+If the video is going into ads, onto the website and onto a screen in the office, you need a stock track licensed for all of those uses, or music written to order. With music generators, the rights depend on the terms: in Suno, for example, songs made on the free plan belong to the service and are suitable for non-commercial use only. Keep the licence or receipt together with the source files — if a rights holder complains, it is your main argument.'],
+            ['AI video for advertising: who owns the result', 'Azerbaijan’s Law “On Copyright and Related Rights” defines the author as the natural person who created the work. It contains no specific provisions on the output of AI, so whether a generated shot has an author at all remains an open question. In a report dated 29 January 2025, the US Copyright Office concluded that prompts alone are not enough to make someone the author of the output. What can be protected is the human contribution: selection and arrangement, modifications, and the person’s own elements in the final shot.
+
+This leads to three conclusions for businesses.
+
+1. What you can do with the output is set by the service’s terms. They depend on the plan, and sometimes on the size of the company: under Midjourney’s terms, a company with annual revenue of more than a million dollars owns its outputs only if it uses the Pro or Mega plan.
+2. The more of the video is yours — brand graphics, your own photos, the script and the edit — the more confidently you can use the video as a whole.
+3. Do not ask a generator to depict someone else’s logo, a recognisable person or a character. In April 2026, Article 148-2 was added to Azerbaijan’s Criminal Code: it penalises creating or distributing false photos, videos and audio featuring a person’s image or voice, made without their consent using AI or special software.'],
+            ['AI labels: what platforms and the law require', 'YouTube requires disclosure of realistic content made or altered with AI: a person says something they did not say, footage of a real event or place has been altered, a lifelike scene has been generated. This also covers AI music if it is the main element of the video. The disclosure is made at upload, in the attributes section. You do not need to disclose unrealistic content, such as AI graphics in a fully animated video, nor AI help with the script, title or subtitles, nor a clone of your own voice used for the voice-over. YouTube may label videos with C2PA metadata itself, and the creator cannot remove such a label. According to YouTube, disclosure itself does not limit reach or monetisation, but consistently failing to disclose may lead to penalties.
+
+Meta may require an AI label for photorealistic video and realistic-sounding audio and warns of penalties if a required label is missing. In June 2026, Meta announced that it was starting to detect, using industry signals, ads made or edited with third-party AI tools and to show a label in the ad information. TikTok also requires realistic AI content to be labelled and automatically labels videos carrying Content Credentials metadata from certain services.
+
+The Azerbaijani rule is broader. Law No. 387-VIIQD of 21 April 2026, which added Article 148-2, also added Article 13-2.7 to the Law “On Information, Informatisation and Protection of Information”: photos, videos and audio prepared with AI must carry a clear and easily noticeable label to that effect when shown publicly. The text contains no exceptions for animation, so it is sensible to label generated footage in advertising directly in the video rather than relying on platform settings. Where the line falls with partial use — for example, when AI has only removed the background — the law does not say.'],
+            ['Formats, length and subtitles', 'Versions for different platforms are planned before the animation starts: rebuilding a finished horizontal scene for vertical is almost the same work all over again.
+
+— 9:16 — Reels, stories, Shorts and TikTok, as well as video ads in the Instagram feed, for which Meta recommends vertical; Shorts on YouTube can be up to three minutes long;
+— 4:5 — video ads in the Facebook feed;
+— 16:9 — YouTube, the website, presentations, a screen in the office.
+
+Length is set by the task and, in advertising, by the format as well. With skippable ads on YouTube, viewers get the option to skip after 5 seconds — who you are and what you offer has to come across before that. Bumper ads last from 5 to 6 seconds and cannot be skipped: they hold one idea and a logo.
+
+In a motion design video, the text on screen often serves as the subtitles. If there is a voice-over, upload your own subtitle file to YouTube, for example SRT. YouTube has automatic captions for both Azerbaijani and Russian, but company names and terms are checked by hand afterwards, and if the languages in the speech are mixed, there may be no captions at all. In Reels it is more reliable to burn the text into the picture inside the safe zone — this is covered in detail in the article on vertical video.
+
+An animated logo or icons for the website are best delivered as Lottie: the animation is exported from After Effects to JSON, and a player on the page renders it as vector graphics. Put background video on without sound: Chrome always allows muted autoplay, but autoplay with sound only under certain conditions. If movement starts automatically, lasts longer than five seconds and is shown alongside other content, then under success criterion 2.2.2 of the WCAG accessibility standard the visitor must be able to pause or hide it.'],
+        ],
+        'end'      => 'Motion design replaces a shoot where you need to explain rather than show reality: a service with no physical product, a process, a logo, an ad made from existing material. AI video works for backgrounds and atmosphere, but generated footage in advertising gets labelled: realistic footage under platform rules, and in Azerbaijan any footage under the law. Before ordering a video, put together a timed script, the brand source files and licences for the font, voice and music.',
+    ],
+    'korporativnaya-pochta-na-svoyom-domene' => [
+        'seoTitle' => 'Business email: Google Workspace vs Microsoft 365 vs hosting',
+        'seoDesc'  => 'Business email on your own domain: how hosting mailboxes differ from Google Workspace and Microsoft 365 and what to compare — storage, spam, shared addresses.',
+        'title'    => 'Business email on your own domain: hosting, Google Workspace or Microsoft 365',
+        'desc'     => 'How mailboxes included in a hosting plan differ from Google Workspace and Microsoft 365: storage and limits, shared addresses, staff leaving, backups, pricing and moving over via MX.',
+        'rubric'   => 'Support',
+        'lead'     => 'Your company’s email has lived in the hosting plan ever since the website went live. Mailboxes keep filling up, the whole department knows the password for sales@, and when a manager leaves, nobody knows what to do with their correspondence. A contractor suggests moving to Google Workspace or Microsoft 365, and it is not clear what you would be paying for every month. From the outside, business email on your own domain looks the same whichever you choose — the difference lies in what stands behind the address. Let’s look at what to compare before you choose and how to move without losing any emails.',
+        'body'     => [
+            ['What the options are for email on your own domain', 'An address like name@yourdomain.az is the same wherever the emails are stored. Where incoming mail is delivered is set by the MX record in the domain’s DNS zone. That is why you can change the service without changing the addresses.
+
+The main options:
+— mailboxes included in a hosting plan: you create them in a panel such as cPanel and read them through webmail or an email program;
+— Google Workspace: Gmail on your domain, together with Calendar, Drive, Docs and Meet;
+— Microsoft 365: Exchange Online email with Outlook, a calendar and OneDrive; if you only need email, there is a standalone plan, Exchange Online Plan 1;
+— other email services for business, such as Zoho Mail.
+
+A personal gmail.com mailbox is not on this list: the domain in the address belongs to Google, not to the company, and you are not the one who sets up the SPF, DKIM and DMARC records for it. There is more on this in the article on why your company’s emails land in spam.'],
+            ['Mailbox size, limits and the spam filter', 'In Google Workspace, storage is pooled across the whole company: each user adds 30 GB to the pool on the Business Starter plan, 2 TB on Business Standard and 5 TB on Business Plus. That space is shared by Drive, Gmail and Google Photos, and emails in the “Spam” and “Bin” folders take up room too.
+
+In Microsoft 365, email is counted separately from files. On the Business Basic, Standard and Premium plans, the primary mailbox holds 100 GB (the limit was raised from 50 GB in 2026), while files are kept in OneDrive — 1 TB per user. With the standalone Exchange Online Plan 1, the mailbox is still 50 GB. On hosting, email usually shares the disk with the website, and the limit is set by the plan.
+
+Cloud services have sending limits too. In Google Workspace, one user can send up to 2,000 emails in any 24-hour period. In Exchange Online, it is up to 10,000 recipients a day and no more than 30 messages a minute, and for mailings to customers Microsoft advises using specialist services. Hosting limits are found in the plan’s terms.
+
+Who controls the spam filter differs as well. In Google Workspace, protection against spam and phishing comes with every plan. In Microsoft 365, basic filtering, Exchange Online Protection, is built into every cloud mailbox, and Business Premium adds Defender for Office 365 Plan 1, which checks attachments and links. In cPanel, the filter is built on Apache SpamAssassin: you set the threshold yourself, but whether the tool is available at all is up to the hosting provider.'],
+            ['Google Workspace or hosting email: calendar, documents, shared addresses', 'Hosting email means mailboxes and a web interface; in cPanel they also come with calendars and contacts that sync over CalDAV and CardDAV. What you do not get there is collaborative work on documents or a single staff directory with access permissions.
+
+Every Google Workspace plan includes Calendar, Drive, Docs, Sheets and Meet; on Business Starter, meetings are limited to 100 participants and cannot be recorded. Microsoft 365 Business Basic includes the web versions of Word, Excel, PowerPoint and Outlook, with the desktop apps starting from Business Standard.
+
+For addresses such as info@ and sales@, cloud services have dedicated tools:
+— an alias, a second address for the same mailbox: in Google Workspace, up to 30 per user at no extra cost, and in Microsoft 365, up to about 300 addresses per mailbox;
+— a shared mailbox in Microsoft 365 of up to 50 GB does not need a licence of its own, and staff open it with their own accounts;
+— in Google Workspace, the role of a shared mailbox is played by an account with delegates or by a group with a collaborative inbox, where an email can be assigned to a member of staff and marked as done.
+
+If a shared address on hosting is a single mailbox with one password for the whole department, you cannot see who replied to a client, and whenever anyone leaves, the password has to be changed and handed out again.'],
+            ['What happens to the mailbox when someone leaves', 'A manager’s correspondence with clients belongs to the company. After they leave, it should stay accessible, and emails sent to their address should reach their colleagues.
+
+In Google Workspace, you can suspend the user: new emails and invitations are blocked and the data is kept, but the licence is paid for as if the user were active. When deleting the user, the administrator can transfer their Drive files and calendar to a colleague, while email is moved to another mailbox in advance, using the data migration service. Anything not transferred is deleted along with the user; it can be restored within 20 days. The old address is then added as an alias for whoever takes over the work.
+
+In Microsoft 365, the departing employee’s mailbox is converted to a shared mailbox: emails and the calendar are kept, colleagues get access, and the licence can be removed if the mailbox is no larger than 50 GB. The account itself is not deleted — the shared mailbox depends on it — but its password is reset so that the former employee cannot sign in. A deleted user can be restored within 30 days.
+
+On hosting, everything comes down to the panel: change the password, set up forwarding, keep an archive. That is possible as long as the company has access to the panel, not just the contractor. In cloud services the same goes for administrators: Google recommends having more than one super administrator, with each one assigned to a different person.'],
+            ['Backups: what you can get back', 'A backup is not only for when something fails: a cloud service will carry out a deletion made by mistake just as faithfully as any other command. That is why it matters how long deleted items can still be recovered.
+
+In Gmail, an email stays in the bin for 30 days, after which a Google Workspace administrator has another 25 days to restore it from the console. Google Vault, which comes with plans from Business Plus upwards, retains data according to rules you set and lets you search it, but, as its help pages say, it is not designed for backup. In Microsoft 365, a deleted mailbox is kept for 30 days, and backup is a separate service, Microsoft 365 Backup, billed by the amount of data protected.
+
+With hosting, the answer depends on the provider: how often backups are made, how long they are kept and whether you can restore a single mailbox rather than the whole account. Keep important correspondence outside the email service as well: in an export made with the service’s own tools or in third-party backup software.'],
+            ['How the pricing works', 'Hosting email is usually not paid for separately: it comes with the plan, along with the plan’s limits. Google Workspace and Microsoft 365 are priced per user per month, so what you need to compare is the total for the whole company, not the price of a single licence.
+
+What to factor in:
+— the commitment term: both services offer monthly and annual options; with Google the annual one is cheaper, but you cannot reduce the number of licences until the term ends, even if you delete a user;
+— introductory discounts: work out the price after they end as well;
+— what does not need a separate licence: aliases in Google Workspace, shared mailboxes of up to 50 GB in Microsoft 365;
+— what is charged for even though it looks free: a suspended Google Workspace user;
+— tax: on Google’s pricing page, prices are shown without it.
+
+Prices change, so check them on the official page on the day you pay.'],
+            ['MX records and moving without losing emails', 'New emails start arriving at the new service once the MX record has been changed. Its value is given by the service itself: for Google Workspace it is currently a single smtp.google.com record with priority 1. If there are several MX records, the sending server first tries the one with the lower priority number and, if that does not respond, the next ones. That is why the old records are deleted; otherwise some emails may go to the old server.
+
+Old emails are moved over IMAP: in Google Workspace, with the data migration service in the Admin console, and in Microsoft 365, with IMAP migration in the Exchange admin center. Only email moves over IMAP: as Microsoft warns, contacts and calendars have to be moved separately.
+
+The order is as follows:
+1. Create the mailboxes in the new service and lower the TTL on the MX record in advance.
+2. Move the old email.
+3. Switch the MX record and immediately update SPF and DKIM for the new service.
+4. Once the DNS caches have expired, run the sync once more and pick up the emails that arrived in the old mailboxes.
+
+There is more on TTL in the article on moving a website to new hosting.'],
+        ],
+        'end'      => 'Business email is chosen not by the price of a single mailbox but by what happens on the awkward days: someone leaves, an important email gets deleted, the whole department reads a shared address. Hosting email covers the “address on your domain” job, while Google Workspace and Microsoft 365 add shared mailboxes, staff management, a calendar and documents on top. Either way, the domain stays yours, and you can change the service without changing the addresses.',
+    ],
+    'bezopasnost-sajta-kak-zashchitit-ot-vzloma' => [
+        'seoTitle' => 'Website security: how to protect it and what to do if hacked',
+        'seoDesc'  => 'Outdated plugins, shared passwords, forgotten accounts and backups on the same server: how websites get hacked and what to do if your site is hacked.',
+        'title'    => 'Company website security: how sites get hacked and what to do after a hack',
+        'desc'     => 'How small companies’ websites get hacked, a checklist to protect a website from hacking, and what to do if your site has already been hacked: from isolating it to requesting a review in Google.',
+        'rubric'   => 'Support',
+        'lead'     => 'A client writes to say that a link to your website opened a casino advert for them. Or, in Google, a note saying “This site may be hacked” has appeared under the link to your company’s site, and a search of the site turns up pages you never created. The attacker is not after your company but after your server and your domain’s reputation. They get in through everyday things: among the main ways sites are hacked, Google lists a guessed or stolen password, a missed update, an insecure theme or plugin. Let’s look at what website security is made up of, what to check right now and what to do if your site is hacked.',
+        'body'     => [
+            ['Why a small company’s website gets hacked', 'Among the motives for hacking, Google lists:
+
+— spam: links and pages are added to the site, or visitors are redirected to other people’s resources;
+— data theft: customer details, card numbers, logins and passwords;
+— malicious code that loads content from other sites into your pages.
+
+None of this requires a large or well-known site. Admin passwords are guessed by programs: according to the WordPress documentation, such attacks are automated and often run through botnets — networks of infected computers.
+
+The consequences go beyond the site. According to Search Console Help, infected pages may get a warning in search results, and the browser may show a warning page instead of them. The hosting provider may take the site offline. If spam is sent through the site, the server’s IP address ends up on blacklists, and the company’s email with it, if the email runs on the same server.'],
+            ['An outdated CMS, plugins and themes', 'The OWASP Top 10 — a list of the most critical risks to web applications from the non-profit OWASP Foundation — includes, in its 2025 edition, a category called “software supply chain failures”: it is about other people’s code that yours depends on. In OWASP’s wording, an application is likely vulnerable if its software is out of date, unsupported or contains known vulnerabilities. For a CMS-based site, that means the core, plugins and themes.
+
+Updates and PHP support dates are covered in the article on website technical support. Something else matters more here: you can only update what someone is still updating. Google advises removing themes and plugins that are no longer maintained and deleting all their files from the server, not just deactivating them.
+
+Two more sources of risk. The first is paid themes and plugins downloaded for free from third-party sites: according to Google, adding malicious code to such copies is a common trick. The second is forgotten copies of the site: an old version on a subdomain, a test folder, an archive in the site’s root. Nobody updates them, yet they open just like the main site.'],
+            ['Passwords, a second factor and forgotten accounts', 'A familiar picture: one admin password for everyone, a former developer knows it, and one of the staff uses it for their personal email too. A password leaked from another service will be tried on your site as well: OWASP calls this credential stuffing — trying “login — password” pairs taken from other services’ leaks.
+
+The US guideline NIST SP 800-63B, in its 2025 edition, requires the following of login systems: a password used as the only factor must be at least 15 characters long, and one used together with a second factor at least 8. It prohibits mandatory special characters and scheduled password changes: a password should be changed when there are signs of compromise. Long unique passwords are easy to keep in a password manager.
+
+A second factor — a code from an app or a physical key — protects you even when the password has been found out. According to the WordPress documentation, it is not built into the core but added with a plugin, and it is recommended for all administrators. Turn it on, too, wherever the site can be managed without going through the admin panel: in the hosting panel, at the domain registrar and in the email account used to reset passwords.
+
+Accounts from the past are a separate issue: an employee who has left, a former contractor, a test user. Google counts administrator rights held by people who do not need them among security gaps. Review the user list whenever someone leaves, and give the minimum role: in WordPress, the “Author” role is enough to publish news. The WordPress documentation advises against using the login admin.'],
+            ['Hosting, file access and permissions', 'On shared hosting, your account shares a server with other people’s sites, and the WordPress documentation warns that if a neighbouring site is hacked, yours may suffer too, even if you have followed all its advice.
+
+What to check on your side:
+
+— files are uploaded over SFTP: unlike FTP, it transmits the password and data in encrypted form;
+— file permissions: for shared hosting where the site’s scripts run as your user, the WordPress documentation recommends 755 or 750 for folders, 644 or 640 for files, and 440 or 400 for wp-config.php so that other users on the server cannot read it; no folder should have 777, not even the uploads folder;
+— the built-in theme and plugin editor is disabled with the line define( \'DISALLOW_FILE_EDIT\', true ); in wp-config.php: according to the documentation, an attacker who has managed to log in often starts with exactly this editor; it will not stop malicious files from being uploaded, but it cuts off some attacks;
+— if the site does not use xmlrpc.php, this entry point is disabled: the WordPress documentation calls it a frequent target of password-guessing attacks.
+
+The computer used to log in to the admin panel is part of the picture too. According to the WordPress documentation, an infection often starts on the owner’s computer: a Trojan intercepts the FTP and admin passwords.'],
+            ['A backup on the same server is not insurance', 'A backup in the same hosting account can be deleted or corrupted along with the site: all it takes is access to the account. At least one copy should be kept outside the hosting, in storage with a separate login. The “3-2-1” rule is covered in the article on technical support.
+
+For recovering from a hack, how far back the backups go matters as well. The first step in Google’s guide to cleaning up a site is to make sure the backup was made before the hack. If the infection was noticed late, the recent backups already contain someone else’s code.
+
+The backup must include both the files and the database. And before cleaning up, both Google and WordPress advise saving one more copy — the infected one — so that there is something to go back to if something goes wrong.'],
+            ['Website security: a checklist to protect a website from hacking', '1. Update the core, plugins and theme; remove everything unused and abandoned from the server.
+2. Get rid of pirated themes and plugins, old copies of the site and archives in public folders.
+3. Give everyone their own login and the minimum role; delete the accounts of staff and contractors who have left.
+4. Turn on a second factor for the admin panel, the hosting panel, the registrar and email; limit the number of login attempts to the admin panel.
+5. Switch to long unique passwords from a password manager.
+6. Work over SFTP, check file permissions, disable the file editor in the admin panel.
+7. Keep a backup outside the hosting and know how many days back you can roll back.
+8. Verify the site in Google Search Console so that you learn about security issues from the report, not from customers.'],
+            ['What to do if your site is hacked, step by step', 'The order below is based on Google’s guides and the WordPress documentation.
+
+1. Write down what you see, when you noticed it and what was changed on the site in the last few days.
+2. Take the site offline and tell your hosting provider. Google advises stopping the web server or pointing the domain to a page on another server that returns a 503 status code: simply serving an error from the hacked server is not enough.
+3. Save a copy of the site in its infected state and label it as infected.
+4. Scan the computers that were used to log in to the admin panel and the hosting panel with antivirus software.
+5. Delete the accounts the attacker created. Change the passwords for the admin panel, the hosting panel, FTP and SFTP, the database and email. In WordPress, replace the secret keys in wp-config.php — this ends all open sessions.
+6. Restore the site from a backup made before the hack, or reinstall the system from scratch: according to Google, a simple update may leave behind files from the previous version, including infected ones. Check .htaccess and the theme’s main files separately.
+7. Update everything, close the vulnerability that was used to get in, and change the passwords again.
+8. Type site: followed by the site’s address into Google and check for pages that are not yours. They should return a 404 error. The URL removal tool in Search Console will help take them out of search faster, but only for the attacker’s pages, not for your own pages that they damaged.
+9. Once all the pages in the “Security issues” report in Search Console have been fixed, request a review there and describe what you found and what you did.
+
+According to Search Console Help, a review takes anywhere from several days to several weeks. Do not send another request while you are waiting for an answer. And a request submitted before everything has been fully fixed can delay the next review.'],
+        ],
+        'end'      => 'The causes of a hack described in this article can be seen in advance: a plugin without updates, a shared password, a former contractor’s account, a single backup on the same server. Almost everything on the checklist is done once and then checked as part of the site’s regular maintenance. If the site has already been hacked, order matters more than speed: isolation and passwords first, then a clean backup and updates, and only then a review request in Google.',
+    ],
     'korporativnyj-sajt-kakie-stranicy-nuzhny' => [
         'seoTitle' => 'Corporate website: the pages you need and what goes on each',
         'seoDesc'  => 'The pages a business website in Baku needs: home, services, projects, about, contacts, privacy policy. What goes on each, what to launch with, what can wait.',

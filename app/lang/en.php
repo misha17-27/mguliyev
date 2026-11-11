@@ -51,6 +51,7 @@ return [
     'blog.nf' => 'Article not found',
     'blog.svc' => 'Related studio service',
     'blog.photo' => 'Photo',
+    'blog.related' => 'Related articles',
 
     'nf.h'    => 'Page not found',
     'nf.p'    => 'The address may have a typo, or the page has moved. Try one of the sections below.',

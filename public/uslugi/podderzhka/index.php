@@ -26,5 +26,6 @@ include __DIR__ . '/../../../app/partials/head.php';
     </div>
   </div>
 </section>
+<?php $svcSlug = 'podderzhka'; include __DIR__ . '/../../../app/partials/related_articles.php'; ?>
 </main>
 <?php include __DIR__ . '/../../../app/partials/foot.php'; ?>

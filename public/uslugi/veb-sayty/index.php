@@ -120,5 +120,6 @@ $h2  = 'font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:16px';
 
   </div>
 </section>
+<?php $svcSlug = 'veb-sayty'; include __DIR__ . '/../../../app/partials/related_articles.php'; ?>
 </main>
 <?php include __DIR__ . '/../../../app/partials/foot.php'; ?>

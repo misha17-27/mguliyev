@@ -8,6 +8,714 @@
    показывается по-русски и на этом языке не индексируется. */
 
 return [
+    'kak-vybrat-veb-studiyu-v-baku' => [
+        'seoTitle' => 'Bakıda veb-studiya necə seçilir: portfolio və müqavilə',
+        'seoDesc'  => 'Sayt hazırlayan şirkət seçimi: portfolioda nəyi yoxlamalı, studiyadan və ya frilanserdən nə soruşmalı, hansı cavablar şübhə doğurur, müqaviləyə nə yazmalı.',
+        'title'    => 'Bakıda veb-studiya və ya frilanser necə seçilir: portfolio, suallar və müqavilə',
+        'desc'     => 'Portfolioda nəyi yoxlamalı, müqavilə imzalanana qədər nə soruşmalı, hansı cavablar şübhə doğurmalı və saytın və girişlərin şirkətdə qalması üçün müqaviləyə nə yazmalı.',
+        'rubric'   => 'Saytlar',
+        'lead'     => 'Sorğunu Bakıdakı üç veb-studiyaya və bir frilanserə göndərdiniz və dörd təklif aldınız: məbləğlər xeyli fərqlənir, hər birində portfoliodan gözəl şəkillər var. Onları qiymətə görə müqayisə etmək alınmır: bir rəqəmin arxasında dizayn, mətnlər və tərcümə dayanır, digərinin arxasında isə bunlar olmadan hazır şablon. Fərqi müqaviləni imzalamazdan əvvəl aydınlaşdırmaq daha asandır, nəinki sayt işə salındıqdan sonra, domenin və parolların icraçıda qaldığı məlum olanda. Gəlin baxaq: veb-studiya və ya sayt tərtibatçısı necə seçilir, portfolioda nəyi yoxlamalı, hansı sualları verməli, hansı cavablar şübhə doğurmalı və müqaviləyə nə yazmalı.',
+        'body'     => [
+            ['Veb-studiyanın portfoliosunu necə yoxlamalı', 'Təqdimatdakı və ya Behance-dəki maket dizaynerin necə işlədiyini göstərir. İşləyən sayt isə daha çox şey deyir: maketi koda qədər çatdırıblar, saytı işə salıblar və o, bu gün də açılır.
+
+Ona görə də yalnız skrinşotlar deyil, işləyən saytlara linklər istəyin. Onlardan iki-üçünü özünüz açın və yoxlayın:
+— sayt telefonda özünü necə aparır: menyu, formalar, zəng düyməsi;
+— sayt çoxdillidirsə, səhifələr tam tərcümə olunub, yoxsa yalnız menyu;
+— səhifənin aşağı hissəsində nə yazılıb: orada bəzən tərtibatçı göstərilir, amma imzanın olmaması heç nəyi sübut etmir — onu sifarişçinin xahişi ilə silə bilərdilər;
+— sayt əvvəllər necə görünürdü: o, web.archive.org-dakı Wayback Machine arxivinə düşübsə, surətlərin tarixlərindən indiki dizaynın nə vaxt yarandığı görünür; arxiv bütün saytları saxlamır.
+
+İcraçıdan soruşun ki, hər layihədə məhz nə edib. «Bizim saytımız» həm sıfırdan hazırlanma, həm də başqasının saytında bannerin dəyişdirilməsi demək ola bilər. Bir-iki sifarişçinin əlaqə məlumatlarını istəyin və onlara üç sual verin: müddətlərə əməl olunubmu, düzəlişlər necə gedib və sayta girişlər hazırda kimdədir.'],
+            ['Saytınızı kim hazırlayacaq', 'Sayt tərtibatçısını seçmək — layihəniz üzərində konkret olaraq kimin işləyəcəyini anlamaq deməkdir. Studiyada adətən bir neçə rol olur: menecer, dizayner, proqramçı, bəzən kopirayter və tərcüməçi. Frilanser çox vaxt hər şeyi özü edir və ya tanışlarını cəlb edir. Variantlardan heç biri özlüyündə digərindən pis deyil — vacib olan komandanın tərkibini əvvəlcədən bilməkdir.
+
+Soruşun:
+— bütün layihə boyu əlaqə şəxsiniz kim olacaq və məzuniyyət və ya xəstəlik dövründə onu kim əvəz edəcək;
+— dizaynı və kodu kim hazırlayır: əməkdaşlar, yoxsa cəlb olunmuş icraçılar;
+— bu adam sizinki ilə paralel daha neçə layihə aparır;
+— sayt hansı idarəetmə sistemi (CMS) və ya freymvork üzərində olacaq və niyə məhz o seçilib.
+
+Frilanserlə ayrıca risk var — bir nəfərdən asılılıq. O, cavab verməyi dayandırsa, işi başqa tərtibatçı davam etdirə bilər, amma yalnız bütün girişlər və mənbə kodu sizdədirsə, sayt isə geniş yayılmış sistem və ya freymvork üzərində hazırlanıbsa.'],
+            ['Qiymətə nə daxildir və nə ayrıca ödənilir', 'Təklifləri yalnız eyni işi təsvir etdikləri halda müqayisə etmək olar. Hər icraçıdan smetanı bəndlər üzrə yazmağı xahiş edin və siyahıları tutuşdurun:
+— neçə səhifə və səhifə şablonu, hansı formalar və funksiyalar;
+— qiymətə neçə dizayn variantı və neçə düzəliş dövrəsi daxildir;
+— telefonlara və planşetlərə uyğunlaşdırma;
+— mətnlər, Azərbaycan, rus və ingilis dillərinə tərcümə, fotolar: onları kim hazırlayır — icraçı, yoxsa siz;
+— axtarış sistemləri üçün əsas ayarlar: səhifələrin başlıqları və təsvirləri, sayt xəritəsi, Search Console-un qoşulması;
+— domen, hostinq, SSL sertifikatı: daxildirmi, hansı müddətə və kimin adına rəsmiləşdirilir;
+— idarə panelində işləməyin öyrədilməsi.
+
+Siyahıda olmayan hər şey təhvil zamanı asanlıqla «əlavə iş» sayıla bilər. Smetalardan biri xeyli ucuzdursa, əvvəlcə orada bəndlərin daha az olub-olmadığını yoxlayın.
+
+Ayrıca aydınlaşdırın ki, işə salındıqdan sonra nə olacaq: səhvlərin əlavə ödəniş olmadan düzəldildiyi zəmanət müddəti varmı, ondan sonra düzəlişlər necə ödənilir və icraçı müraciətə nə qədər vaxta cavab verir.'],
+            ['Domen, hostinq və girişlər: sayt kimə məxsusdur', 'Dizaynı yenidən etmək olar. Domen və girişlərlə iş daha mürəkkəbdir: onlar icraçının adına rəsmiləşdirilibsə, onlara siz yox, o sərəncam verir. Domenin niyə şirkətin adına yazılmalı olduğu domen qeydiyyatı haqqında məqalədə ətraflı izah olunub.
+
+Sualı birbaşa verin: domen və hostinq kimin adına rəsmiləşdiriləcək və kabinetlərin parolları kimdə olacaq. Düzgün cavab — şirkətin adına, icraçı isə girişi iş müddətinə alır. .com domeninin qeydiyyat məlumatlarına lookup.icann.org-da, .az domeninkinə isə whois.az-da baxmaq olar. Açıq cavabda sahibin adı gizlədilə bilər, ona görə də registratorun kabinetində yoxlamaq daha etibarlıdır.
+
+İkinci sual — saytın idarəetmə sistemi. Açıq sistem üzərində qurulmuş saytı başqa tərtibatçıya təhvil vermək daha asandır. Məsələn, WordPress GPL lisenziyasının 2-ci və ya daha sonrakı versiyası ilə yayılır, «Alətlər → İxrac» bölməsində isə yazılar, səhifələr, şərhlər, kateqoriyalar və etiketlər XML faylına ixrac olunur — həmin faylı başqa WordPress quraşdırmasına idxal etmək olar.
+
+Studiyanın öz sistemi ilə də işləmək olar, amma bu halda yazılı cavab istəyin: mənbə kodu sizə verilirmi, başqa tərtibatçı işi davam etdirə biləcəkmi və məzmunu — səhifələri, məhsulları, müraciətləri — standart formatda ixrac etmək mümkündürmü.'],
+            ['Müddətlər və ödəniş: icraçı gecikərsə, nə olacaq', 'Mərhələləri göstərilməyən «iki ay» müddəti az şey ifadə edir. Qrafik istəyin: prototip, dizayn, maketin koda keçirilməsi və proqramlaşdırma, məzmunla doldurma, test, işə salınma. Hər mərhələnin tarixi və sizin qəbul etdiyiniz nəticəsi olmalıdır.
+
+Müddətlərin bir hissəsi sizdən asılıdır: mətnlər, fotolar, maketlərin razılaşdırılması. Cavab üçün neçə gününüz olduğu və materiallar gecikərsə, qrafikin necə sürüşəcəyi barədə razılığa gəlin.
+
+Ödənişi mərhələlərə bağlamaq rahatdır: avans, dizayn qəbul edildikdən sonra ödəniş, qalan məbləğ işə salındıqdan sonra. Payların nisbəti razılaşma məsələsidir. Vacib olan odur ki, son ödəniş saytın işlədiyi və girişlərin təhvil verildiyi vaxta düşsün.
+
+Və birbaşa soruşun: müddətləri icraçı pozarsa, nə olacaq — qiymət azalırmı, dəbbə pulu nəzərdə tutulubmu, müqaviləni ləğv etmək olarmı və bu halda nə alacaqsınız — ödənilmiş mərhələlər üzrə maketləri, kodu, materialları.'],
+            ['Hansı cavablar şübhə doğurmalıdır', 'Şübhəni yüksək qiymət və ya təvazökar ofis deyil, belə cavablar və şərtlər doğurmalıdır:
+— domeni və ya hostinqi «daha asan olsun deyə» icraçının adına rəsmiləşdirməyi təklif edirlər;
+— müqavilə yoxdur və ya onu «sonra» vəd edirlər, iş isə messencerdəki yazışma ilə gedir;
+— icraçı sayta, domen və hostinq kabinetlərinə administrator girişini verməyə hazır deyil;
+— sayt məzmunu ixrac etmək mümkün olmayan qapalı sistem üzərindədir, mənbə kodu isə verilmir;
+— portfolioda yalnız maketlər var, işləyən sayta isə bir dənə də link yoxdur;
+— müəyyən tarixə qədər Google-da birinci yer vəd edirlər.
+
+Google-un sayt sahibləri üçün yardım materiallarında açıq yazılıb ki, heç kim Google-da birinci yerə zəmanət verə bilməz. Orada həmçinin öz hərəkətlərini gizli saxlayan və ya nə edəcəklərini aydın izah edə bilməyən SEO podratçılarına ehtiyatla yanaşmağı məsləhət görürlər və xatırladırlar: işə götürdüyünüz şirkətin hərəkətlərinə görə məsuliyyəti siz daşıyırsınız.'],
+            ['Sayt hazırlanması müqaviləsinə nə yazmalı', 'Müqavilə təkcə mübahisə halı üçün lazım deyil: o, hər iki tərəfin «sayt» sözü altında nəyi başa düşdüyünü qeydə alır. Orada bunları təsbit etməyə dəyər:
+1. İşlərin siyahısı — müqaviləyə əlavə kimi texniki tapşırıq.
+2. Mərhələlər, müddətlər və hər mərhələdə icraçının sizdən nə gözlədiyi.
+3. Qəbul qaydası və düzəliş dövrələrinin sayı.
+4. Dəyər və mərhələlər üzrə ödəniş qrafiki.
+5. Dizayn, mətnlər və kod üzərində hüquqlar.
+6. Təhvil zamanı verilən girişlərin siyahısı, həmçinin domenin, hostinqin və ödənişli servislərin kimin adına rəsmiləşdirildiyi.
+7. Zəmanət müddəti və işə salındıqdan sonra dəstək şərtləri.
+8. Müddətlərin pozulmasının nəticələri və müqavilənin ləğvi qaydası.
+
+Hüquqlar barədə bəndi ayrıca yazmağa dəyər. Azərbaycan Respublikasının «Müəllif hüququ və əlaqəli hüquqlar haqqında» Qanunu kompüter proqramlarını da, dizayn əsərlərini də müəllif hüququ obyektlərinə aid edir. Bu qanuna görə müəllif müqaviləsi yazılı formada bağlanır və orada əsərdən istifadə üsulları, müddət və ərazi göstərilir. Belə müqavilə üzrə hüquqlar, müqavilədə başqa hal nəzərdə tutulmayıbsa, qeyri-müstəsna hesab olunur. Ərazi göstərilməyibsə, müqavilənin qüvvəsi Azərbaycanla məhdudlaşır. Müddət göstərilməyibsə, müəllif müqaviləni bağlanmasından beş il sonra, bu barədə altı ay əvvəl yazılı xəbərdarlıq etməklə ləğv edə bilər.
+
+Bundan əlavə, maddi daşıyıcı üzərində mülkiyyət hüququnun verilməsi özlüyündə əsər üzərində müəllif hüququnu vermir. Başqa sözlə, saytın faylları sizin hostinqinizdə ola bilər, dizayn və kod üzərində müstəsna hüquqlar isə icraçıda qala bilər. Ona görə də müstəsna hüquqların şirkətə verilməsini açıq şəkildə yazmaq daha yaxşıdır. Hazır komponentlər — WordPress, ödənişli temalar və plaginlər — öz lisenziyaları ilə yayılır, onların siyahısını da əlavə etməyə dəyər. Müqavilənin son redaksiyasını hüquqşünasa göstərmək məqsədəuyğundur.'],
+        ],
+        'end'      => 'İcraçını şəkillərə və ən aşağı rəqəmə görə deyil, konkret suallara verilən cavablara görə seçməyə dəyər: işə nə daxildir, onu kim görür və təhvildən sonra qalan hər şey kimin adına rəsmiləşdirilib. Söhbətlərdən sonra əlinizdə bəndlər üzrə smeta, mərhələli qrafik və hüquqların və girişlərin yazıldığı müqavilə layihəsi varsa, təklifləri müqayisə etmək olar.',
+    ],
+    'konstruktor-ili-sajt-pod-klyuch' => [
+        'seoTitle' => 'Sayt konstruktoru, yoxsa sifarişlə sayt: şirkət nəyi seçməli',
+        'seoDesc'  => 'Tilda, yoxsa açar təhvil sayt: konstruktor nə vaxt kifayətdir, sifarişlə sayt nə vaxt lazımdır — ixrac, dillər, yerli banklarla ödəniş, bütün müddətin xərci.',
+        'title'    => 'Sayt konstruktoru, yoxsa sifarişlə sayt: Tilda nə vaxt kifayətdir, öz saytınız nə vaxt lazımdır',
+        'desc'     => 'Konstruktorda sayt, yoxsa sifarişlə hazırlama: sərhəd haradan keçir, Tilda və Wix-dən nəyi götürmək olmur və saytın bütün ömrü boyu xərcləri necə müqayisə etmək olar.',
+        'rubric'   => 'Saytlar',
+        'lead'     => 'Şirkətə sayt lazımdır və seçim dərhal qarşıya çıxır: onu Tilda və ya Wix-də özünüz yığmaq, yoxsa hazırlanmasını sifariş vermək. Tanışlardan biri konstruktoru məsləhət görür — tez və podratçısız, digəri isə açar təhvil sayt təklif edir. Hər ikisi öz baxımından haqlıdır, seçimdəki səhv isə sonra üzə çıxır: yerli bank vasitəsilə ödəniş qəbul etmək, Azərbaycan dilində versiya əlavə etmək və ya saytı platformadan götürmək lazım gələndə. Gəlin araşdıraq: sizə nəyin daha çox lazım olduğunu — sayt konstruktoru, yoxsa sifarişlə sayt — necə müəyyənləşdirmək olar, konstruktordakı saytı nə məhdudlaşdırır və xərcləri birinci ay üzrə deyil, bütün müddət üzrə necə müqayisə etməli.',
+        'body'     => [
+            ['Konstruktor nə vaxt kifayət edir', 'Konstruktor saytın brauzerdə hazır bloklardan yığıldığı xidmətdir: hostinqi, sertifikatı və yeniləmələri isə platforma öz üzərinə götürür. Bir çox tapşırıq üçün bu kifayətdir:
+
+— vizit kart sayt və ya xidmətlər, əlaqə məlumatları və forma olan bir səhifə;
+— ömrü qısa olan layihə: tədbir, mövsümi aksiya, hazırlanmaya sərmayə qoymazdan əvvəl ideyanın yoxlanması;
+— saytı bir nəfər idarə edir və onun üçün podratçını gözləməkdənsə mətni özü düzəltmək daha vacibdir;
+— saytın uçot sistemi, anbar və ya yerli ödəniş sistemi ilə əlaqəyə ehtiyacı yoxdur.
+
+Pulsuz tarif şirkətin işlək saytı üçün adətən yaramır. Tilda-da bu tarifdə öz domeninizi qoşmaq olmur, səhifələrin sayı 50-dən çox ola bilməz, formalardan məlumat qəbul edən servislər isə əlçatan deyil. Wix-də pulsuz sayt platformanın ünvanında, onun reklam banneri ilə işləyir, öz domeninizi isə yalnız ödənişli planla birlikdə qoşmaq olur. Buna görə də sifarişlə hazırlama ilə ödənişli tarifi müqayisə etməyə dəyər.'],
+            ['Abunəlik alış deyil, icarədir', 'Konstruktorda siz sayt üçün deyil, abunəlik davam etdikcə ondan istifadə hüququ üçün ödəyirsiniz. Abunəliyi uzatmasanız nə baş verəcəyini platformalar açıq yazır. Tilda saytı dərcdən çıxarır, məlumatları altı ay saxlayır, sonra isə onları geri qaytarılmaz şəkildə silir. Wix-də sayt internetdə qalır, amma platformanın pulsuz ünvanına qayıdır və orada yenidən Wix reklamı göstərilir.
+
+İcarənin özü konstruktoru pis seçim etmir: hostinq və yeniləmələr də pula başa gəlir, burada isə onlar artıq qiymətə daxildir. Vacib olan başqa şeydir: ödəniş sayt mövcud olduqca təkrarlanır və ehtiyaclarınızla birlikdə artır. Wix-də hər sayta ayrıca plan lazımdır. İmkanların bir hissəsi yalnız yuxarı tariflərdə — məsələn, Tilda-da ixrac belə qurulub — və ya öz abunəliyi olan ayrıca servislərdə əlçatandır. Məsələn, Squarespace-də tərcümələri Weglot servisi edir: pulsuz olaraq bir əlavə dil və 2000 sözə qədər, sonra isə Weglot-un özündə ayrıca abunəlik lazımdır.'],
+            ['Saytı konstruktordan götürmək olarmı', 'Bir qayda olaraq, yalnız qismən, sərhəd isə hər platformada başqa yerdən keçir.
+
+— Wix yardım bölməsində açıq yazır ki, sayt Wix serverlərində işləməlidir və onu başqa hostinqə köçürmək mümkün deyil. Məsələn, mağazanın məhsullarını ixrac etmək olar — CSV faylına, bir faylda 5000 sətrə qədər.
+— Squarespace WordPress XML formatında fayl ixrac edir: adi səhifələr, bir bloq, mətn blokları və şəkil blokları. Mağaza səhifələri, məhsul blokları, üslub ayarları və sizin öz CSS kodunuz ona düşmür. Məhsullar ayrıca, CSV formatında ixrac olunur, amma şəkillərsiz.
+— Shopify da məhsulları CSV-yə ixrac edir, amma şəkillərin özü fayla daxil olmur: idxal zamanı yeni mağaza onları yalnız köhnə mağazada əlçatan olduqca alacaq. Buna görə də Shopify idxal bitənə qədər köhnə mağazanı bağlamamağı və məhsulları silməməyi məsləhət görür.
+— Tilda saytı statik HTML şəklində ixrac edir, amma yalnız Business tariflərində. İxracdan sonra formalar məlumatları yalnız aktiv abunəlik olduqda göndərir, məhsul kataloqu, Tilda CRM və şəxsi kabinetlər isə ixrac olunmur. Qaydalar kodu yalnız sayt ayarlarında göstərilmiş domendə yerləşdirməyə icazə verir və onu platformadan kənarda dəyişməyi qadağan edir.
+
+Praktikada konstruktordan köçmək məzmunun köçürüldüyü yeni sayt deməkdir. Onun dəyərini hesablamaya əvvəlcədən daxil etmək daha yaxşıdır.'],
+            ['Konstruktordakı saytda dillər və SEO', 'Sayta Azərbaycan, rus və ingilis dillərində versiyalar lazımdırsa, platformalar bunu müxtəlif yollarla həll edir.
+
+— Wix-də tərcümə daxili funksiyadır: dil versiyaları standart olaraq bir domenin alt qovluqlarında açılır, hreflang teqlərini platforma özü əlavə edir.
+— Shopify-da dərc edilmiş hər dilin öz səhifə ünvanları olur, tərcümələri isə Translate & Adapt tətbiqi, CSV faylları və ya üçüncü tərəf tətbiqləri vasitəsilə əlavə edirlər.
+— Tilda-da dil versiyaları bir layihədəki ayrıca səhifələr və ya dil dəyişdirmə menyusu ilə bir-birinə bağlanmış ayrıca layihələrdir; ayrıca layihələr üçün Business tarifi lazımdır. Tilda-nın yardım bölməsinə görə, hreflang nişanlanmasını səhifənin HEAD hissəsinə HTML kodu vasitəsilə əl ilə əlavə edirlər.
+— Squarespace-də Weglot vasitəsilə tərcümələr yalnız 7.1 versiyasında qoşulur, onları isə Squarespace-in özündə deyil, yalnız Weglot interfeysində redaktə etmək olar.
+
+Axtarış ayarlarında da vəziyyət oxşardır: siz platformanın ayarlara çıxardığı şeyləri idarə edirsiniz. Məsələn, Tilda-da robots.txt və sitemap.xml avtomatik yaradılır, 301 yönləndirmələri isə sayt ayarlarında təyin olunur. Şablonların kodu, platformanın skriptləri və server ayarları onun nəzarətində qalır. Vizit kart sayta bu nadir hallarda mane olur, axtarışdan müştəri gətirməli olan üçdilli kataloq üçün isə nəzərəçarpacaq maneəyə çevrilir. Dil versiyalarının necə qurulduğu az, ru və en dillərində sayt haqqında ayrıca məqalədə izah olunub.'],
+            ['Yerli banklar vasitəsilə ödəniş qəbulu', 'Sayt ödəniş qəbul etməlidirsə, platforma seçiminə şablonlardan deyil, ödəniş hissəsindən başlayırlar.
+
+— Shopify Payments məhdud ölkələr siyahısında işləyir və Azərbaycan bu siyahıda yoxdur. Buradan işləyən mağazaya üçüncü tərəf ödəniş provayderi lazımdır, onun vasitəsilə keçən ödənişlərdən isə Shopify öz komissiyasını tutur; komissiyanın həcmi tarifdən asılıdır.
+— Tilda və Squarespace-ə inteqrasiya olunmuş Stripe Azərbaycan şirkətləri üçün əlçatan deyil: ölkə onun siyahısında yoxdur.
+— Tilda-nın hazır inteqrasiyaları Stripe, PayPal, Verifone və ayrı-ayrı ölkələr üçün sistemlərdir. Qalanları üçün Custom Payment Gateway var: qoşulma şablonunu ödəniş sisteminin tərtibatçıları yaradır, üçüncü tərəf inteqrasiyaları ilə bağlı suallarda isə Tilda-nın dəstək xidməti kömək etmir.
+— Squarespace yardım bölməsində ödəniş qəbulunun üç üsulunu adlandırır — Squarespace Payments, Stripe və PayPal, mağaza valyutalarının siyahısında isə Azərbaycan manatı yoxdur.
+— Wix-in ölkələr üzrə ödəniş provayderləri barədə yardım səhifəsində Azərbaycan üçün yalnız PayPal göstərilib.
+
+Praktik addım: platformanı seçməzdən əvvəl işləmək niyyətində olduğunuz bankdan və ya ödəniş provayderindən soruşun ki, onların bu platforma üçün hazır modulu varmı. Modul yoxdursa, ödənişin qoşulması ayrıca hazırlama işinə çevrilir — hətta konstruktorda belə.'],
+            ['Sifarişlə hazırlama və ya açıq CMS nə vaxt lazımdır', 'Açar təhvil sayt və ya açıq idarəetmə sistemi sayt vizit kartı deyil, iş aləti olanda özünü doğruldur:
+
+— sayt uzun müddət işləyir və onun vasitəsilə müraciətlər və ya satışlar gəlir;
+— uçot sistemi, CRM, anbar, çatdırılma və ya yerli bankla əlaqə lazımdır;
+— hər biri üçün ayrıca axtarış ayarları olan üç dil;
+— qeyri-standart məntiq: kalkulyator, şəxsi kabinet, bron, cədvəldən götürülən qiymət siyahısı;
+— kod və server üzərində tam nəzarət və istənilən vaxt köçmək imkanı lazımdır.
+
+Konstruktorla tamamilə öz hazırlamanız arasında orta variant da var — WordPress kimi açıq idarəetmə sistemləri. WordPress GPLv2 və ya daha sonrakı versiyanın lisenziyası ilə sərbəst yayılır və adi hostinqdə işləyir: tövsiyə olunan tələblərdə PHP 8.3 və ya daha yeni, həmçinin MySQL 8.0 və ya MariaDB 10.11 və daha yeni versiyalar göstərilib. Belə sayt fayllardan və verilənlər bazasından ibarətdir və onları bütövlükdə başqa hostinqə köçürmək olar. Tərs tərəfi budur: nüvənin, plaginlərin və temaların yenilənməsi sizin və ya podratçının üzərinə düşür; belə dəstəyə nələrin daxil olduğu ayrıca məqalədə izah olunub.
+
+Sayt sifarişlə hazırlanırsa, müqavilədə təsbit edin: mənbə kodu kimə məxsusdur, harada saxlanılır və hostinqə və domenə girişlər kimdədir. Köçmək azadlığı yalnız kod və girişlər sizdə olanda mövcuddur.'],
+            ['Sayt konstruktoru, yoxsa sifarişlə sayt: dəyəri necə müqayisə etməli', 'Birinci ayın qiymətlərini müqayisə etməyin mənası yoxdur: konstruktorda demək olar ki, hər şey müntəzəm ödənişdir, sifarişlə hazırlamada isə əsas məbləğ başlanğıca düşür. Eyni müddət üzrə ümumi məbləği müqayisə edirlər — sayta ayırdığınız müddət üzrə.
+
+Konstruktor üçün hesablamaya bunlar daxildir:
+
+— bu müddətin bütün aylarına görə abunəlik, yeni funksiyalar lazım olanda yuxarı tarifə keçidlə birlikdə;
+— domen, əgər tarifə daxil deyilsə;
+— ödənişli tətbiqlər, genişlənmələr və tərcümə servisləri;
+— platformanın ödənişlərdən tutduğu komissiyalar, əgər varsa;
+— saytı yığan və idarə edən əməkdaşın vaxtı;
+— sayt platformanın imkanlarını aşarsa, köçmə.
+
+Sifarişlə hazırlama üçün:
+
+— hazırlama və işə salma;
+— hostinq, domen və SSL sertifikatı, əgər ödənişlidirsə;
+— dəstək: yeniləmələr, ehtiyat nüsxələr, xırda düzəlişlər;
+— böyüdükcə təkmilləşdirmələr.
+
+Ayrıca sətir kimi qiymətləndirin: getmək qərarına gəlsəniz, əlinizdə nə qalacaq. Konstruktordan — platformanın ixracının imkan verdiyi şey: adətən saytın məntiqi olmadan məzmun. Öz kodunuzdan və ya açıq CMS-dən — köçürülə bilən işlək sayt.'],
+        ],
+        'end'      => 'Konstruktor bir nəfərin idarə etdiyi və bankla, uçotla əlaqələndirilməsi tələb olunmayan sadə sayt üçün normal seçimdir. Sayt nə qədər uzun yaşamalıdırsa və onda nə qədər çox dil və inteqrasiya varsa, icarə bir o qədər baha başa gəlir, köçmək isə bir o qədər çətinləşir. Seçim etməzdən əvvəl platformanın yardım bölməsində üç şeyi yoxlayın: ödəniş edilmədikdə nə olacaq, nəyi ixrac etmək mümkündür və platforma sizin ödəniş provayderinizi dəstəkləyirmi.',
+    ],
+    'redizajn-sajta-bez-poteri-pozicij' => [
+        'seoTitle' => 'Saytın redizaynı Google mövqelərini itirmədən: çek-list',
+        'seoDesc'  => 'Saytın yenilənməsi axtarış trafikini itirmədən: Search Console-da ünvan siyahısı, 301 yönləndirmələri, bağlı test nüsxəsi və işə salınandan sonra yoxlama.',
+        'title'    => 'Saytın redizaynı Google mövqelərini itirmədən: işə salınmadan əvvəl və sonra nə etməli',
+        'desc'     => 'Saytı Google-dan gələn ziyarətçiləri itirmədən necə yeniləmək olar: hansı səhifələri saxlamalı, 301 yönləndirmələrini necə qurmalı, test nüsxəsini necə bağlamalı və işə salınandan sonra nəyi yoxlamalı.',
+        'rubric'   => 'Saytlar',
+        'lead'     => 'Şirkətin saytı köhnəlmiş görünür, telefondan ondan istifadə etmək narahatdır, qiyməti və ya mətni isə proqramçısız dəyişmək olmur — saytın redizaynı vaxtıdır. Adətən bu mərhələdə dizaynı müzakirə edirlər, axtarışı isə işə salınmadan bir ay sonra, Google-dan gələn zənglər azalanda xatırlayırlar. Amma axtarış üçün rənglər və şriftlər deyil, səhifələrin ünvanları, onlardakı mətn və indeksləməyə icazə vacibdir — redizayn zamanı məhz bunlar hiss olunmadan pozulur. Gəlin araşdıraq ki, Google mövqelərini itirmədən redizaynı necə aparmaq olar: işlərə başlamazdan əvvəl nəyi siyahıya almalı, nəyi saxlamalı, haraya yönləndirməli və işə salınandan sonra nəyi yoxlamalı.',
+        'body'     => [
+            ['Saytın redizaynı nə vaxt lazımdır və nəyə toxunmamaq olar', 'Saytın yenilənməsi üçün səbəblər adətən praktiki olur:
+
+— telefondan ondan istifadə etmək narahatdır, Google isə saytları məhz mobil versiyaya əsasən indeksləyir və sıralayır;
+— mətni, qiymətləri və ya fotoşəkilləri proqramçısız dəyişmək olmur;
+— CMS çoxdan yenilənməyib və onu saytı yenidən qurmadan yeniləmək artıq alınmır;
+— şirkətin xidmətləri və ya korporativ üslubu dəyişib, sayt isə əvvəlki kimi qalıb.
+
+Redizayn hər şeyi dəyişmək məcburiyyətində deyil. Axtarış üçün ən sakit variant səhifələrin eyni ünvanları və eyni məzmunu ilə yeni görünüşdür. Dizaynla birlikdə səhifələrin ünvanları və ya domen də dəyişirsə, Google üçün bu, artıq saytın köçürülməsidir və onun bu hal üçün ayrıca təlimatı var. Oradakı tövsiyələrdən biri bir dəfəyə yalnız bir şeyi dəyişməkdir, məsələn, əvvəlcə domeni, sonra maketi: trafik düşəndə səbəbi belə anlamaq daha asandır.'],
+            ['Siyahıya alma: hansı səhifələr axtarışdan ziyarətçi gətirir', 'İşlərə başlamazdan əvvəl saytın bütün ünvanlarının siyahısını tərtib edin. Mənbələr:
+
+— sitemap.xml faylı və saytın idarəetmə sistemindəki səhifələrin siyahısı;
+— Search Console-dakı effektivlik hesabatı, «Səhifələr» tabı: hansı ünvanlar göstərmə və klik alır. Ən uzun dövrü seçin — Search Console məlumatları 16 ay saxlayır;
+— Search Console-dakı linklər hesabatı: digər saytların ən çox link verdiyi səhifələr;
+— server jurnalları və analitika: onlarda çoxdan menyudan çıxmış, amma hələ də daxil olunan ünvanlar görünür.
+
+«İxrac et» düyməsi hesabatı Google Cədvəllərə, Excel-ə və ya CSV-yə yükləyir, amma 1000 sətirdən çox olmayaraq — mindən az səhifəsi olan sayt üçün bu, kifayətdir.
+
+Faylları da unutmayın — şəkilləri, qiymət siyahısı və ya kataloq olan PDF-ləri: onların da ünvanları var və Google onları səhifələrlə birlikdə köçürməyi məsləhət görür.
+
+Siyahıya almanın nəticəsi üç sütunlu cədvəldir: köhnə ünvan, yeni ünvan və qərar — olduğu kimi saxlamaq, yönləndirmək və ya silmək. Sonra işə salınmanı da elə bu cədvəl üzrə yoxlayırlar.'],
+            ['Hər köhnə ünvana — öz yeni ünvanı', 'Səhifənin ünvanı dəyişirsə, köhnə ünvandan yenisinə daimi server yönləndirməsi lazımdır. Google 301 və 308 kodlarını daimi, 302, 303 və 307 kodlarını isə müvəqqəti hesab edir. Daimi yönləndirmədə axtarış nəticələrində yeni ünvan, müvəqqəti yönləndirmədə isə əvvəlki ünvan göstərilir.
+
+Apache serverlərində bir tələ var: kodu göstərilməmiş Redirect direktivi 302 qaytarır. Kodu açıq yazırlar, məsələn, Redirect 301 /old-page/ /new-page/.
+
+Google-un daha üç qaydası:
+
+— birbaşa son ünvana aparmaq, «köhnə — aralıq — yeni» zəncirləri olmadan;
+— onlarla köhnə ünvanı ana səhifəyə və ya onlara aidiyyəti olmayan başqa səhifəyə göndərməmək. Google belə yönləndirməni yalançı 404 xətası, yəni səhifənin olmaması kimi qiymətləndirə bilər. Bir neçə səhifə birində birləşdirilibsə, onları həmin səhifəyə aparmaq yerinə düşür;
+— əvəzi olmadan silinmiş səhifələr 404 və ya 410 kodu qaytarmalıdır.
+
+Google yönləndirmələri mümkün qədər uzun, adətən ən azı bir il saxlamağı məsləhət görür, köhnə linklərlə gələn ziyarətçilər naminə isə — hətta müddətsiz.'],
+            ['Səhifə mövqe itirməsin deyə onda nəyi saxlamalı', 'Yönləndirmə Google-a səhifənin köçdüyünü bildirir, amma mövqelərə zəmanət vermir: qiymətləndirilən yeni ünvanda yerləşən məzmundur. Google-un sözlərinə görə, səhifənin sorğuya uyğun olmasının ən əsas əlaməti onun başlıqlarında və ya mətnində sorğudakı sözlərin olmasıdır.
+
+Ona görə də səhifəni yenidən yazmazdan əvvəl onun hansı sorğularla tapıldığına baxın: effektivlik hesabatında məlumatları səhifənin ünvanına görə süzün və «Sorğular» tabını açın. Səhifəni «Bakıda xüsusi texnika icarəsi» sorğusu ilə tapırlarsa, yeni dizaynda isə mətndən yalnız «Bizim həllərimiz» başlığı və üç ikon qalıbsa, onun bu sorğuya cavab verəcək heç nəyi qalmır.
+
+Nəyi saxlamalı və ya köçürməli:
+
+— title teqini və h1 başlığını məna etibarilə: onları yaxşılaşdırmaq olar, amma ümumi sözlərlə əvəz etmək olmaz;
+— əsas mətni: xidmətin təsvirini, şərtləri, qiymətləri, tez-tez verilən suallara cavabları;
+— şəkilləri alt atributundakı təsvirləri ilə birlikdə;
+— daxili linkləri: onları yönləndirmə vasitəsilə işləməyə buraxmır, yeni ünvanlarla əvəz edirlər;
+— canonical teqini: hər yeni səhifədə o, səhifənin özünə işarə edir;
+— çoxdilli saytda — yeni ünvanlarla hreflang atributlarını.
+
+Mobil versiya barədə də: Google telefonda kompüterdəki eyni mətni və başlıqları saxlamağı məsləhət görür. Maketə sığmayan mətni silmirlər, tablara və ya açılan bloklara gizlədirlər, amma o, səhifənin kodunda dərhal olmalıdır: basanda yüklənən məzmunu Google yükləmir.'],
+            ['Test nüsxəsi: axtarışdan bağlamaq və açmağı unutmamaq', 'Yeni saytı test ünvanında — subdomendə və ya ayrıca qovluqda yığırlar. O, axtarışa düşməməlidir, əks halda orada öz səhifələrinizin nüsxələri peyda olacaq.
+
+Nüsxəni bağlamağın üsulları eyni dəyərdə deyil:
+
+— server səviyyəsində parol: Google məxfi məzmun üçün məhz onu məsləhət görür, robot parol sorğusundan başqa heç nə görmür;
+— meta teqdə və ya X-Robots-Tag HTTP başlığında noindex: səhifə indeksə düşməyəcək, amma linki olan hər kəs üçün açıqdır;
+— robots.txt-də qadağa zəmanət deyil. Belə bağlanmış səhifə haradasa ona link varsa, nəticələrdə görünə bilər, ondakı noindex-i isə robot oxumayacaq, çünki səhifəni skan etmir.
+
+Təhlükəli məqam işə salınma günüdür: test nüsxəsini qadağalarla birlikdə əsas domenə köçürürlər. Məsələn, WordPress-də «Axtarış sistemlərindən bu saytı indeksləməməyi xahiş et» qeyd xanası səhifələrə noindex meta teqi əlavə edir. Bu ayar verilənlər bazasında saxlanılır və onunla birlikdə köçür. Unudulmuş noindex-i və robots.txt-dəki qadağaları Google köçürmənin tipik səhvləri sırasında çəkir. Son robots.txt faylını əvvəlcədən hazırlayın və bütün qadağaları işə salınma anında götürün.'],
+            ['Sitemap və «Ünvan dəyişikliyi» aləti', 'İşə salınandan sonra Search Console-a yeni sitemap.xml göndərin — yalnız axtarışda görmək istədiyiniz yeni ünvanlarla. Köhnə ünvanlı xəritəni Google əvvəlcədən saxlamağı və onu da göndərməyi məsləhət görür: Sitemap faylları hesabatında onun üzrə köhnə ünvanların indeksdən necə çıxdığı görünür. Orada yönləndirmələr barədə xəbərdarlıqlar normaldır.
+
+Search Console-dakı «Ünvan dəyişikliyi» aləti yalnız domen və ya subdomen dəyişəndə lazımdır. https-ə keçid, www-dən www-siz variantına keçid, səhifələrin sayt daxilində köçürülməsi və ünvanlar dəyişmədən başqa hostinqə köçmək üçün o lazım deyil.
+
+Alətin şərtləri: köhnə ana səhifədən yenisinə 301 yönləndirməsi, arzuolunan haldasa — bütün köhnə səhifələrdən. Bundan başqa, Search Console-da hər iki resursun sahibi olmaq lazımdır, özü də eyni Google hesabında. Köçürmə işə salınandan sonra Google 180 gün ərzində köhnə saytın siqnallarını yenisinə ötürür. Alətin yardım səhifəsi yönləndirmələri ən azı 180 gün, onlar vasitəsilə axtarışdan gəlməyə davam etdikcə isə daha uzun saxlamağı tələb edir. Köhnə domenin haqqını Google ən azı bir il ödəməyi məsləhət görür ki, onu başqası almasın.'],
+            ['İşə salınandan sonra nələri yoxlamalı', 'İşə salınma günü siyahıya alma cədvəlini sətir-sətir keçin:
+
+1. Köhnə ünvanları açın, ən çox klik gətirənlərdən başlayaraq. Hər biri bir addımda öz yeni səhifəsinə aparmalı, o səhifə isə 200 kodu ilə cavab verməlidir. Windows-da bunu səhifənin ünvanı ilə curl.exe -I əmri yoxlayır: cavabda kod, yönləndirmədə isə həm də təyinat ünvanı olan Location başlığı olacaq.
+2. Yeni səhifələrin kodunda və server cavabının başlıqlarında noindex olmadığını, robots.txt-nin isə saytı bağlamadığını yoxlayın. Search Console-dakı URL yoxlama aləti səhifənin indekslənməsinə icazə olub-olmadığını göstərəcək.
+3. Yeni sitemap.xml göndərin.
+
+Sonra bir neçə həftə Search Console hesabatlarını izləyin:
+
+— səhifələrin indekslənməsi hesabatı: işləməli olan ünvanlar arasında «Tapılmadı (404)» statuslu ünvanların sayı artmırmı;
+— ayarlardakı «Skan statistikası»: server xətalarında (5XX) sıçrayış yoxdurmu;
+— iki dövrün müqayisəsi rejimində effektivlik hesabatı: hansı səhifələr və sorğular klik itirib. Səbəbi siyahıya alma cədvəlində axtarın: unudulmuş yönləndirmə və ya atılmış mətn.
+
+Köçürmə zamanı mövqelərin müvəqqəti dəyişməsini Google gözlənilən hal adlandırır: robot hər köhnə və yeni ünvanı ən azı bir dəfə gəzməlidir, kiçik və ya orta sayt üçün isə bu, bir neçə həftə və daha çox çəkə bilər.'],
+        ],
+        'end'      => 'Mövqeləri itirmədən redizayn dizayna deyil, siyahıya almaya söykənir: ünvanların siyahısı, hər biri üzrə qərar və işə salınandan sonra bu qərarın yoxlanması. Ünvanlar və mətnlər əvvəlki kimi qalırsa, risklərin böyük hissəsi öz-özünə aradan qalxır. Dəyişirsə — hər səhifə üçün daimi yönləndirmə, indeksləmə üçün açıq sayt və Search Console-da bir neçə həftəlik müşahidə lazımdır.',
+    ],
+    'sajt-dlya-restorana-ili-kafe' => [
+        'seoTitle' => 'Restoran və ya kafe üçün sayt: orada nə olmalıdır',
+        'seoDesc'  => 'Bakıda restoran və ya kafe saytı: qiymətləri ilə mətn menyusu, Google-dakı kimi iş saatları və ünvan, zəng və bron düymələri, üç dil, Restaurant işarələməsi.',
+        'title'    => 'Restoran və ya kafe üçün sayt: menyu, iş saatları, bron və üç dil',
+        'desc'     => 'PDF əvəzinə mətn şəklində menyu, Google-dakı ilə üst-üstə düşən iş saatları və ünvan, zəng və bron düymələri, turistlər üçün dillər və Restaurant işarələməsi — restoran və ya kafe saytına nə lazımdır.',
+        'rubric'   => 'Saytlar',
+        'lead'     => 'Bakının mərkəzində bir turist şam yeməyi üçün yer axtarır, xəritədə kafenizi tapır və saytı açır. Oradakı menyu qovluqdakı səhifələrin on iki fotosundan ibarətdir, özü də yalnız Azərbaycan dilində, saytdakı və Google-dakı iş saatları isə üst-üstə düşmür. O, tabı bağlayır və lazım olan hər şeyi telefondan yarım dəqiqəyə görmək mümkün olan yerə gedir. Gəlin araşdıraq, restoran və ya kafe üçün sayta nə lazımdır: menyu, iş saatları və əlaqə məlumatları, bron, fotolar, dillər və Restaurant işarələməsi.',
+        'body'     => [
+            ['Restoran saytında nə olmalıdır', 'Restoranın saytını əsas məlumatı tez öyrənmək üçün açırlar: bu nə cür məkandır, burada nə yeyirlər və neçəyə başa gəlir, hazırda açıqdırmı, ora necə getmək olar, necə zəng etmək və ya masa bron etmək olar. Cavabları slayderin və tam ekranlı videonun arxasında gizlətmirlər. Minimum dəst:
+
+— qiymətləri ilə menyu;
+— bayram günləri də daxil olmaqla iş saatları;
+— oriyentiri və xəritəyə linki ilə ünvan;
+— telefon və WhatsApp;
+— masa bronu və ya çatdırılmaya link, əgər bunlar varsa;
+— yeməklərin, zalın və girişin fotoları;
+— dil dəyişdiricisi.
+
+Bütün bunları telefondan yoxlayın: Google saytları mobil versiyaya görə indeksləyir və sıralayır. Ona görə də mobil versiyanı ixtisar etmirlər — kompüterdəki ilə eyni mətn, eyni strukturlaşdırılmış işarələmə və fotoların eyni təsvirləri.'],
+            ['Menyu foto və ya PDF şəklində yox, mətn şəklində', 'Tez-tez rast gəlinən mənzərə: menyu səhifələrin şəkilləri və ya mətbəə üçün hazırlanmış PDF şəklindədir. Telefonda belə faylı böyütmək və barmaqla sürüşdürmək lazım gəlir. Nielsen Norman Group ekrandan oxumaq üçün PDF-dən istifadə etməməyi məsləhət görür: onun maketi brauzer pəncərəsi üçün deyil, kağız vərəq üçün nəzərdə tutulub. Şəkillərlə də vəziyyət yaxşı deyil: W3C-nin izah etdiyi kimi, mətnin şəkli böyüdüləndə təhrif olunur və aydınlığını itirir. WCAG 2.2-nin 1.4.5 meyarı tələb edir ki, lazımi görünüşə adi mətnlə nail olmaq mümkündürsə, məlumat mətnin şəkli ilə deyil, mətnlə ötürülsün.
+
+Üstəlik, Google Business Profile yardım səhifələrində deyilir ki, Google menyu məlumatlarını şirkətin saytından onun profilinə köçürə bilər. Saytdakı qiymətlər köhnəlibsə, orada da köhnəlmiş ola bilər.
+
+Hər yemək üzrə bunlar göstərilir:
+
+— adı, yerli yeməklər üçün isə qısa izah;
+— əsas tərkibi, «acılı» və «vegetarian» qeydləri;
+— porsiyanın çəkisi və ya həcmi;
+— manatla qiyməti.
+
+Menyunu bölmələrə ayırırlar — səhər yeməkləri, şorbalar, isti yeməklər, içkilər — və səhifənin əvvəlində onlara linklər qoyurlar. Qiymətləri hər dəfə yeni maket sifariş etməkdənsə, saytın idarəetmə panelində dəyişmək daha rahatdır. Çap üçün PDF-i saxlamaq olar, amma menyu səhifəsinin əvəzinə deyil, onun yanında.'],
+            ['İş saatları, ünvan və telefon: saytda və Google-da eyni', 'Saytla Google Maps arasındakı uyğunsuzluqlar qonağı çaşdırır. Google Business Profile qaydalarına görə, profildəki ad şirkətin lövhədə, saytda və blanklarda eyni şəkildə istifadə etdiyi real adla üst-üstə düşməlidir. Telefon nömrəsi birbaşa şirkətin nəzarətində olmalıdır; Google mümkün olduqda zəng mərkəzinin nömrəsini deyil, yerli nömrəni göstərməyi xahiş edir.
+
+Saytda iş saatları profildəki kimi yazılır. Kafe gecə yarısından sonra da işləyirsə, bunu açıq göstərirlər: «gec saatlaradək» yox, «02:00-dək». Bayram günləri üçün profildə xüsusi iş saatları təyin edilir, saytda isə menyunun üstündə elan yerləşdirilir — və sonradan onu silməyi unutmurlar.
+
+Ünvanı ərazini tanımayan insanın başa düşəcəyi oriyentirlə verirlər: hansı metro stansiyasının yanında, ticarət mərkəzinin neçənci mərtəbəsində, giriş və parkinq haradadır. Yanında — məkanın səhifəsinə aparan «Google Maps-də aç» linki. Səhifəyə yerləşdirilmiş xəritəyə lazy dəyəri ilə loading atributu verilir: brauzer səhifə xəritəyə yaxın yerə qədər sürüşdürülənə kimi onun yüklənməsini təxirə salacaq.
+
+Telefonu tel: linki, WhatsApp-ı isə wa.me/994XXXXXXXXX şəklində link kimi tərtib edirlər: nömrə beynəlxalq formatda, artı işarəsi, mötərizə, defis və operator kodundan əvvəlki sıfır olmadan. Telefonda hər iki düymə əl altında olur, məsələn, aşağı paneldə. WCAG 2.2-nin 2.5.8 meyarı basılan sahə üçün minimum 24×24 CSS piksel müəyyən edir, əsas düymələr üçün isə W3C 2.5.5 meyarındakı 44×44 ölçüsünü əsas götürməyi məsləhət görür.'],
+            ['Bron və çatdırılma: hər düymə hara aparır', 'Bronları necə qəbul etdiyinizi əvvəlcədən həll edin və bir əsas üsul göstərin. Masaları telefonla bron edirlərsə, əsas düymə «Zəng et» olur. Bron servisindən istifadə edirsinizsə, düymə servisin ana səhifəsinə yox, birbaşa tarix və saat seçiminə aparır. Saytda bron forması yalnız müraciətlər elə həmin axşam təsdiqlənirsə mənalıdır.
+
+Çatdırılma ilə də belədir: link ümumi kataloqa deyil, çatdırılma servisindəki öz səhifənizə aparır. Çatdırılmadakı qiymətlər zaldakı qiymətlərdən fərqlənirsə, bunu menyunun yanında yazın. Bronu və çatdırılması olmayan kafenin saytına bu blok lazım deyil — əsas düymələr «Zəng et» və «Marşrut» olaraq qalır.
+
+Profilinizdə belə bəndlər varsa, Google Business Profile-a bron və yemək sifarişi üçün linklər, həmçinin menyuya link əlavə etmək olar. Sonuncunun bir məhdudiyyəti var: Google qaydalarına görə menyu linki birbaşa kənar sifariş və ya çatdırılma servisinə apara bilməz. Ona görə də saytda öz menyu səhifəniz hər halda lazımdır.'],
+            ['Fotolar: real yeməklər və real zal', 'Qonaq saytda gördüyünü ona gətirilənlə müqayisə edir. Stok şəkillər və başqa məkanlardan götürülmüş fotolar belə müqayisəyə tab gətirmir. Google Business Profile qaydalarında bu, açıq deyilir: təsvir ciddi emal edilmədən və filtrlərdən sui-istifadə olunmadan reallığı əks etdirməlidir. Eyni meyarı saytda da saxlamaq məntiqlidir.
+
+Nəyi çəkmək lazımdır:
+
+— menyudakı yeməkləri, ilk növbədə daha tez-tez sifariş olunanları;
+— zalı gündüz və axşam, varsa, terrası;
+— fasadı və girişi: qonaq məkanı küçədə məhz onlara görə tanıyır;
+— banket keçirirsinizsə, banket zalını.
+
+Hər fotoya qısa alternativ mətn lazımdır: «IMG_2045» yox, «qatıqla yarpaq dolması». Telefon üçün şəkillərin kiçildilmiş versiyalarını hazırlayır və onları srcset atributunda sadalayırlar ki, mobil cihaza böyük monitor üçün nəzərdə tutulmuş fayl yüklənməsin.'],
+            ['Üç dil: yerli sakinlər və turistlər üçün', 'Bakıda restoran saytını həm yerli sakinlər, həm də turistlər açır, ona görə də onun Azərbaycan, rus və ingilis dillərində versiyaları olmalıdır. İlk növbədə saytın nə üçün açıldığını tərcümə edirlər: menyunu, iş saatlarını, ünvanı, bron şərtlərini. Yalnız naviqasiyası tərcümə olunmuş, yeməkləri isə Azərbaycan dilində qalmış ingilis versiyası qonağa kömək etməyəcək. Google da yalnız interfeys mətnlərini tərcümə etməyi məsləhət görmür: o zaman axtarış nəticələrində eyni məzmun bir neçə dəfə, sadəcə düymələrin dili fərqli olmaqla görünür.
+
+Yerli yeməklərin adlarını orijinalda saxlayır və izah əlavə edirlər: «qutab — içinə göyərti, ət və ya balqabaq qoyulmuş nazik yuxa». Menyunun maşın tərcüməsini həm mətbəxi, həm də dili bilən insan yenidən oxuyur.
+
+Google hər dil versiyasına səhifənin öz ünvanını verməyi tövsiyə edir; dil dəyişdiricisi görünən yerdə saxlanılır. Ziyarətçini dilini təxmin edərək avtomatik olaraq hansısa versiyaya yönləndirməyi Google məsləhət görmür: belə olduqda insanlar və axtarış robotları digər versiyaları görməyə bilər. Versiyaları hreflang atributu ilə necə əlaqələndirmək lazım olduğu çoxdilli sayt haqqında ayrıca məqalədə izah olunub.'],
+            ['Restaurant işarələməsi: nə verir və nə vermir', 'Strukturlaşdırılmış məlumatlar məkanın maşın formatında təsviridir, adətən səhifə kodunda JSON-LD bloku. schema.org lüğətində bunun üçün FoodEstablishment tipi var — o, LocalBusiness-in alt tipidir, onun da öz alt tipləri var: Restaurant, CafeOrCoffeeShop, BarOrPub, Bakery və başqaları. Google ən dəqiqini seçməyi məsləhət görür.
+
+Google sənədlərində məcburi xassə ikidir: name və address. Tövsiyə olunanlardan restorana bunlar yarayacaq:
+
+— servesCuisine — mətbəxin növü;
+— menu — menyu səhifəsinin tam ünvanı (schema.org-da onu hasMenu əvəz edib, amma Google sənədlərində menu adlanır);
+— priceRange — qiymət səviyyəsi, 100 simvoldan qısa, əks halda Google onu göstərməyəcək;
+— openingHoursSpecification — iş saatları: validFrom və validThrough mövsümi iş saatlarını təyin edir, 00:00 dəyəri ilə opens və closes isə bütün günü bağlı olmaq deməkdir;
+— telephone, url və geo — onluq hissəsində ən azı beş rəqəm olan koordinatlar.
+
+Gecə yarısından sonrakı iş bir qeydlə təsvir olunur: schema.org-un tərifinə görə, bağlanma vaxtı açılma vaxtından kiçikdirsə, interval növbəti günə keçir.
+
+İşarələmənin etmədiyi şey: o, axtarış nəticələrində xüsusi görünüşü təmin etmir — Google açıq yazır ki, strukturlaşdırılmış məlumatların axtarış nəticələrində göstərilməsinə zəmanət vermir. Google-un sözlərinə görə, restoran karuseli hələlik yalnız məhdud sayda provayder üçün əlçatandır. İşarələmədəki məlumatlar səhifədə görünənlə üst-üstə düşməli və aktual olmalıdır. Onu Google-un Rich Results Test alətində və validator.schema.org ünvanındakı Schema Markup Validator-da yoxlayırlar.'],
+        ],
+        'end'      => 'Restoran və ya kafe saytı o zaman işləyir ki, telefondan yarım dəqiqəyə burada nə yeyildiyini, bunun neçəyə başa gəldiyini, hazırda açıq olub-olmadığını və bura necə gəlmək olduğunu öyrənmək mümkün olsun. Mətn şəklində menyu, saytda və Google-da eyni məlumatlar və real fotolar qonağa animasiya və slayderlərdən daha çox şey verir. Öz saytınızı yoxlayın: ingilis versiyasını telefondan açın və istənilən yeməyin qiymətini, bugünkü iş saatlarını və zəng düyməsini tapın.',
+    ],
+    'google-biznes-profil-dlya-kompanii-v-baku' => [
+        'seoTitle' => 'Google Biznes Profili: şirkəti Google Xəritələrə əlavə etmək',
+        'seoDesc'  => 'Şirkəti Google Xəritələrə əlavə etmək: Google Biznes Profilini təsdiqləmək, qaydalara uyğun doldurmaq və Google-a görə Bakıda lokal SEO nədən asılıdır.',
+        'title'    => 'Google Biznes Profili: Bakı şirkətləri Google Xəritələrə necə düşə bilər',
+        'desc'     => 'Google Biznes Profilini necə yaratmaq və təsdiqləmək, onu qaydaları pozmadan necə doldurmaq olar və Google özü hansı amilləri lokal sıralama amilləri adlandırır.',
+        'rubric'   => 'Marketinq',
+        'lead'     => 'İnsan telefonda «yaxınlıqda stomatologiya» və ya «kondisioner təmiri» yazır, Google isə bir neçə şirkətin göründüyü xəritəni göstərir. Zəng etmək, marşrut qurmaq və iş saatlarına baxmaq birbaşa şirkətin kartından mümkündür. Şirkətiniz Google Xəritələrdə yoxdursa, zəng başqasına gedəcək, kartda köhnə nömrə qalıbsa, ümumiyyətlə çatmayacaq. Gəlin görək, Google Biznes Profilini necə yaratmaq və təsdiqləmək, qaydalara uyğun doldurmaq olar və Google özü lokal sıralama amilləri kimi nələri adlandırır.',
+        'body'     => [
+            ['Google xəritədə kimi göstərəcəyini necə müəyyən edir', 'Google-un arayış bölməsinə görə, lokal nəticələr əsasən üç amildən asılıdır:
+— relevantlıq: profil sorğuya nə dərəcədə uyğundur; burada tam və ətraflı məlumatlar kömək edir;
+— məsafə: şirkət axtaran insandan nə qədər uzaqdadır; insan harada olduğunu göstərməyibsə, Google onun yeri barədə bildiklərindən istifadə edir;
+— tanınmışlıq: şirkət nə dərəcədə tanınır; Google bura, məsələn, ona istinad edən saytların və rəylərin sayını aid edir.
+
+Orada həmçinin deyilir ki, şirkətin rəyləri və müsbət qiymətləndirmələri nə qədər çox olsa, o, lokal nəticələrdə bir o qədər yuxarıda ola bilər, yeri isə xahiş etmək və ya satın almaq mümkün deyil. Sizə «xəritələrdə zəmanətli top» təklif edəndə bunu xatırlayın.
+
+Məsafəyə təsir edə bilməzsiniz: Yasamal rayonundakı ofis Xətai rayonundan axtaran insana yaxınlaşmayacaq. Məlumatların tamlığı, rəylər və linklər isə sizdən asılıdır. Google həmçinin yazır ki, lokal sıralamaya seçilmiş kateqoriyalar da təsir edir. Vədləri kənara qoysaq, Bakıda lokal SEO məhz bu bəndlər üzərində işdir.'],
+            ['Profili necə yaratmaq və ya mövcud profilə girişi necə qaytarmaq', 'Profil business.google.com/add səhifəsində yaradılır, sonra isə ekrandakı addımlarla irəliləyirsiniz. Rus interfeysində servis «Профиль компании в Google» adlanır.
+
+Çox vaxt kartı artıq başqa biri əlavə etmiş olur. Kart təsdiqlənməyibsə, şirkəti Google Xəritələrdə adı və şəhəri ilə tapın və sahib üçün nəzərdə tutulmuş bənd vasitəsilə hüquqlarınızı bildirin. Artıq təsdiqlənibsə, amma sizin girişiniz yoxdursa, sahiblik sorğusu göndərin. Hazırkı sahibə məktub gələcək və onun cavab vermək üçün üç günü var; cavab verməsə, bəzən profili özünüz təsdiqləyə bilərsiniz. Eyni şirkət üçün ikinci profil yaradılmır: qaydalara görə bir məkana bir kart düşür.
+
+Müştərilər sizin yanınıza — mağazaya, klinikaya, salona — gəlirsə, ünvan göstərilir. Yalnız özünüz müştərilərin yanına gedirsinizsə — ustalar, təmizlik xidməti, çatdırılma — ünvan silinir və xidmət ərazisi təyin edilir: 20-yə qədər şəhər, rayon və ya poçt indeksi, amma radius yox. Google tövsiyə edir ki, bu ərazi bazanızdan təxminən iki saatlıq yoldan uzağa çıxmasın.'],
+            ['Təsdiqləmə: hazırda hansı üsullar var', 'Təsdiqləmə olmadan rəylərə cavab vermək olmur, Google-un lokal sıralamaya dair məsləhətlərində isə o, birinci yerdədir. Üsulu Google özü seçir — biznesin növünə, regiona, açıq məlumatlara və iş saatlarına görə — və onu dəyişmək mümkün deyil. Variantlar:
+— iş nömrəsinə kodla zəng və ya SMS; zəngi avtomatik səsli menyu qəbul edirsə, kod çatmayacaq;
+— elektron poçta məktub;
+— videoyazı — sizin üçün mümkündürsə, Google məhz onu tövsiyə edir;
+— dəstək əməkdaşı ilə videozəng, yalnız şirkətin iş saatlarında və hamı üçün yox;
+— beşrəqəmli kodu olan açıqca, bu da hamı üçün deyil: adətən 14 gün ərzində gəlir, kod 30 gün qüvvədə olur;
+— ani təsdiqləmə, məsələn, sayt artıq Google Search Console-da təsdiqlənibsə.
+
+Açıqcanı gözləyərkən adı, ünvanı və kateqoriyanı dəyişməyin və yeni kod istəməyin: göndərilmiş kod işləməyəcək.
+
+Təsdiqləmə üçün videonu telefonla, profilin özü vasitəsilə, canlı, bir dəfəyə və montajsız, ən azı 30 saniyə çəkirlər. Kadrda bunlar olmalıdır:
+— məkan: küçə adı yazılmış lövhələr, bina nömrəsi, qonşu müəssisələr;
+— profildəki adla eyni ad yazılmış lövhə, divar və ya vitrin;
+— yalnız əməkdaşın çıxışı olan bir şey, məsələn, açıq kassa.
+
+Səyyar işləyirsinizsə, lövhənin əvəzinə alətləri, avadanlığı və ya loqolu furqonu göstərirlər. Kadrda hesab nömrələri, vergi nömrələri, şəxsiyyət vəsiqəsinin məlumatları və kənar insanların üzləri olmamalıdır.
+
+Bundan sonra yoxlama beş iş gününə qədər, nadir hallarda isə daha çox çəkir.'],
+            ['Ad, kateqoriya və ünvan Google qaydalarına uyğun', 'Ad şirkətin real həyatda tanındığı kimi olmalıdır: lövhədə, saytda və blanklarda olduğu kimi. Artıq nəsə əlavə etmək qadağandır — şüarlar, xidmətlərin təsviri, rayon, iş saatları, telefon, saytın ünvanı. «Romaşka — Nəsimidə stomatologiya 24/7» qaydaları pozur, «Romaşka» isə pozmur. Bakı üçün başqa bir məqam da vacibdir: adı bir neçə dildə və ya əlifbada təkrarlamaq olmaz, hətta lövhədə məhz belə yazılıbsa da. «Romaşka / Ромашка» variantı uyğun deyil, birini seçin.
+
+Əsas kateqoriya mütləqdir, əlavə kateqoriyalardan isə doqquza qədər seçmək olar. Qaydalar kateqoriyaları mümkün qədər konkret və mümkün qədər az seçməyi xahiş edir. Kateqoriya «bu şirkət nədir?» sualına cavab verməlidir, «bu şirkətdə nə var?» sualına yox. Wi-Fi olan restoran restoran olaraq qalır, Wi-Fi isə atributlarda göstərilir.
+
+Ünvan dəqiq olmalı və şirkətin həqiqətən işlədiyi yeri göstərməlidir. Abunəçi poçt qutusu və virtual ofis, yəni işləmədiyiniz icarəyə götürülmüş ünvan, yaramır. Google ünvanı tapmırsa, məsələn, binanın nömrəsi yoxdursa, nişanı xəritədə əl ilə qoyurlar.
+
+Ad dəyişdikdən sonra təkrar təsdiqləmə lazım ola bilər, köçdükdən sonra isə o, mütləqdir. Qaydaları pozan profilin fəaliyyətini Google dayandıra bilər.'],
+            ['İş saatları, telefon və sayt üst-üstə düşməlidir', 'Müştərilərin həqiqətən gələ bildiyi saatlar göstərilir. Bayramlar üçün xüsusi iş saatları təyin edilir. Google rəsmi bayramlarda iş saatlarını, adi saatlardan fərqlənməsə belə, təsdiqləməyi məsləhət görür. Azərbaycanda bunlar, məsələn, Novruz, Ramazan və Qurban bayramlarıdır — Əmək Məcəlləsinə görə qeyri-iş günləri. Ardıcıl yeddi gün və daha çox bağlanırsınızsa və ya nə qədər bağlı qalacağınızı bilmirsinizsə, profil müvəqqəti bağlı kimi qeyd olunur.
+
+Telefon məhz bu məkana aparmalı və birbaşa sizin nəzarətinizdə olmalıdır. Qaydalar yerli nömrəni ümumi zəng mərkəzinin nömrəsindən üstün tutur. Yüksək tarifli nömrələr, həmçinin şirkətin özünə deyil, başqa yerə yönləndirən nömrələr və linklər qadağandır.
+
+Google şirkət barədə məlumatları həm istifadəçilərdən, həm də lisenziyalı mənbələrdən götürür. Bəzi düzəlişlər barədə Google əvvəlcədən xəbərdarlıq edir və onları qəbul və ya rədd etmək üçün dörd gününüz olur. Cavab verməsəniz, düzəlişi başqa açıq məlumatlar, məsələn, saytınız təsdiqləyirsə, Google onu özü dərc edə bilər. Ona görə də ad, ünvan, telefon və iş saatlarını saytda, profildə və lövhədə eyni saxlamaq daha yaxşıdır: köhnəlmiş səhifə sizin əleyhinizə işləyə bilər.'],
+            ['Foto, video və paylaşımlar', 'Foto və video Google-un lokal sıralamaya dair məsləhətlərində var. Foto — JPG və ya PNG, 10 KB-dan 5 MB-a qədər, tövsiyə olunan ölçü 720 × 720 piksel, minimum 250 × 250; aydın, yaxşı işıqlandırılmış, güclü emal və filtrlər olmadan. Video — 30 saniyəyə qədər, 75 MB-a qədər, 720p və daha yüksək. Google loqo və örtük şəkli təyin etməyi, eləcə də müştəri gələndə yeri tanısın deyə binanın çöldən fotolarını əlavə etməyi məsləhət görür.
+
+Paylaşımlar profildəki qısa yazılardır və onların üç növü var: «Yeniliklər», «Təklif» və «Tədbir»; təklif və tədbir üçün tarixlər göstərilir. Tarix aralığı təyin edilməyibsə, altı aydan köhnə yazılar arxivə keçir. Mətnində telefon olan paylaşım, nömrəni şirkətlə əlaqələndirmək mümkün deyilsə, rədd edilə bilər. Lokal sıralama barədə arayışda paylaşımlar çəkilmir: bu, kartı artıq açmış insanlara yenilik barədə xəbər vermək üsuludur — məsələn, təklif və ya bayram iş qrafiki barədə.'],
+            ['Rəylər: necə xahiş etmək və necə cavab vermək', 'Rəylər, yuxarıda deyildiyi kimi, tanınmışlığa işləyir. Rəyi yalnız Google hesabına daxil olmuş insan yaza bilər. Ən sadəsi ona profildən link və ya QR kod verməkdir: piştaxtada və ya sifarişdən sonra göndərilən mesajda.
+
+Nə etmək olmaz:
+— rəy, onun dəyişdirilməsi və ya silinməsi müqabilində nəsə təklif etmək: pul, endirim, pulsuz məhsul və ya xidmət;
+— rəyləri yalnız razı qalan müştərilərdən istəmək və ya mənfi rəy yazmaqdan çəkindirmək;
+— müştəri yanınızda olarkən rəy tələb etmək və ya ona təzyiq göstərmək, əməkdaşlara rəy planı qoymaq;
+— maraqlar toqquşması olduqda rəy dərc etmək: hazırkı və keçmiş əməkdaşlardan, qohumlardan, müqavilə tərəfdaşlarından;
+— reputasiyalarını korlamaq üçün rəqiblərin kartlarında rəy yazmaq.
+
+Cavab vermək yalnız təsdiqlənmiş profildən mümkündür. Cavab yoxlamadan keçir — adətən 10 dəqiqəyə qədər, bəzən 30 günə qədər. Google qısa yazmağı, hamıya eyni «təşəkkür» göndərməməyi və cavabı reklama çevirməməyi məsləhət görür. Mənfi rəyə cavab verəndə müəllifə adı ilə müraciət edin, onun konkret iradına cavab verin və gecikdirməyin.
+
+Rəyi yalnız xoşagəlməz olduğuna görə sildirmək olmaz: Google yalnız qaydaları pozan rəyləri silir və şirkətlə müştəri arasındakı münaqişələrə qarışmır. Pozuntunu profildə və ya rəylərin idarə edilməsi alətində qeyd edirlər. Yoxlama adətən bir neçə gün çəkir, imtina olduqda bir dəfə apellyasiya vermək olar.'],
+        ],
+        'end'      => 'Google-dakı profil reklam yeri deyil, dəqiqliyinə sizin cavabdeh olduğunuz arayış kartıdır. Onu təsdiqləyin, tam və dəqiq doldurun, rəylərə cavab verin və onları dürüst toplayın — Google lokal nəticələrdə yuxarı qalxmağın yolları kimi məhz bunları adlandırır. Saytda və profildə eyni məlumatlar isə kartı səhv düzəlişlərdən qoruyur.',
+    ],
+    'google-analytics-4-chto-smotret-vladelcu' => [
+        'seoTitle' => 'Saytın analitikası: Google Analytics 4 və Search Console',
+        'seoDesc'  => 'Sahib üçün Search Console hesabatları və GA4: əsas hadisələr, kanallar, açılış səhifələri, sorğular və orta mövqe — ayda bir nəyi yoxlamalı, necə oxumalı.',
+        'title'    => 'Saytın analitikası: Google Analytics 4 və Search Console-da ayda bir dəfə nəyə baxmalı',
+        'desc'     => 'Google Analytics 4 və Search Console-un hansı hesabatlarını ayda bir dəfə açmalı, müraciətləri və zəngləri əsas hadisə kimi necə qeyd etməli və orta mövqe niyə yanıltıcıdır.',
+        'rubric'   => 'Marketinq',
+        'lead'     => 'Ayın əvvəlində Google Analytics 4-ü açırsınız və ya podratçıdan on qədər qrafik, faiz və oxla dolu hesabat alırsınız. Ona baxıb saytın daha çox müraciət gətirməyə başlayıb-başlamadığını anlamaq adətən alınmır. Səbəb sizdə deyil: standart hesabatlar hər şeyi bir yerə yığır, sahibə isə bir neçə rəqəm lazımdır. Gəlin araşdıraq: GA4 və Search Console-un hansı hesabatlarını ayda bir dəfə açmalı, onlarda müraciətlərin, zənglərin və WhatsApp-a keçidlərin görünməsi üçün nəyi qurmalı və orta mövqeyi necə düzgün oxumalı.',
+        'body'     => [
+            ['İki servis fərqli suallara cavab verir', 'Search Console sayta keçiddən əvvəl Google-da baş verənləri göstərir: səhifələriniz hansı sorğular üzrə çıxıb, onları neçə dəfə görüblər və neçə dəfə klikləyiblər. Google Analytics 4 isə sonra baş verənləri göstərir: ziyarətçi haradan gəlib, hansı səhifəyə düşüb və sayt nə üçün yaradılıbsa, onu edibmi.
+
+Ona görə də iki servisdəki rəqəmlər üst-üstə düşmür və bu, normaldır. Search Console Google nəticələrindəki klikləri sayır, GA4 isə seansları, özü də yalnız analitika kodunun yükləndiyi seansları. GA4-də Organic Search kanalına başqa axtarış sistemləri də düşür. Cookie fayllarından imtina edən ziyarətçini isə GA4 ümumiyyətlə görməyə bilər.
+
+Servisləri əlaqələndirmək olar: GA4-də «Admin» səhifəsində, «Product links» (məhsul əlaqələri) hissəsində Search Console üçün bənd var. Bunun üçün Analytics-də «Editor» (redaktor) rolu, Search Console-da isə təsdiqlənmiş sahib statusu lazımdır. Əlaqələndirmədən sonra yaranan sorğular və Google-dan gələn orqanik trafik üzrə hesabatlar ilkin olaraq dərc edilməmiş olur — onları «Library» (kitabxana) bölməsində aktivləşdirirlər. Məlumatlar təxminən 48 saat gecikmə ilə gəlir.'],
+            ['Google Analytics 4-də əsas hadisələr: nəyi nəticə saymalı', 'GA4 səhifə baxışlarını və sürüşdürməni özü toplayır, amma sizin üçün müraciətin nə olduğunu bilmir. Biznes üçün vacib hərəkətləri əsas hadisələr (key events) kimi qeyd edirlər. Əvvəllər onlar konversiyalar adlanırdı; indi «konversiya» reklam terminidir və onu Google Ads-də əsas hadisə əsasında yaradırlar. Standart resursda 30-a qədər hadisəni əsas kimi qeyd etmək olar. Bu qeyd keçmiş məlumatları dəyişmir.
+
+Şirkət saytı üçün adətən üçü kifayət edir:
+
+— formanın göndərilməsi. Məlumat axınında formalarla qarşılıqlı əlaqə daxil olmaqla «Enhanced measurement» (təkmilləşdirilmiş ölçmə) aktivdirsə, GA4 form_submit hadisəsini özü toplayır. Onu test müraciəti ilə yoxlayın; hadisə görünmürsə və ya başqa formada işə düşürsə, tərtibatçı uğurlu göndərişdən sonra Google-un tövsiyə etdiyi generate_lead hadisəsini qurur;
+— WhatsApp-a keçid. wa.me linki başqa sayta aparır və GA4 xarici keçid klikini qeydə alır — ünvanı link_url parametrində olan click hadisəsini. Onun əsasında ayrıca hadisə yaradırlar: «Admin» → «Events» → «Create event», şərtlər: event_name click-ə bərabərdir, link_url isə wa.me-ni (və ya düymənizin apardığı başqa ünvanı) ehtiva edir;
+— telefon nömrəsinə basılması. tel: linki başqa sayta aparmır, GA4-ün onu xarici keçid kliki sayıb-saymadığını isə Google dəqiqləşdirmir. Nömrəyə özünüz basın və «Realtime» (real vaxt) hesabatında hadisənin görünüb-görünmədiyinə baxın. Görünmürsə, onu Google Tag Manager vasitəsilə və ya saytın kodunda əlavə edirlər.
+
+Yaradılmış hadisələr də keçmiş məlumatlara tətbiq edilmir və ən tezi bir saatdan sonra işləməyə başlayır. Hadisə siyahıda görünəndə onu ulduz işarəsi ilə əsas kimi qeyd edin.'],
+            ['Ziyarətçilər haradan gəlir', '«Acquisition» bölməsindəki «Traffic acquisition» (trafikin cəlb edilməsi) hesabatı seansları kanallar üzrə bölür:
+
+— Organic Search — adi, reklam olmayan axtarış nəticələri;
+— Paid Search — axtarış sistemlərində reklam;
+— Organic Social — reklamsız sosial şəbəkələr;
+— Referral — başqa saytlardan gələn linklər;
+— Direct — yadda saxlanmış link və ya əl ilə yığılmış ünvan;
+— Unassigned — ziyarət heç bir qaydaya uyğun gəlməyib.
+
+Yalnız seansların sayına deyil, hər kanal üzrə əsas hadisələrə də baxın. Müraciətsiz çoxlu ziyarət bu kanalın hansı səhifələrə apardığını və insanın orada nə gördüyünü yoxlamaq üçün səbəbdir.
+
+Instagram profilindən, e-poçt göndərişindən və ya Google-dakı şirkət profilindən gələn keçidləri bir-birindən ayırmaq üçün linklərə UTM etiketləri əlavə edirlər. Google həmişə üç parametri göstərməyi məsləhət görür: utm_source — mənbə, utm_medium — kanalın növü, utm_campaign — kampaniya. Belə linki tərtib etməyə Campaign URL Builder kömək edir.'],
+            ['Açılış səhifələri: axtarışdan hara düşürlər', '«Engagement» bölməsindəki «Landing page» (açılış səhifəsi) hesabatı seansların başladığı səhifələri, yanında isə seansları, aktiv istifadəçiləri, orta cəlbolunma müddətini və əsas hadisələri göstərir. Organic Search kanalı üzrə filtr əlavə edin — insanların axtarışdan gəldiyi səhifələrin siyahısını alacaqsınız.
+
+Burada xidmət səhifələrindən hansının müraciət, hansının isə yalnız ziyarətçi gətirdiyi görünür. Blog məqaləsi axtarış trafiki alırsa, amma ondan heç kim xidmətə keçmirsə, məsələ axtarışda deyil, səhifənin özündədir: orada link və ya aydın növbəti addım yoxdur.
+
+GA4-də imtinalar çoxlarının öyrəşdiyi kimi hesablanmır. Seans 10 saniyədən çox davam edibsə, əsas hadisə ehtiva edibsə və ya iki və daha çox səhifə baxışı olubsa, cəlbolunmuş (engaged) sayılır. İmtina göstəricisi (bounce rate) qalan seansların payıdır. Əlaqə səhifəsinə gələn, nömrəyə basan və səkkiz saniyə sonra çıxan insan, nömrəyə basılma əsas hadisə kimi qeyd olunmayıbsa, imtinalara düşəcək.'],
+            ['Search Console hesabatları: effektivlik və indeksləmə', 'Effektivlik hesabatında dörd göstərici var: kliklər, göstərmələr, CTR — kliklərin göstərmələrə nisbəti — və orta mövqe. Qrafikin altında «Sorğular», «Səhifələr», «Ölkələr», «Cihazlar» və digər tablar yerləşir. Məlumatlar 16 ay saxlanılır; ən təzələri qrafikdə qırıq xəttlə işarələnib — onlar ilkindir və hələ dəyişə bilər.
+
+Ayda bir dəfə son 28 günü əvvəlki 28 günlə (tarix filtrində «Müqayisə et» variantı), tələb mövsümidirsə, keçən ilin eyni dövrü ilə müqayisə edin. Şirkətin adı olmayan sorğulara ayrıca baxın: brend sorğuları ilə sizi şirkəti artıq tanıyanlar axtarır, qalan sorğuların artması isə saytı yeni insanların tapdığını göstərir. Sorğu filtrində bunun üçün «Brendli» və «Qeyri-brendli» variantları var, amma göstərmələri az olan saytlarda onlar olmur. Onda «Xüsusi (requlyar ifadə)» variantını və «Requlyar ifadəyə uyğun gəlmir» şərtini seçin, adın bütün yazılışlarını şaquli xətlə ayıraraq sadalayın: latın və kiril hərfləri ilə, Azərbaycan dilində.
+
+Cədvəldəki sətirlərin cəmi adətən qrafikin üstündəki yekunla üst-üstə düşmür. Google sorğuların bir hissəsini məxfilik naminə gizlədir: onlar yekunlara daxildir, cədvələ isə yox. Bundan başqa, Search Console yalnız ən vacib sətirləri göstərir. Sorğu filtri tətbiq olunanda isə gizli sorğular yekunlardan da çıxır.
+
+Kiçik sayt üçün səhifələrin indekslənməsi hesabatını hər ay açmaq vacib deyil: Google-un sözlərinə görə, 500 səhifədən az olan sayta o, böyük ehtimalla lazım deyil. Əsas səhifələri URL yoxlama aləti ilə yoxlamaq və Search Console-un mesajlarını oxumaq kifayətdir — indeksləmə ilə bağlı yeni problem barədə o özü xəbərdarlıq edir. Ətraflı — SEO-nun nədən başladığı haqqında məqalədə.'],
+            ['Orta mövqeyi necə oxumalı', 'Search Console hər sorğu üçün saytınıza aparan linkin düşdüyü ən yuxarı mövqeyi götürür və bu dəyərləri bütün sorğular üzrə ortalayır. Mövqe yalnız göstərmə olubsa qeydə alınır. Bir qayda olaraq, nəticələrin hər elementi, içində neçə link olmasından asılı olmayaraq, bir mövqe tutur: süni intellekt icmalının (AI Overview) da bir mövqeyi var və o, içindəki bütün linklər üçün ortaqdır.
+
+Tez-tez rast gəlinən səhv buradan qaynaqlanır. Sayt yeni sorğular üzrə, hətta uzaq mövqelərdə olsa belə, görünməyə başlayır: göstərmələr və kliklər artır, orta mövqe isə pisləşir. Ona görə də ümumi rəqəm az şey deyir — konkret sorğu və səhifə üzrə mövqeyə baxın.
+
+1. «Sorğular» tabında lazım olan sorğuya basın — hesabat ona görə filtrlənəcək.
+2. «Azərbaycan» ölkəsi üzrə, lazım gələrsə, cihaz üzrə də filtr əlavə edin: telefonda və kompüterdə mövqelər fərqlənə bilər.
+3. «Səhifələr» tabında hansı səhifənin göstərildiyini yoxlayın. Xidmət haqqında sorğu üzrə nəticələrdə xidmət səhifəsi deyil, blog məqaləsi çıxırsa, mətnlərə və daxili linklərə yenidən baxın.'],
+            ['Bir dəfə yoxlanılan ayarlar', 'Məlumatların saxlanması. GA4-ün məlumat ayarlarında «Data retention» (məlumatların saxlanması) bəndi var: standart resurs üçün 2 və ya 14 ay. Bu ayar yalnız «Explorations» (araşdırmalar) bölməsinə və hunilərə aiddir, standart hesabatları məhdudlaşdırmır. Amma «Explorations»da mövsümü keçən ilki ilə müqayisə etmək istəsəniz, iki aylıq saxlama müddətində orada keçən il üzrə məlumat olmayacaq. Yaş, cins və maraqlar barədə məlumatlar istənilən ayarda iki ay saxlanılır.
+
+Cookie fayllarına razılıq. Google Analytics-in şərtləri məxfilik siyasətini dərc etməyi, orada cookie fayllarından və Google Analytics-dən istifadə barədə məlumat verməyi, qanunun tələb etdiyi yerlərdə isə ziyarətçinin razılığını almağı tələb edir. Google-un razılıq rejiminin iki variantı var. Əsas rejimdə ziyarətçi razılıq verənə qədər Google teqləri yüklənmir və imtina edənləri GA4 görmür. Genişləndirilmiş rejimdə imtina zamanı cookie-siz siqnallar göndərilir və Analytics boşluqları modelləşdirmə ilə doldura bilər. Hər iki halda GA4 hamını görmür: mütləq dəyərləri deyil, dinamikanı müqayisə edin.'],
+        ],
+        'end'      => 'Ayda bir dəfə sahibə dörd şey kifayətdir: kanallar üzrə əsas hadisələr, açılış səhifələri, Search Console-da şirkətin adı olmayan sorğular və bir neçə vacib sorğu üzrə mövqelər. İki servisin rəqəmləri üst-üstə düşməyəcək və düşməməlidir də: daha vacibi onların aydan-aya hansı istiqamətdə dəyişməsidir. Hesabatlarda sayılası bir şey olması üçün isə müraciətlər, zənglər və WhatsApp-a keçidlər əvvəlcə əsas hadisə kimi qeyd olunur.',
+    ],
+    'fotosemka-dlya-sajta-kak-podgotovitsya' => [
+        'seoTitle' => 'Şirkət saytı üçün foto çəkiliş: əvvəlcədən nə hazırlamalı',
+        'seoDesc'  => 'Səhifələr üzrə kadr siyahısı, üfüqi və şaquli kadrlar, kadrdakı insanların razılığı, işıq, fayllar və fotolara hüquqlar: biznes üçün çəkilişə hazırlıq.',
+        'title'    => 'Şirkət saytı üçün foto çəkiliş: kadr siyahısından fotoların hüquqlarına qədər',
+        'desc'     => 'Sayt və sosial şəbəkələr üçün foto və video çəkilişə necə hazırlaşmalı: səhifələr üzrə kadr siyahısı, kadrdakı insanların razılığı, çəkiliş məkanında işıq, fayllar və müqavilədə hüquqlar.',
+        'rubric'   => 'Marketinq',
+        'lead'     => 'Sayt demək olar ki, hazırdır, amma «Şirkət haqqında» səhifəsində fotobankdan götürülmüş insanlar gülümsəyir, məhsullar isə telefonla, müxtəlif işıqda çəkilib. Ya da fotoqraf artıq gəlib: yüzlərlə kadr var, amma stories üçün şaquli kadr yoxdur, ana səhifədə başlıq üçün boş yer yoxdur, kadra düşən əməkdaşlar isə heç nə imzalamayıb. Sayt üçün foto çəkiliş işinin böyük hissəsi fotoqraf kameranı çıxarmazdan əvvəl görülür. Gəlin baxaq: kadr siyahısını necə tərtib etməli, nəyi eyni anda iki oriyentasiyada çəkməli, hansı razılıqları toplamalı, çəkiliş məkanını necə hazırlamalı, hansı faylları təhvil almalı və müqaviləyə nə yazmalı.',
+        'body'     => [
+            ['Sayt üçün foto çəkiliş səhifələrin siyahısından başlayır', 'İşə fotoqrafdan deyil, saytın xəritəsindən başlayın. Hər səhifə üçün yazın: orada hansı fotolar olacaq və onlar nəyi göstərməlidir. Adətən dəst belə olur:
+
+— ana səhifə — işin mahiyyətini göstərən bir-iki geniş kadr, başlıq üçün boş yerlə;
+— «Şirkət haqqında» və komanda — eyni fonda portretlər, ümumi şəkil, iş başında insanlar;
+— ofis və ya istehsalat — lövhəsi olan giriş, qəbul otağı, iş yerləri, avadanlıq;
+— xidmət səhifələri — addım-addım proses: əllər, alətlər, materiallar;
+— məhsullar — sadə fonda kataloq kadrları və istifadədə olan məhsul;
+— görülmüş işlərin nəticələri — eyni nöqtədən və eyni hündürlükdən «əvvəl» və «sonra»; kadrı sonradan təkrarlamaq üçün ştativin yerini qeyd edin.
+
+Hər sətirdə oriyentasiyanı, kadrda kimin olacağını və nəyin hazırlanmalı olduğunu göstərin. Belə siyahı eyni zamanda həm fotoqraf üçün tapşırıq, həm günün cədvəli, həm də razılığı alınmalı olan insanların siyahısıdır.'],
+            ['Bir çəkilişdə həm üfüqi, həm şaquli kadrlar', 'Eyni foto müxtəlif çərçivələrə düşür. Telefonun dar ekranında ana səhifənin yuxarısındakı geniş şəkil çox vaxt kənarları kəsilmiş halda göstərilir. Məqalə və xəbərlər üçün Google Article nişanlanmasında 16:9, 4:3 və 1:1 nisbətlərində bir neçə təsvir tövsiyə edir. Linkin önizləməsi üçün Facebook ən azı 1200×630 piksel ölçüdə, nisbəti 1,91:1-ə mümkün qədər yaxın olan şəkil məsləhət görür. Stories və Reels isə şaquli 9:16 formatıdır.
+
+Buradan iki qayda çıxır. Ən vacib kadrları əsas obyektin ətrafında boş yer ehtiyatı ilə çəkirlər ki, bir fayldan həm geniş, həm də kvadrat variant alınsın və nə baş, nə də loqo kəsilsin. Sosial şəbəkələr üçün şaquli kadrları isə ayrıca çəkirlər: üfüqi kadrdan şaquli kadr kəsəndə dar bir zolaq qalır, piksellərin böyük hissəsi isə kəsilib atılır. Şaquli videonun öz qaydaları var, onlar barədə 9:16 kadrda təhlükəsiz zona haqqında məqalədə danışılır. Siyahıda hansı fotoların hər iki oriyentasiyada lazım olduğunu qeyd edin: çəkiliş məkanında bunu unutmaq asandır.'],
+            ['Kadrdakı insanların razılığı', 'Azərbaycan Respublikasının «Fərdi məlumatlar haqqında» Qanunu şəxsin kimliyini birbaşa və ya dolayısı ilə müəyyən etməyə imkan verən istənilən məlumatı fərdi məlumat hesab edir (2.1.1-ci maddə). Qanun üz təsvirini birbaşa biometrik məlumatlara aid edir və onun tələbləri bu məlumatlara tam həcmdə şamil olunur (9.5-ci maddə). Razılıq yazılı olmalıdır, o cümlədən gücləndirilmiş elektron imza ilə təsdiqlənmiş elektron sənəd formasında (8.1-ci maddə).
+
+8.2-ci maddəyə görə razılıqda bunlar göstərilir:
+
+— razılığı kim verir və onu kim alır;
+— məqsəd, məsələn, şirkətin saytında və sosial şəbəkələrində dərc;
+— hansı məlumatlar və onlarla hansı əməliyyatlar aparılır;
+— razılığın qüvvədə olma müddəti və onun geri götürülməsi şərtləri;
+— məlumatların məhv edilməsi və ya arxivləşdirilməsi şərtləri.
+
+Yetkinlik yaşına çatmayanların adından razılığı valideynlər və ya qanuni nümayəndələr verir (8.3-cü maddə). Razılığın olduğunu sübut etmək şirkətin üzərinə düşəcək (8.4-cü maddə), ona görə də imzalanmış razılıqları fayllarla birlikdə saxlayın. Təsadüfən kadra düşən ziyarətçilərdən razılıq istəyirlər və ya onları tanınmayacaq şəkildə çəkirlər.
+
+2024-cü ildə qanuna 8.6-cı maddə əlavə edilib: məlumatların məcburi toplanması halları istisna olmaqla, razılıqlar Elektron Hökumət İnformasiya Sistemi vasitəsilə mərkəzləşdirilmiş qaydada alınır və geri götürülür. Bu maddənin çəkilişə necə tətbiq edildiyini razılıq formasını təsdiqləməzdən əvvəl hüquqşünasdan dəqiqləşdirin.'],
+            ['Çəkiliş məkanı, işıq və vahid üslub', 'Bir gün əvvəl çəkiliş məkanını kameranın gözü ilə gəzin. Masalardan sənədləri, divarlardan parollar və qrafiklər yazılmış vərəqləri, lövhələrdən planları və rəqəmləri yığışdırın. Monitorlarda poçtu, CRM-i və müştəri məlumatlarının göründüyü hər şeyi bağlayın. Kabelləri, şəxsi əşyaları, zibil qablarını gizlədin. Portretlər üçün geyimi əvvəlcədən razılaşdırın: birrəngli, başqa brendlərin iri loqoları olmadan, bütün komanda üçün eyni rəng qammasında.
+
+Pəncərədən düşən gün işığını və isti işıq verən lampaları eyni kadrda qarışdırmayın: onların çaları fərqlidir və fotoda bəzi sahələr göyümtül, bəziləri isə sarımtıl görünür. Daha bir tələ lampaların titrəməsidir. Azərbaycanda elektrik şəbəkəsinin tezliyi 50 Hs-dir və belə şəbəkələr üçün, məsələn, Sony 1/50 və ya 1/100 saniyəlik ekspozisiya müddəti tövsiyə edir, əks halda kadrda zolaqlar və rəng fərqləri yarana bilər. LED lampalar başqa tezliklə titrəyə bilər, ona görə də iş işığı altında sınaq çəkilişini əvvəlcədən edirlər.
+
+Vahid üslub təkrarlanmaya əsaslanır: bütün portretlər üçün eyni fon, işıq, kameranın hündürlüyü və rəng korreksiyası. Fotoqrafdan sxemi yazıb saxlamasını xahiş edin: onda yarım il sonra gələn yeni əməkdaşı elə çəkəcəklər ki, onun fotosu ümumi sıradan seçilməyəcək.'],
+            ['Çəkilişdən sonra hansı faylları təhvil almalı', 'Faylların təhvil verilməsi barədə çəkilişdən sonra yox, əvvəl razılaşırlar.
+
+— Seçilmiş və işlənmiş fotolar tam ayırdetmə qabiliyyətində — istənilən versiyanın hazırlandığı master fayllar.
+— Sayt üçün sRGB rəng məkanında versiyalar. CSS spesifikasiyasına görə brauzer daxili profili olmayan təsviri sRGB-də olan foto kimi qəbul edir. Daha geniş rəng məkanında, məsələn, Adobe RGB-də olan fayl sıxılarkən profilini itiribsə, saytda rənglər solğun görünəcək.
+— Anlaşılan adlar. Google image1.jpg kimi heç nə deməyən adlar əvəzinə qısa, təsviri fayl adları tövsiyə edir, üstəlik arxivdə də belə axtarmaq daha asandır.
+— IPTC metaməlumatları: müəllif (Creator), müəllifliyin göstərilməsi sətri (Credit Line), müəllif hüququ barədə bildiriş (Copyright Notice). Google Şəkillər bu sahələri faylın özündən götürür.
+— Sayt səhifələri üzrə qovluqlar və cədvəl: hansı kadrda kim var və onun razılığı harada saxlanılır.
+— Video üçün — hər iki oriyentasiyada hazır çarxlar və gələcək versiyalar üçün ilkin materiallar.
+
+WebP və ya AVIF formatına sıxmanı və srcset atributu vasitəsilə müxtəlif ekranlar üçün fotonun bir neçə ölçüsünü adətən tərtibatçı hazırlayır, amma bunun üçün ona böyük ilkin fayllar lazımdır.'],
+            ['Müqavilədə fotolara hüquqlar', 'Fotoşəkillər müəllif hüququnun obyektidir — bu, Azərbaycan Respublikasının «Müəllif hüququ və əlaqəli hüquqlar haqqında» Qanununun 6-cı maddəsində birbaşa yazılıb. Şirkətin onlardan istifadə edə bilməsi üçün müəllif öz hüquqlarını müəllif müqaviləsi əsasında ona ötürür (30-cu maddə), qanun isə belə müqavilənin yazılı formada bağlanmasını tələb edir (31-ci maddə).
+
+31-ci maddə müqavilədə istifadə üsullarının, müddətin, ərazinin və müəllif haqqının müəyyən edilməsini tələb edir. Nəyi yoxlamalı:
+
+— istifadə üsulları: sayt, sosial şəbəkələr, reklam, çap, qablaşdırma; siyahı olmadıqda müqavilə yalnız tərəflərin zəruri hesab etdiyi üsullar üçün bağlanmış sayıla bilər, bu isə mübahisə üçün əsasdır;
+— müddət: göstərilməyibsə, müəllif müqaviləni bağlandıqdan beş il sonra, altı ay əvvəl yazılı xəbərdarlıq etməklə ləğv edə bilər;
+— ərazi: göstərilməyibsə, hüquqlar yalnız Azərbaycan hüdudlarında qüvvədədir;
+— müstəsnalıq: 30-cu maddəyə görə, müqavilədə başqa şey nəzərdə tutulmayıbsa, qeyri-müstəsna hüquqlar ötürülür və fotoqraf həmin fotolardan başqasının da istifadə etməsinə icazə verə bilər;
+— kadrlamaya, retuşa və mətn yerləşdirməyə icazə: əsərin mənasının dəyişdirilməsinə, təhrif edilməsinə və işlənməsinə etiraz etmək hüququ hüquqlar ötürüldükdən sonra da müəllifdə qalır (14-cü maddə);
+— müəllifin adının göstərilməsi və fotoqrafın fotoları öz portfoliosunda göstərmək hüququ.
+
+Çəkilişi ştatda olan əməkdaş xidməti vəzifələri çərçivəsində və ya işəgötürənin tapşırığı ilə aparırsa, aralarındakı müqavilədə başqa şey nəzərdə tutulmayıbsa, fotolardan istifadəyə müstəsna hüquq işəgötürənə məxsusdur (13-cü maddə). Lakin işəgötürən onlardan üç il ərzində səbəbsiz istifadə etmirsə, bu hüquqlar müəllifə keçir.'],
+            ['Fotobank niyə real fotoları əvəz etmir', 'Fotobank fotonu deyil, lisenziyanı satır. Məsələn, Adobe Stock-un standart lisenziyası qeyri-müstəsnadır: eyni fotonu istənilən şəxs, o cümlədən rəqibiniz də ala bilər. Google-da şəkil üzrə axtarış isə eyni və ya oxşar təsvirin olduğu saytları göstərir, yəni sizin «komandanızın» haradan gəldiyini istənilən ziyarətçi yoxlaya bilər.
+
+Komanda, ofis, görülmüş işlər və məhsullar barədə səhifələrdə şirkət saytı üçün fotolardan insan şirkətin mövcud olduğuna və məhz belə göründüyünə sübut gözləyir. Başqasının ofisindəki yad insanlar bunu vermir, işlər bölməsindəki stok şəkil isə başqasının nəticəsini sizinki kimi təqdim edir. Lisenziyaların məhdudiyyətləri də var: məsələn, Adobe Stock-un şərtləri stok təsvirin tamamilə və ya qismən istifadə edildiyi əmtəə nişanının qeydiyyata alınmasını qadağan edir.
+
+Stok şəkillər heç nəyi sübut etməyə ehtiyac olmayan yerlərdə uyğundur: fon, faktura, məqalə üçün illüstrasiya.'],
+        ],
+        'end'      => 'Biznes üçün çəkilişin uğurlu alınıb-alınmayacağı hələ fotoqraf gəlməzdən əvvəl bəlli olur: səhifələr üzrə kadr siyahısı, əsas kadrlar üçün hər iki oriyentasiya, kadrdakı insanların razılığı, hazırlanmış çəkiliş məkanı. Çəkilişdən sonra düzgün fayllar və istifadə üsullarının, müddətin, ərazinin və müstəsnalığın yazıldığı müqavilə lazımdır. Çəkilişdən əvvəl üç şeyi yoxlayın: kadr siyahısı varmı, kadra düşəcək hər kəsin razılığı rəsmiləşdirilibmi və müqavilə fotolara hüquqlar barədə nə deyir.',
+    ],
+    'motion-dizajn-i-ai-video-dlya-biznesa' => [
+        'seoTitle' => 'Motion dizayn və AI video: çarxı nə vaxt çəkməmək olar',
+        'seoDesc'  => 'Biznes üçün animasiya çarxı və reklam üçün AI video çəkilişi nə vaxt əvəz edir, dizaynerə nə hazırlamalı, musiqi və səs hüquqları, Sİ nişanı harada lazımdır.',
+        'title'    => 'Motion dizayn və AI video: biznes üçün animasiya çarxı nə vaxt çəkilişi əvəz edir',
+        'desc'     => 'Animasiya və AI video harada çəkilişi əvəz edir, çarx üçün dizaynerə nə lazımdır, generasiya olunmuş kadrın və musiqinin hüquqları kimə məxsusdur və süni intellekt nişanı nə vaxt tələb olunur.',
+        'rubric'   => 'Dizayn',
+        'lead'     => 'Yeni xidmət haqqında çarx lazımdır, amma çəkməyə bir şey yoxdur: məhsul proqram və ya sığorta polisidir, ofis qonşu ofisdən seçilmir, planda isə çəkiliş günü yoxdur. Podratçı animasiya və ya neyroşəbəkənin yığdığı video təklif edir, bundan nə çıxacağı və nəyi riskə atdığınız isə aydın deyil. Gəlin baxaq: motion dizayn harada çəkilişi əvəz edir, iş başlamazdan əvvəl nə hazırlamaq lazımdır, musiqi, səs və generasiya olunmuş kadrlar üzərində hüquqlar necə qurulub və süni intellektdən istifadə barədə nişan nə vaxt lazımdır.',
+        'body'     => [
+            ['Motion dizayn nə vaxt çəkilişdən daha uyğundur', 'Motion dizayn hərəkətdə olan qrafikadır: mətn, ikonlar, sxemlər, illüstrasiyalar, loqo. O, kamera ilə çəkilə bilməyəni göstərir.
+
+Animasiyanın adətən üstün gəldiyi vəzifələr:
+
+— fiziki məhsulu olmayan xidməti izah etmək: çatdırılmanı, proqramı, sığortanı, mühasibat xidmətini;
+— videoda kompüter arxasında oturan insana çevriləcək prosesi və ya sxemi göstərmək;
+— çarxların, təqdimatların və sərgidəki ekranın açılışı üçün loqo animasiyası hazırlamaq;
+— sosial şəbəkələr üçün reklamı hazır fotolardan, 3D modellərdən və korporativ rənglərdən yığmaq.
+
+AI video ayrıca alətdir. Generator mətn təsviri və ya ilkin şəkil əsasında qısa plan yığır: şəhərin üzərində buludlar, masanın üstündə məhsul, abstrakt fon. Ara kadr və ya əhval-ruhiyyə yaradan kadr üçün bu, çox vaxt kifayət edir.
+
+Etibarın reallıq üzərində qurulduğu yerdə çəkiliş əvəzolunmazdır: sizin komandanız, sizin zalınız, sizin yeməkləriniz, real müştərinin rəyi. Generasiya olunmuş «restoran interyeri» olmayan bir şeyin vədidir. Platformalar nişanlanmanı ilk növbədə məhz məkanın belə realistik generasiya olunmuş kadrları üçün tələb edir.'],
+            ['Animasiya çarxı üçün nə hazırlamaq lazımdır', 'Çarx animasiyadan deyil, ssenaridən başlayır. Ən rahatı iki sütunlu cədvəldir: solda — ekranda nə səslənir və ya yazılıb, sağda — həmin anda nə görünür. Mətni saniyəölçənlə, diktorun tempində ucadan oxuyun. Ayrılmış vaxta sığmırsa, nitqi sürətləndirmir, mətni qısaldırlar.
+
+Dizaynerə lazımdır:
+
+— vektor formatında loqo (SVG, PDF və ya AI), saytdan götürülmüş şəkil yox — dəstə nələrin daxil olduğu loqo faylları haqqında məqalədə izah olunub;
+— korporativ rənglərin rəqəmli kodları və şriftlər;
+— məhsulun fotoları, proqramın skrinşotları, 3D modellər, əgər varsa;
+— çarxın hər dili üçün diktor mətni;
+— versiyaların siyahısı: platformalar, nisbətlər, səssiz variantın lazım olub-olmadığı.
+
+Google Fonts şriftləri əsasən SIL Open Font License altında yayılır: onlardan istənilən işlərdə, o cümlədən kommersiya işlərində pulsuz istifadə etmək olar, yalnız şrift fayllarının özünü satmaq olmaz. Ödənişli şriftlərdə hüquqlar bəzən göstərilmə yerinə görə bölünür. Məsələn, Typotheque-də sosial şəbəkələr üçün animasiyaları əsas Desktop lisenziyası əhatə edir, televiziyada və strim servislərində reklam üçün isə ilk göstərilmədən əvvəl alınmış əlavə Broadcast Licence lazımdır.'],
+            ['Səs və musiqi: hər trekin öz lisenziyası var', 'Diktor canlı da ola bilər, sintez edilmiş də. Canlı diktoru yazmaq lazımdır, amma adlardakı vurğuları və Azərbaycan, rus və ingilis dillərinin qarışığını o, sizin istədiyiniz kimi oxuyacaq. Sintez edilmiş səsləndirməni son montajdan əvvəl həmin dili ana dili kimi bilən birinə dinlədin. Başqasının səsini icazəsiz klonlamırlar: ElevenLabs-ın qaydaları canlı insanın səsini onun açıq və şüurlu razılığı və ya başqa qanuni əsas olmadan təkrarlamağı birbaşa qadağan edir.
+
+Musiqi ilə daha tez-tez səhv edirlər. Meta-nın musiqi qaydaları müvafiq lisenziyalar olmadan ondan kommersiya məqsədilə istifadəni qadağan edir, paylaşımdakı və ya reklamdakı musiqiyə görə isə onu yerləşdirən cavabdehdir. YouTube-un audio kitabxanası yalnız YouTube Studio-dadır; onun treklərindən YouTube platformasından kənarda istifadəyə dair YouTube hüquqi izahat vermir və üçüncü tərəf kitabxanalarından götürülmüş «pulsuz» musiqiyə görə cavabdeh deyil. Audio kitabxananın treki Creative Commons lisenziyası altındadırsa, müəllif çarxın təsvirində göstərilir.
+
+Çarx həm reklama, həm sayta, həm də ofisdəki ekrana gedəcəksə, bütün bu yerlər üçün lisenziyası olan stok treki və ya sifarişlə yazılmış musiqi lazımdır. Musiqi generatorlarında hüquqlar şərtlərdən asılıdır: məsələn, Suno-da pulsuz tarifdə yaradılmış mahnılar servisə məxsusdur və yalnız qeyri-kommersiya istifadəsi üçün yararlıdır. Lisenziyanı və ya çeki mənbə faylları ilə birlikdə saxlayın — hüquq sahibi şikayət edəndə bu, əsas dəlildir.'],
+            ['Reklam üçün AI video: nəticə kimə məxsusdur', 'Azərbaycanın «Müəllif hüququ və əlaqəli hüquqlar haqqında» Qanunu əsəri yaratmış fiziki şəxsi müəllif adlandırır. Orada süni intellektin işinin nəticələrinə dair ayrıca normalar yoxdur, ona görə də generasiya olunmuş kadrın müəllifinin olub-olmaması sualı açıq qalır. ABŞ Müəllif Hüquqları İdarəsi 29 yanvar 2025-ci il tarixli məruzəsində belə nəticəyə gəlib ki, nəticənin müəllifi sayılmaq üçün təkcə promptlar kifayət deyil. Qorunma insanın töhfəsinə şamil oluna bilər: seçim və kompozisiya, sonradan işlənmə, yekun kadrdakı öz elementləri.
+
+Buradan biznes üçün üç nəticə çıxır.
+
+1. Nəticə ilə nə etmək olacağını servisin şərtləri müəyyən edir. Onlar tarifdən, bəzən isə şirkətin ölçüsündən asılıdır: Midjourney-nin şərtlərinə görə, illik gəliri bir milyon dollardan çox olan şirkət nəticələrə yalnız Pro və ya Mega tarifindən istifadə etdikdə sahib olur.
+2. Çarxda sizə məxsus olan nə qədər çoxdursa — korporativ qrafika, öz fotolarınız, ssenari və montaj, — bütövlükdə ona bir o qədər əminliklə sərəncam verirsiniz.
+3. Generatordan başqasının loqosunu, tanınan insanı və ya personajı təsvir etməyi istəməyin. 2026-cı ilin aprelində Azərbaycanın Cinayət Məcəlləsinə 148-2-ci maddə əlavə edilib: o, insanın razılığı olmadan süni intellekt və ya xüsusi proqramlar vasitəsilə hazırlanmış, onun təsvirini və ya səsini əks etdirən həqiqətə uyğun olmayan foto, video və audionun yaradılmasına və ya yayılmasına görə cəza nəzərdə tutur.'],
+            ['Süni intellekt nişanı: platformalar və qanun nə tələb edir', 'YouTube süni intellektlə yaradılmış və ya dəyişdirilmiş realistik kontentin açıqlanmasını tələb edir: insan demədiyi sözləri deyir, real hadisənin və ya məkanın yazısı dəyişdirilib, inandırıcı səhnə generasiya olunub. Çarxda əsas yer tutursa, süni intellektlə yaradılmış musiqi də bura aiddir. Bu, yükləmə zamanı atributlar bölməsində qeyd olunur. Qeyri-realistik olanı, məsələn, tam animasiya çarxındakı süni intellekt qrafikasını, həmçinin ssenari, başlıq və altyazılarla bağlı süni intellektin köməyini və səsləndirmə üçün öz səsinizin klonunu açıqlamaq lazım deyil. C2PA metaməlumatları olan çarxları YouTube özü nişanlaya bilər və müəllif belə nişanı silə bilməz. YouTube-un sözlərinə görə, açıqlamanın özü əhatəni və monetizasiyanı məhdudlaşdırmır, sistematik şəkildə susmağa görə isə sanksiyalar mümkündür.
+
+Meta fotorealistik video və realistik səslənən audio üçün süni intellekt nişanı tələb edə bilər və məcburi nişan olmadıqda sanksiyalar barədə xəbərdarlıq edir. 2026-cı ilin iyununda Meta elan edib ki, üçüncü tərəf süni intellekt servisləri ilə yaradılmış və ya redaktə edilmiş reklamları sənayedə qəbul olunmuş siqnallar əsasında özü tanımağa və reklam haqqında məlumatda nişan göstərməyə başlayır. TikTok da realistik süni intellekt kontentinin nişanlanmasını tələb edir və bəzi servislərdən gələn Content Credentials metaməlumatları olan videoları avtomatik nişanlayır.
+
+Azərbaycan qaydası daha genişdir. 148-2-ci maddəni əlavə edən 21 aprel 2026-cı il tarixli 387-VIIQD nömrəli Qanun «İnformasiya, informasiyalaşdırma və informasiyanın mühafizəsi haqqında» Qanunu da 13-2.7-ci maddə ilə tamamlayıb: süni intellektin köməyi ilə hazırlanmış foto, video və audio ictimaiyyətə göstərilərkən bu barədə aydın və asanlıqla görünən nişana malik olmalıdır. Mətndə animasiya üçün istisnalar yoxdur, ona görə də reklamdakı generasiya olunmuş kadrları platformanın ayarlarına güvənmədən birbaşa çarxın içində nişanlamaq ağlabatandır. Qismən istifadə zamanı sərhədin harada keçdiyini — məsələn, süni intellekt yalnız fonu silibsə — qanun dəqiqləşdirmir.'],
+            ['Formatlar, uzunluq və altyazılar', 'Müxtəlif platformalar üçün versiyalar animasiyadan əvvəl planlaşdırılır: hazır üfüqi səhnəni şaquli formata yenidən qurmaq demək olar ki, eyni işi təzədən görmək deməkdir.
+
+— 9:16 — Reels, stories, Shorts, TikTok, həmçinin Instagram lentindəki video reklam, onun üçün Meta şaquli formatı tövsiyə edir; YouTube-da Shorts üç dəqiqəyə qədər ola bilər;
+— 4:5 — Facebook lentindəki video reklam;
+— 16:9 — YouTube, sayt, təqdimat, ofisdəki ekran.
+
+Uzunluğu vəzifə, reklamda isə həm də format müəyyən edir. YouTube-da ötürülə bilən reklamda izləyiciyə 5 saniyədən sonra onu ötürmək imkanı yaranır — kim olduğunuz və nə təklif etdiyiniz bundan əvvəl səslənməlidir. Bamper reklamlar 5 saniyədən 6 saniyəyə qədər davam edir və ötürülmür: onlara bir fikir və loqo sığır.
+
+Motion dizayn çarxında altyazı rolunu çox vaxt ekrandakı mətnin özü oynayır. Diktor varsa, YouTube-a öz altyazı faylınızı, məsələn, SRT yükləyin. YouTube-un avtomatik altyazıları həm Azərbaycan, həm də rus dili üçün var, amma onlardan sonra şirkət adlarını və terminləri əl ilə yoxlayırlar, nitqdə dillər qarışıqdırsa, altyazılar ümumiyyətlə olmaya bilər. Reels-də mətni təhlükəsiz zonanın daxilində birbaşa görüntüyə yazmaq daha etibarlıdır — bu barədə şaquli video haqqında məqalədə ətraflı danışılır.
+
+Sayt üçün loqo və ya ikon animasiyasını Lottie formatında təhvil vermək rahatdır: onu After Effects-dən JSON-a ixrac edirlər, səhifədəki pleyer isə onu vektor kimi çəkir. Fon videosunu səssiz qoyun: Chrome səssiz avtomatik oynatmaya həmişə icazə verir, səsli oynatmaya isə yalnız müəyyən şərtlər daxilində. Hərəkət öz-özünə başlayırsa, beş saniyədən uzun davam edirsə və başqa məzmunla yanaşı göstərilirsə, WCAG əlçatanlıq standartının 2.2.2 kriteriyasına görə ziyarətçinin onu dayandırmaq və ya gizlətmək imkanı olmalıdır.'],
+        ],
+        'end'      => 'Motion dizayn reallığı göstərmək yox, izah etmək lazım olan yerdə çəkilişi əvəz edir: fiziki məhsulu olmayan xidməti, prosesi, loqonu, hazır materiallardan yığılan reklamı. AI video fon və əhval-ruhiyyə üçün yararlıdır, amma reklamdakı generasiya olunmuş kadrlar nişanlanır: realistik olanlar — platformaların qaydalarına görə, Azərbaycanda isə istənilən kadr — qanuna görə. Çarxı sifariş etməzdən əvvəl xronometrajlı ssenarini, brendin mənbə fayllarını və şrift, səs və musiqi lisenziyalarını toplayın.',
+    ],
+    'korporativnaya-pochta-na-svoyom-domene' => [
+        'seoTitle' => 'Korporativ poçt: Google Workspace, yoxsa hostinqdə poçt',
+        'seoDesc'  => 'Öz domeninizdə korporativ poçt: hostinqdəki qutular Google Workspace və Microsoft 365-dən nə ilə fərqlənir, nəyi müqayisə etməli — həcm, spam, ümumi ünvanlar.',
+        'title'    => 'Öz domeninizdə korporativ poçt: hostinq, Google Workspace, yoxsa Microsoft 365',
+        'desc'     => 'Hostinq tarifindəki poçt qutuları Google Workspace və Microsoft 365-dən nə ilə fərqlənir: həcm və limitlər, ümumi ünvanlar, əməkdaşın işdən çıxması, ehtiyat nüsxələr, qiymət və MX vasitəsilə köçmə.',
+        'rubric'   => 'Dəstək',
+        'lead'     => 'Şirkətin poçtu sayt işə salınandan bəri hostinq tarifində yaşayır. Poçt qutuları dolub-daşır, sales@ ünvanının parolunu bütün şöbə bilir, menecer işdən çıxandan sonra isə onun yazışmaları ilə nə edəcəklərini heç kim anlamır. Podratçı Google Workspace və ya Microsoft 365-ə keçməyi təklif edir və hər ay nəyin haqqını ödəyəcəyiniz aydın deyil. Kənardan baxanda öz domeninizdə korporativ poçt istənilən seçimdə eyni görünür — fərq ünvanın arxasında dayananlardadır. Gəlin görək, seçimdən əvvəl nəyi müqayisə etməli və məktubları itirmədən necə köçmək olar.',
+        'body'     => [
+            ['Öz domeninizdə poçtun hansı variantları var', 'Məktublar harada saxlanılırsa saxlanılsın, ad@domeniniz.az kimi ünvan eyni qalır. Daxil olan poçtun hara çatdırılacağını domenin DNS zonasındakı MX yazısı göstərir. Buna görə də ünvanları dəyişmədən xidməti dəyişmək olar.
+
+Əsas variantlar:
+— hostinq tarifindəki poçt qutuları: onları cPanel kimi paneldə yaradır, veb-poçt və ya poçt proqramı vasitəsilə oxuyurlar;
+— Google Workspace: domeninizdə Gmail, üstəlik Təqvim, Disk, Sənədlər və Meet;
+— Microsoft 365: Outlook, təqvim və OneDrive ilə birlikdə Exchange Online poçtu; yalnız poçt lazımdırsa, ayrıca Exchange Online Plan 1 tarifi var;
+— biznes üçün digər poçt xidmətləri, məsələn, Zoho Mail.
+
+Şəxsi gmail.com qutusu bu siyahıya daxil deyil: ünvandakı domen şirkətə deyil, Google-a məxsusdur və onun üçün SPF, DKIM və DMARC yazılarını siz tənzimləmirsiniz. Ətraflı — şirkətin məktublarının niyə spama düşməsi haqqında məqalədə.'],
+            ['Poçt qutusunun həcmi, limitlər və spam filtri', 'Google Workspace-də yer bütün şirkət üçün ümumidir: hər istifadəçi ümumi həcmə Business Starter tarifində 30 GB, Business Standard-da 2 TB, Business Plus-da isə 5 TB əlavə edir. Bu həcmi Disk, Gmail və Google Foto bölüşür, üstəlik «Spam» və «Səbət» qovluqlarındakı məktublar da yer tutur.
+
+Microsoft 365-də poçt fayllardan ayrı hesablanır. Business Basic, Standard və Premium tariflərində əsas poçt qutusunun həcmi 100 GB-dır (2026-cı ildə limit 50 GB-dan qaldırılıb), fayllar isə OneDrive-da saxlanılır — istifadəçi başına 1 TB. Ayrıca Exchange Online Plan 1 tarifində qutu əvvəlki kimi 50 GB-dır. Hostinqdə poçt adətən diski saytla bölüşür və limiti tarif müəyyən edir.
+
+Göndərmə məhdudiyyətləri bulud xidmətlərində də var. Google Workspace-də bir istifadəçi istənilən 24 saat ərzində 2000-ə qədər məktub göndərə bilər. Exchange Online-da limit sutkada 10 000-ə qədər alıcı və dəqiqədə ən çox 30 məktubdur, müştərilərə göndərişlər üçün isə Microsoft ixtisaslaşmış servislərdən istifadə etməyi məsləhət görür. Hostinqin məhdudiyyətlərini tarifin şərtlərində axtarırlar.
+
+Spam filtrini kimin idarə etməsi də fərqlənir. Google Workspace-də spam və fişinqdən müdafiə bütün tariflərdə var. Microsoft 365-də baza filtrasiya — Exchange Online Protection — istənilən bulud poçt qutusuna daxildir, Business Premium isə qoşmaları və linkləri yoxlayan Defender for Office 365 Plan 1 əlavə edir. cPanel-də filtr Apache SpamAssassin üzərində qurulub: həddi özünüz tənzimləyirsiniz, amma bu alətin əlçatan olub-olmamasına hostinq qərar verir.'],
+            ['Google Workspace, yoxsa hostinqdə poçt: təqvim, sənədlər, ümumi ünvanlar', 'Hostinqdə poçt — poçt qutuları və veb-interfeysdir; cPanel-də onlara CalDAV və CardDAV vasitəsilə sinxronlaşan təqvimlər və kontaktlar da əlavə olunur. Sənədlər üzərində birgə iş və giriş hüquqları olan vahid əməkdaş kataloqu isə orada yoxdur.
+
+Google Workspace-in bütün tariflərində Təqvim, Disk, Sənədlər, Cədvəllər və Meet var; Business Starter-də görüşlər 100 iştirakçıya qədərdir və onları yazmaq olmur. Microsoft 365 Business Basic-ə Word, Excel, PowerPoint və Outlook-un veb versiyaları daxildir, masaüstü tətbiqlər isə Business Standard tarifindən başlayaraq verilir.
+
+Bulud xidmətlərinin info@ və sales@ kimi ünvanlar üçün ayrıca alətləri var:
+— alias — həmin qutunun ikinci ünvanı: Google Workspace-də istifadəçi başına əlavə ödənişsiz 30-a qədər, Microsoft 365-də isə qutu başına təxminən 300-ə qədər ünvan;
+— Microsoft 365-də 50 GB-a qədər həcmi olan ümumi poçt qutusu öz lisenziyasını tələb etmir, əməkdaşlar onu öz hesabları ilə açırlar;
+— Google Workspace-də ümumi qutu rolunu nümayəndələri olan hesab və ya birgə poçt qutusu olan qrup oynayır: orada məktubu əməkdaşa təyin edir və icra olunmuş kimi qeyd edirlər.
+
+Hostinqdəki ümumi ünvan bütün şöbə üçün bir parolu olan bir qutudursa, müştəriyə kimin cavab verdiyi görünmür, hər hansı əməkdaş işdən çıxandan sonra isə parolu dəyişib yenidən paylamaq lazım gəlir.'],
+            ['Əməkdaş işdən çıxanda poçt qutusu ilə nə olur', 'Menecerin müştərilərlə yazışması şirkətə məxsusdur. O getdikdən sonra yazışma əlçatan qalmalı, onun ünvanına gələn məktublar isə həmkarlarına çatmalıdır.
+
+Google Workspace-də istifadəçinin fəaliyyətini dayandırmaq olar: yeni məktublar və dəvətlər bloklanır, məlumatlar saxlanılır, amma lisenziyanın haqqı aktiv istifadəçi üçün olduğu kimi ödənilir. İstifadəçini silərkən administrator Disk fayllarını və təqvimi həmkarına ötürə bilər, poçtu isə əvvəlcədən, məlumat miqrasiyası xidməti vasitəsilə başqa qutuya köçürürlər. Ötürülməyən hər şey istifadəçi ilə birlikdə silinir; onu 20 gün ərzində bərpa etmək olar. Köhnə ünvanı sonra işləri təhvil alan əməkdaşa alias kimi əlavə edirlər.
+
+Microsoft 365-də işdən çıxan əməkdaşın qutusunu ümumi qutuya çevirirlər: məktublar və təqvim saxlanılır, həmkarlar giriş əldə edir, qutu 50 GB-dan böyük deyilsə, lisenziyanı götürmək olar. Bu zaman hesab silinmir — ümumi qutu onun üzərində dayanır, — amma onun parolu sıfırlanır ki, keçmiş əməkdaş daxil ola bilməsin. Silinmiş istifadəçini 30 gün ərzində bərpa etmək olar.
+
+Hostinqdə hər şey panelə gəlib çıxır: parolu dəyişmək, yönləndirməni tənzimləmək, arxivi saxlamaq. Bu, panelə giriş təkcə podratçıda deyil, şirkətin özündə olduğu müddətdə mümkündür. Bulud xidmətlərində eyni şey administratorlara aiddir: Google birdən çox super administrator saxlamağı və hər birini ayrı şəxsə verməyi tövsiyə edir.'],
+            ['Ehtiyat nüsxələr: nəyi geri qaytarmaq olar', 'Nüsxə təkcə nasazlıq halı üçün lazım deyil: səhvən verilmiş silmə əmrini bulud xidməti istənilən başqa əmr kimi eyni dəqiqliklə yerinə yetirəcək. Buna görə də silinmiş məlumatı daha nə qədər müddət geri qaytarmağın mümkün olması vacibdir.
+
+Gmail-də məktub səbətdə 30 gün qalır, bundan sonra Google Workspace administratorunun onu konsoldan bərpa etmək üçün daha 25 günü var. Business Plus-dan başlayaraq tariflərə daxil olan Google Vault məlumatları təyin olunmuş qaydalar üzrə saxlayır və onlarda axtarış aparır, lakin onun arayış səhifəsində deyildiyi kimi, ehtiyat nüsxələmə üçün nəzərdə tutulmayıb. Microsoft 365-də silinmiş poçt qutusu 30 gün saxlanılır, ehtiyat nüsxələmə isə qorunan məlumatların həcminə görə ödənilən ayrıca xidmətdir — Microsoft 365 Backup.
+
+Hostinqdə cavab provayderdən asılıdır: nüsxələr nə qədər tez-tez çıxarılır, nə qədər saxlanılır və bütün hesabı deyil, tək bir poçt qutusunu qaytarmaq olarmı. Vacib yazışmanı poçt xidmətindən kənarda da saxlayın: xidmətin öz vasitələri ilə edilmiş ixracda və ya ehtiyat nüsxələmə üçün kənar proqramda.'],
+            ['Qiymət necə formalaşır', 'Hostinqdə poçt üçün adətən ayrıca ödəmirlər: o, öz məhdudiyyətləri ilə birlikdə tarifə daxildir. Google Workspace və Microsoft 365-də qiymət istifadəçi başına aylıq göstərilir, ona görə də bir lisenziyanın qiymətini deyil, bütün şirkət üzrə məbləği müqayisə etmək lazımdır.
+
+Hesablamada nəyi nəzərə almalı:
+— öhdəlik müddəti: hər iki xidmətin aylıq və illik variantı var; Google-da illik variant daha ucuzdur, amma istifadəçini silsəniz belə, müddətin sonunadək lisenziyaların sayını azaltmaq olmur;
+— başlanğıc endirimləri: onlar bitəndən sonrakı qiyməti də hesablayın;
+— nə ayrıca lisenziya tələb etmir: Google Workspace-də aliaslar, Microsoft 365-də 50 GB-a qədər ümumi qutular;
+— pulsuz görünsə də, nəyin haqqı ödənilir: Google Workspace-də fəaliyyəti dayandırılmış istifadəçi;
+— vergi: Google-un tariflər səhifəsində qiymətlər vergisiz göstərilir.
+
+Qiymətlər dəyişir — ödəniş günü onları rəsmi səhifədə yoxlayın.'],
+            ['MX yazıları və məktubları itirmədən köçmə', 'Yeni məktublar MX yazısı dəyişdirildikdən sonra yeni xidmətə gəlməyə başlayır. Onun dəyərini xidmətin özü verir: Google Workspace-də hazırda bu, prioriteti 1 olan tək smtp.google.com yazısıdır. MX yazıları bir neçədirsə, göndərən server əvvəlcə prioritet ədədi daha kiçik olan yazını yoxlayır, o cavab vermirsə — növbətiləri. Buna görə də köhnə yazılar silinir, əks halda məktubların bir hissəsi əvvəlki serverə gedə bilər.
+
+Köhnə məktublar IMAP vasitəsilə köçürülür: Google Workspace-də — administrator konsolundakı məlumat miqrasiyası xidməti ilə, Microsoft 365-də — Exchange admin mərkəzində IMAP miqrasiyası ilə. IMAP vasitəsilə yalnız poçt köçür: Microsoft-un xəbərdarlıq etdiyi kimi, kontaktlar və təqvimlər ayrıca köçürülür.
+
+Ardıcıllıq belədir:
+1. Yeni xidmətdə poçt qutularını yaratmaq və MX yazısının TTL-ini əvvəlcədən azaltmaq.
+2. Köhnə poçtu köçürmək.
+3. MX yazısını yeni xidmətə yönləndirmək və dərhal SPF ilə DKIM-i ona uyğun yeniləmək.
+4. DNS keşlərinin müddəti bitəndə sinxronizasiyanı bir daha işə salmaq və köhnə qutulara gəlmiş məktubları götürmək.
+
+TTL haqqında ətraflı — saytın başqa hostinqə köçürülməsi haqqında məqalədə.'],
+        ],
+        'end'      => 'Korporativ poçtu bir qutunun qiymətinə görə deyil, çətin günlərdə baş verənlərə görə seçirlər: əməkdaş işdən çıxır, vacib məktub silinir, ümumi ünvanı bütün şöbə oxuyur. Hostinqdə poçt «domendə ünvan» məsələsini həll edir, Google Workspace və Microsoft 365 isə ona ümumi qutular, əməkdaşların idarə olunması, təqvim və sənədlər əlavə edir. Bu zaman domen sizin olaraq qalır, xidməti isə ünvanları dəyişmədən dəyişmək olar.',
+    ],
+    'bezopasnost-sajta-kak-zashchitit-ot-vzloma' => [
+        'seoTitle' => 'Saytın təhlükəsizliyi: necə qorumalı, sındırılıbsa nə etməli',
+        'seoDesc'  => 'Köhnəlmiş plaginlər, ümumi parollar, unudulmuş hesablar və eyni serverdəki nüsxələr: saytları necə sındırırlar və sayt artıq sındırılıbsa nə etməli.',
+        'title'    => 'Şirkət saytının təhlükəsizliyi: saytı hansı yollarla sındırırlar və sındırılandan sonra nə etməli',
+        'desc'     => 'Kiçik şirkətlərin saytlarını hansı yollarla sındırırlar, saytın sındırılmadan qorunması üçün yoxlama siyahısı və sayt artıq sındırılıbsa, görüləcək işlərin ardıcıllığı: təcriddən Google-da yoxlama sorğusuna qədər.',
+        'rubric'   => 'Dəstək',
+        'lead'     => 'Müştəri yazır ki, saytınızın linkini açanda qarşısına kazino reklamı çıxıb. Yaxud Google-da şirkət saytının linkinin altında «Bu sayt sındırılmış ola bilər» qeydi peyda olub, sayt üzrə axtarış isə sizin yaratmadığınız səhifələri tapır. Təcavüzkara sizin şirkətiniz yox, serveriniz və domeninizin reputasiyası lazımdır. İçəri o, gündəlik, adi şeylər vasitəsilə girir: Google sındırılmanın əsas yolları sırasında təxmin edilmiş və ya oğurlanmış parolu, vaxtında quraşdırılmamış yeniləməni, təhlükəsiz olmayan temanı və ya plagini göstərir. Gəlin araşdıraq: saytın təhlükəsizliyi nədən ibarətdir, elə indi nəyi yoxlamaq lazımdır və sayt sındırılıbsa nə etməli.',
+        'body'     => [
+            ['Kiçik şirkətin saytını niyə sındırırlar', 'Google sındırılmanın motivləri sırasında bunları göstərir:
+
+— spam: sayta linklər və səhifələr əlavə edirlər və ya ziyarətçiləri başqalarının resurslarına yönləndirirlər;
+— məlumatların oğurlanması: müştərilər barədə məlumatlar, kart nömrələri, loginlər və parollar;
+— səhifələrə başqa saytlardan məzmun yükləyən zərərli kod.
+
+Bunların heç biri üçün böyük və ya tanınmış sayt lazım deyil. Admin panelinin parollarını proqramlar təxmin edir: WordPress sənədlərinə görə, belə hücumlar avtomatikdir və çox vaxt botnetlər — yoluxmuş kompüterlərdən ibarət şəbəkələr vasitəsilə aparılır.
+
+Nəticələr saytdan kənara çıxır. Search Console yardım bölməsinə görə, yoluxmuş səhifələr axtarış nəticələrində xəbərdarlıq ala, brauzer isə onların yerinə xəbərdarlıq səhifəsi göstərə bilər. Hostinq provayderi saytın işini dayandıra bilər. Sayt vasitəsilə spam göndərilirsə, serverin IP ünvanı qara siyahılara düşür, onunla birlikdə isə şirkətin poçtu da — əgər poçt eyni serverdə işləyirsə.'],
+            ['Köhnəlmiş CMS, plaginlər və temalar', 'OWASP Top 10 qeyri-kommersiya OWASP fondunun veb-tətbiqlər üçün ən kritik risklər siyahısıdır və onun 2025-ci il redaksiyasında «proqram təminatının tədarük zəncirində nasazlıqlar» kateqoriyası var: söhbət sizin kodunuzun dayandığı yad koddan gedir. OWASP-ın ifadəsinə görə, proqram təminatı köhnəlibsə, dəstəklənmirsə və ya məlum zəifliklərə malikdirsə, tətbiq, çox güman ki, həssasdır. CMS üzərində qurulmuş sayt üçün bu, nüvə, plaginlər və temalar deməkdir.
+
+Yeniləmələr və PHP-nin dəstək müddətləri haqqında saytın texniki dəstəyinə dair məqalədə yazılıb. Burada başqa şey daha vacibdir: yalnız hələ də kiminsə yenilədiyi şeyi yeniləmək mümkündür. Google artıq dəstəklənməyən temaları və plaginləri silməyi, özü də sadəcə söndürməyi deyil, onların bütün fayllarını serverdən pozmağı məsləhət görür.
+
+Daha iki risk mənbəyi var. Birincisi — kənar saytlardan pulsuz yüklənmiş ödənişli temalar və plaginlər: Google-un sözlərinə görə, belə nüsxələrə zərərli kod əlavə etmək geniş yayılmış üsuldur. İkincisi — saytın unudulmuş nüsxələri: subdomendəki köhnə versiya, test qovluğu, saytın kök qovluğundakı arxiv. Onları heç kim yeniləmir, açılırlar isə əsas sayt kimi.'],
+            ['Parollar, ikinci faktor və unudulmuş hesablar', 'Tanış mənzərə: admin panelinin hamı üçün bir parolu var, onu keçmiş tərtibatçı da bilir, əməkdaşlardan biri isə həmin parolu şəxsi poçtunda da istifadə edir. Başqa servisdən sızmış parolu sizin saytınızda da sınayacaqlar: OWASP bunu credential stuffing adlandırır — başqa sızmalardan götürülmüş «login — parol» cütlərinin sınaqdan keçirilməsi.
+
+ABŞ-ın NIST SP 800-63B təlimatı 2025-ci il redaksiyasında giriş sistemlərinə belə tələb qoyur: parol yeganə faktordursa, ən azı 15 simvoldan, ikinci faktorla birlikdə işləyirsə, ən azı 8 simvoldan ibarət olmalıdır. Məcburi xüsusi simvolları və parolun qrafik üzrə dəyişdirilməsini isə təlimat qadağan edir: parolu ələ keçirilmə əlamətləri olduqda dəyişmək lazımdır. Uzun unikal parolları parol menecerində saxlamaq rahatdır.
+
+İkinci faktor — tətbiqdəki kod və ya fiziki açar — parolu öyrənsələr belə, qoruyur. WordPress sənədlərinə görə, nüvədə o yoxdur və plaginlə əlavə olunur; onu bütün administratorlar üçün aktivləşdirmək tövsiyə edilir. İkinci faktoru saytın admin panelindən yan keçərək idarə olunduğu yerlərdə də aktivləşdirin: hostinq panelində, domen registratorunda, parolların sıfırlandığı poçtda.
+
+Ayrıca mövzu keçmişdən qalan hesablardır: işdən çıxmış əməkdaş, keçmiş podratçı, test istifadəçisi. Google ehtiyacı olmayan şəxslərdə administrator hüquqlarının olmasını təhlükəsizlik boşluqlarına aid edir. Kimsə gedəndə istifadəçilərin siyahısına yenidən baxın və minimal rol verin: WordPress-də xəbər dərc etmək üçün «Müəllif» rolu kifayətdir. WordPress sənədləri admin loginindən istifadə etməyi məsləhət görmür.'],
+            ['Hostinq, fayllara giriş və hüquqlar', 'Virtual hostinqdə hesabınız serveri başqalarının saytları ilə bölüşür və WordPress sənədləri xəbərdarlıq edir: qonşu sayt sındırılarsa, sənədlərdəki bütün məsləhətlərə əməl etmiş olsanız belə, sizin saytınız da zərər çəkə bilər.
+
+Özünüzdə nəyi yoxlamalı:
+
+— fayllar SFTP ilə yüklənir: FTP-dən fərqli olaraq, o, parolu və məlumatları şifrələnmiş şəkildə ötürür;
+— fayllara hüquqlar: saytın skriptlərinin sizin istifadəçiniz adından işlədiyi virtual hostinq üçün WordPress sənədləri qovluqlara 755 və ya 750, fayllara 644 və ya 640, wp-config.php faylına isə 440 və ya 400 hüquqları verməyi məsləhət görür ki, onu serverin digər istifadəçiləri oxuya bilməsin; 777 hüquqları heç bir qovluqda olmamalıdır, hətta yükləmələr qovluğunda belə;
+— temaların və plaginlərin daxili redaktoru wp-config.php faylındakı define( \'DISALLOW_FILE_EDIT\', true ); sətri ilə söndürülüb: sənədlərə görə, daxil olmağı bacarmış təcavüzkar çox vaxt məhz bu redaktordan başlayır; bu, zərərli faylların yüklənməsini dayandırmayacaq, amma hücumların bir hissəsinin qarşısını alacaq;
+— sayt xmlrpc.php-dən istifadə etmirsə, bu giriş nöqtəsi söndürülüb: WordPress sənədləri onu parol təxmini hücumlarının tez-tez seçilən hədəfi adlandırır.
+
+Admin panelinə daxil olduğunuz kompüter də bu sxemin bir hissəsidir. WordPress sənədlərinə görə, yoluxma çox vaxt sahibin kompüterindən başlayır: troyan FTP və admin paneli parollarını ələ keçirir.'],
+            ['Eyni serverdəki ehtiyat nüsxə sığorta deyil', 'Eyni hostinq hesabındakı nüsxəni saytla birlikdə silmək və ya korlamaq olar: bunun üçün hesaba giriş kifayətdir. Ən azı bir nüsxə hostinqdən kənarda, ayrıca girişi olan saxlama yerində durmalıdır. «3-2-1» qaydası texniki dəstək haqqında məqalədə izah olunub.
+
+Sındırılmadan sonra bərpa üçün nüsxələrin nə qədər geriyə saxlanıldığı da vacibdir. Google-un saytın təmizlənməsinə dair təlimatında ilk addım nüsxənin sındırılmadan əvvəl çıxarıldığına əmin olmaqdır. Yoluxma gec aşkar edilibsə, təzə nüsxələrdə artıq yad kod var.
+
+Nüsxəyə həm fayllar, həm də verilənlər bazası daxil olmalıdır. Təmizləmədən əvvəl isə həm Google, həm də WordPress daha bir nüsxəni — yoluxmuş nüsxəni saxlamağı məsləhət görür ki, nəsə alınmasa, geri qayıtmaq üçün bir şey olsun.'],
+            ['Saytın təhlükəsizliyi: sındırılmadan qorunma üzrə yoxlama siyahısı', '1. Nüvəni, plaginləri və temanı yeniləyin, istifadə olunmayan və tərk edilmiş hər şeyi serverdən silin.
+2. Pirat temaları və plaginləri, saytın köhnə nüsxələrini və ictimai qovluqlardakı arxivləri silin.
+3. Hər kəsə öz logini və minimal rol verin, artıq sizinlə işləməyən əməkdaşların və podratçıların hesablarını silin.
+4. Admin panelində, hostinq panelində, registratorda və poçtda ikinci faktoru aktivləşdirin, admin panelinə giriş cəhdlərinin sayını məhdudlaşdırın.
+5. Parol menecerindən uzun unikal parollara keçin.
+6. SFTP ilə işləyin, fayllara hüquqları yoxlayın, admin panelindəki fayl redaktorunu söndürün.
+7. Nüsxəni hostinqdən kənarda saxlayın və neçə gün geriyə qayıda biləcəyinizi bilin.
+8. Təhlükəsizlik problemləri barədə müştərilərdən deyil, hesabatdan xəbər tutmaq üçün saytı Google Search Console-da təsdiqləyin.'],
+            ['Sayt sındırılıb: addım-addım nə etməli', 'Ardıcıllıq Google təlimatları və WordPress sənədləri əsasında tərtib olunub.
+
+1. Nə gördüyünüzü, bunu nə vaxt aşkar etdiyinizi və son günlərdə saytda nəyi dəyişdiyinizi yazın.
+2. Saytı bağlayın və hostinq provayderinə xəbər verin. Google veb-serveri dayandırmağı və ya domeni başqa serverdə yerləşən, 503 cavab kodu qaytaran səhifəyə yönləndirməyi məsləhət görür: sındırılmış serverdən sadəcə xəta qaytarmaq kifayət deyil.
+3. Saytın yoluxmuş vəziyyətdə nüsxəsini saxlayın və onu yoluxmuş kimi qeyd edin.
+4. Admin panelinə və hostinq panelinə daxil olduğunuz kompüterləri antivirusla yoxlayın.
+5. Təcavüzkarın yaratdığı hesabları silin. Admin panelinin, hostinq panelinin, FTP və SFTP-nin, verilənlər bazasının və poçtun parollarını dəyişin. WordPress-də wp-config.php faylındakı gizli açarları əvəz edin — bu, bütün açıq seansları başa çatdıracaq.
+6. Saytı sındırılmadan əvvəl çıxarılmış nüsxədən bərpa edin və ya sistemi sıfırdan yenidən quraşdırın: Google-un sözlərinə görə, sadə yeniləmədən sonra əvvəlki versiyanın faylları, o cümlədən yoluxmuş fayllar qala bilər. .htaccess faylını və temanın əsas fayllarını ayrıca yoxlayın.
+7. Hər şeyi yeniləyin, içəri girmək üçün istifadə olunan zəifliyi aradan qaldırın və parolları yenidən dəyişin.
+8. Google-da axtarış sətrinə site: və saytın ünvanını yazıb yad səhifələrin olub-olmadığını yoxlayın. Onlar 404 xətası qaytarmalıdır. Onları axtarışdan daha tez çıxarmağa Search Console-dakı URL-lərin silinməsi aləti kömək edəcək, amma yalnız təcavüzkarın səhifələri üçün; onun korladığı öz səhifələriniz üçün yox.
+9. Search Console-dakı «Təhlükəsizlik problemləri» hesabatında göstərilən bütün səhifələr düzəldiləndə orada yoxlama sorğusu göndərin və nə tapdığınızı, nə etdiyinizi təsvir edin.
+
+Search Console yardım bölməsinə görə, yoxlama bir neçə gündən bir neçə həftəyədək çəkir. Cavab gələnədək təkrar sorğu göndərməyin. Tam düzəlişdən əvvəl göndərilmiş sorğu isə növbəti yoxlamanı uzada bilər.'],
+        ],
+        'end'      => 'Bu məqalədəki sındırılma səbəbləri əvvəlcədən görünür: yeniləməsiz plagin, ümumi parol, keçmiş podratçının hesabı, eyni serverdəki yeganə nüsxə. Yoxlama siyahısındakı demək olar ki, hər şey bir dəfə edilir, sonra isə saytın adi xidməti ilə birlikdə yoxlanılır. Sayt artıq sındırılıbsa, ardıcıllıq sürətdən daha vacibdir: əvvəlcə təcrid və parollar, sonra təmiz nüsxə və yeniləmələr və yalnız bundan sonra — Google-da yoxlama sorğusu.',
+    ],
     'korporativnyj-sajt-kakie-stranicy-nuzhny' => [
         'seoTitle' => 'Korporativ sayt: hansı səhifələr lazımdır və onlarda nə olur',
         'seoDesc'  => 'Şirkət üçün sayt: ana səhifə, xidmətlər, layihələr, şirkət haqqında, əlaqə, məxfilik siyasəti. Hər birində nə olur, nə dərhal lazımdır, nə gözləyə bilər.',
